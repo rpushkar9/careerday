@@ -96,110 +96,173 @@ export function StudentForm() {
           major: majorName,
           years: {
             year1: {
-              courses: [
-                'Introduction to Major',
-                'Core Requirement 1',
-                'Core Requirement 2',
-                'General Education Course 1',
-                'General Education Course 2',
-              ],
-              opportunities: [
-                'Join a relevant student club or organization',
-                'Attend department orientation events',
-                'Meet with academic advisor regularly',
-              ],
-              volunteerWork: [
-                'Campus community service day',
-                'Department-sponsored outreach program',
-              ],
-              internships: [
-                'Research assistant (on-campus)',
-                'Entry-level summer internship',
-              ],
-              projects: [
-                'Introductory course project',
-                'Personal portfolio development',
-              ],
+              fall: {
+                courses: [
+                  {
+                    code: 'INTRO101',
+                    name: 'Introduction to Major',
+                    credits: 3,
+                  },
+                  { code: 'CORE101', name: 'Core Requirement 1', credits: 3 },
+                  {
+                    code: 'GEN101',
+                    name: 'General Education Course 1',
+                    credits: 3,
+                  },
+                ],
+                opportunities: [
+                  'Join a relevant student club',
+                  'Attend orientation events',
+                ],
+                volunteerWork: ['Campus community service day'],
+                internships: ['Research assistant (on-campus)'],
+                projects: ['Introductory course project'],
+                totalCredits: 9,
+                tuition: 5000,
+              },
+              spring: {
+                courses: [
+                  { code: 'CORE102', name: 'Core Requirement 2', credits: 3 },
+                  {
+                    code: 'GEN102',
+                    name: 'General Education Course 2',
+                    credits: 3,
+                  },
+                ],
+                opportunities: ['Meet with academic advisor regularly'],
+                volunteerWork: ['Department-sponsored outreach program'],
+                internships: ['Entry-level summer internship'],
+                projects: ['Personal portfolio development'],
+                totalCredits: 6,
+                tuition: 5000,
+              },
+              totalCost: 10000,
             },
             year2: {
-              courses: [
-                'Intermediate Major Course 1',
-                'Intermediate Major Course 2',
-                'Related Elective 1',
-                'General Education Course 3',
-                'Minor Course (if applicable)',
-              ],
-              opportunities: [
-                'Apply for department scholarships',
-                'Attend career fairs',
-                'Join study groups',
-              ],
-              volunteerWork: [
-                'Peer tutoring',
-                'Community organization related to field',
-              ],
-              internships: [
-                'Summer internship in related field',
-                'Part-time job related to major',
-              ],
-              projects: [
-                'Team-based course project',
-                'Independent study project',
-              ],
+              fall: {
+                courses: [
+                  {
+                    code: 'INT201',
+                    name: 'Intermediate Major Course 1',
+                    credits: 3,
+                  },
+                  { code: 'ELEC201', name: 'Related Elective 1', credits: 3 },
+                ],
+                opportunities: [
+                  'Apply for department scholarships',
+                  'Attend career fairs',
+                ],
+                volunteerWork: ['Peer tutoring'],
+                internships: ['Summer internship in related field'],
+                projects: ['Team-based course project'],
+                totalCredits: 6,
+                tuition: 5000,
+              },
+              spring: {
+                courses: [
+                  {
+                    code: 'INT202',
+                    name: 'Intermediate Major Course 2',
+                    credits: 3,
+                  },
+                  {
+                    code: 'GEN201',
+                    name: 'General Education Course 3',
+                    credits: 3,
+                  },
+                ],
+                opportunities: ['Join study groups'],
+                volunteerWork: ['Community organization related to field'],
+                internships: ['Part-time job related to major'],
+                projects: ['Independent study project'],
+                totalCredits: 6,
+                tuition: 5000,
+              },
+              totalCost: 10000,
             },
             year3: {
-              courses: [
-                'Advanced Major Course 1',
-                'Advanced Major Course 2',
-                'Advanced Major Course 3',
-                'Related Elective 2',
-                'Minor Course (if applicable)',
-              ],
-              opportunities: [
-                'Study abroad program',
-                'Research with faculty',
-                'Professional conference attendance',
-              ],
-              volunteerWork: [
-                'Leadership role in campus organization',
-                'Industry-related volunteer work',
-              ],
-              internships: [
-                'Summer internship in target career field',
-                'Co-op or part-time professional position',
-              ],
-              projects: [
-                'Research project',
-                'Professional portfolio development',
-              ],
+              fall: {
+                courses: [
+                  {
+                    code: 'ADV301',
+                    name: 'Advanced Major Course 1',
+                    credits: 3,
+                  },
+                  {
+                    code: 'ADV302',
+                    name: 'Advanced Major Course 2',
+                    credits: 3,
+                  },
+                ],
+                opportunities: [
+                  'Study abroad program',
+                  'Research with faculty',
+                ],
+                volunteerWork: ['Leadership role in campus organization'],
+                internships: ['Summer internship in target career field'],
+                projects: ['Research project'],
+                totalCredits: 6,
+                tuition: 5000,
+              },
+              spring: {
+                courses: [
+                  {
+                    code: 'ADV303',
+                    name: 'Advanced Major Course 3',
+                    credits: 3,
+                  },
+                  { code: 'ELEC301', name: 'Related Elective 2', credits: 3 },
+                ],
+                opportunities: ['Professional conference attendance'],
+                volunteerWork: ['Industry-related volunteer work'],
+                internships: ['Co-op or part-time professional position'],
+                projects: ['Professional portfolio development'],
+                totalCredits: 6,
+                tuition: 5000,
+              },
+              totalCost: 10000,
             },
             year4: {
-              courses: [
-                'Senior Seminar',
-                'Capstone Course',
-                'Specialized Elective 1',
-                'Specialized Elective 2',
-                'Professional Development Course',
-              ],
-              opportunities: [
-                'Present at undergraduate research symposium',
-                'Network with alumni',
-                'Graduate school application preparation',
-              ],
-              volunteerWork: [
-                'Mentor underclassmen',
-                'Professional organization volunteer',
-              ],
-              internships: [
-                'Pre-professional internship',
-                'Job shadowing in target career',
-              ],
-              projects: [
-                'Senior thesis or capstone project',
-                'Industry-standard portfolio completion',
-              ],
+              fall: {
+                courses: [
+                  { code: 'SEN401', name: 'Senior Seminar', credits: 3 },
+                  { code: 'CAP401', name: 'Capstone Course', credits: 3 },
+                ],
+                opportunities: [
+                  'Present at undergraduate research symposium',
+                  'Network with alumni',
+                ],
+                volunteerWork: ['Mentor underclassmen'],
+                internships: ['Pre-professional internship'],
+                projects: ['Senior thesis or capstone project'],
+                totalCredits: 6,
+                tuition: 5000,
+              },
+              spring: {
+                courses: [
+                  {
+                    code: 'SPEC401',
+                    name: 'Specialized Elective 1',
+                    credits: 3,
+                  },
+                  {
+                    code: 'PROF401',
+                    name: 'Professional Development Course',
+                    credits: 3,
+                  },
+                ],
+                opportunities: ['Graduate school application preparation'],
+                volunteerWork: ['Professional organization volunteer'],
+                internships: ['Job shadowing in target career'],
+                projects: ['Industry-standard portfolio completion'],
+                totalCredits: 6,
+                tuition: 5000,
+              },
+              totalCost: 10000,
             },
           },
+          totalDegreeCredits: 120,
+          totalDegreeCost: 40000,
         });
       }
     } catch (error) {
