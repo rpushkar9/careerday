@@ -9,8 +9,9 @@
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "format:check": "prettier --check src",
+    "prisma": "npx prisma db pull && npx prisma generate"
   },
   "dependencies": {
     "@ai-sdk/openai": "latest",
