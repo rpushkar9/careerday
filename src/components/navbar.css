@@ -1,0 +1,113 @@
+/* Navbar */
+.navbar {
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  width: 100%;
+  z-index: 50;
+  padding: 16px 0;
+}
+
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* Branding */
+.navbar a {
+  text-decoration: none;
+  color: #333;
+}
+
+.navbar a:hover {
+  color: #6d6bd3;
+}
+
+/* Navbar Links */
+.navbar-link {
+  color: #6d6bd3;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.navbar-link:hover {
+  color: #5a57c1;
+}
+
+/* Career Quiz Button */
+.career-quiz-btn {
+  background-color: #eef2ff;
+  color: #6d6bd3;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.3s;
+}
+
+.career-quiz-btn:hover {
+  background-color: #dbe4ff;
+}
+
+/* My Account Button */
+.account-btn {
+  background-color: #6d6bd3;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.3s;
+}
+
+.account-btn:hover {
+  background-color: #5a57c1;
+}
+
+/* Dropdown Menu */
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  margin-top: 10px;
+  width: 220px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  color: #333;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+
+.dropdown-item:hover {
+  background-color: #f3f4f6;
+}
+
+.dropdown-item i {
+  margin-right: 10px;
+}
+
+.logout {
+  color: red !important;
+}
+
+.logout:hover {
+  background-color: #fee2e2;
+}
+
+/* Spacing for Fixed Navbar */
+.navbar-placeholder {
+  height: 64px;
+}
