@@ -1,7 +1,0 @@
-{
-  "/signup/page": "app/signup/page.js",
-  "/step/[number]/page": "app/step/[number]/page.js",
-  "/about/page": "app/about/page.js",
-  "/recommendation/page": "app/recommendation/page.js",
-  "/roadmap/page": "app/roadmap/page.js"
-}
