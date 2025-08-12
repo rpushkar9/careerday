@@ -47,7 +47,8 @@ export function Roadmap({ data }: RoadmapProps) {
   const totalYears = 4;
   const yearIndex = Number.parseInt(activeYear.replace('year', ''));
   const progress = (yearIndex / totalYears) * 100;
-  const yearData = data.years[activeYear];
+const yearData = data.years[activeYear as keyof typeof data.years];
+
 
   return (
     <Card className="w-full">

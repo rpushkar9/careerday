@@ -56,7 +56,10 @@ const roadmapData: RoadmapData = {
           { code: 'LANG', name: 'College Option Language', credits: 3 },
           { code: 'SCI', name: 'College Option Science', credits: 3 },
         ],
-        // Add activities...
+        opportunities: [],
+        volunteerWork: [],
+        internships: [],
+        projects: []
       },
       spring: {
         totalCredits: 17,
@@ -68,8 +71,12 @@ const roadmapData: RoadmapData = {
           { code: 'ACCT261', name: 'Business Law I', credits: 3 },
           { code: 'elective', name: 'General Elective', credits: 7 },
         ],
-        // Add activities...
+        opportunities: [],
+        volunteerWork: [],
+        internships: [],
+        projects: []
       },
+      totalCost: 0
     },
     year3: {
       // Continue with junior and senior courses from QC roadmap plan :contentReference[oaicite:2]{index=2}
@@ -82,6 +89,10 @@ const roadmapData: RoadmapData = {
           { code: 'ACCTelective', name: 'Acct Elective', credits: 3 },
           { code: 'minor', name: 'Minor/General Elective', credits: 5 },
         ],
+        opportunities: [],
+        volunteerWork: [],
+        internships: [],
+        projects: []
       },
       spring: {
         totalCredits: 15,
@@ -90,12 +101,30 @@ const roadmapData: RoadmapData = {
           { code: 'ACCT322', name: 'Auditing II', credits: 3 },
           { code: 'minor', name: 'Minor/General Elective', credits: 12 },
         ],
+        opportunities: [],
+        volunteerWork: [],
+        internships: [],
+        projects: []
       },
+      totalCost: 0
     },
     year4: {
       // Adjust or repeat senior structures if needed…
-      fall: { totalCredits: 15, tuition: 8000, courses: [/* electives */] },
-      spring: { totalCredits: 15, tuition: 8000, courses: [/* electives */] },
+      fall: {
+        totalCredits: 15, tuition: 8000, courses: [ /* electives */],
+        opportunities: [],
+        volunteerWork: [],
+        internships: [],
+        projects: []
+      },
+      spring: {
+        totalCredits: 15, tuition: 8000, courses: [ /* electives */],
+        opportunities: [],
+        volunteerWork: [],
+        internships: [],
+        projects: []
+      },
+      totalCost: 0
     },
   },
 };
