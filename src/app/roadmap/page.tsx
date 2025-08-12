@@ -4,12 +4,29 @@ import { useSearchParams } from 'next/navigation';
 import StepOne from '@/components/stepone';
 import Navbar from '@/components/navbar';
 
-// Define all the roadmaps for different career paths
-const allRoadmaps = {
+// Type definitions
+type Step = {
+  stage: string;
+  description: string;
+  duration: string;
+  keySkills: string[];
+  resources: string[];
+};
+
+type Roadmap = {
+  title: string;
+  steps: Step[];
+};
+
+type Roadmaps = {
+  [career: string]: Roadmap;
+};
+
+// Your roadmap data with typing
+const allRoadmaps: Roadmaps = {
   'Cybersecurity Analyst': {
     title: 'Cybersecurity Analyst',
     steps: [
-      // Year 1
       {
         stage: 'Fall Semester (Year 1): Computer Science & Networking Basics',
         description:
@@ -46,8 +63,7 @@ const allRoadmaps = {
           'Security+ Exam Prep',
         ],
       },
-
-      // Year 2
+      // ... more steps for Cybersecurity Analyst ...
       {
         stage:
           'Fall Semester (Year 2): Intermediate Networking & Risk Management',
@@ -76,8 +92,6 @@ const allRoadmaps = {
         ],
         resources: ['Hack The Box', 'TryHackMe', 'Kali Linux', 'OWASP Top 10'],
       },
-
-      // Year 3
       {
         stage:
           'Fall Semester (Year 3): Penetration Testing & Incident Response',
@@ -114,8 +128,6 @@ const allRoadmaps = {
           'Capture The Flag (CTF) Challenges',
         ],
       },
-
-      // Year 4
       {
         stage: 'Fall Semester (Year 4): Certifications & Interview Prep',
         description:
@@ -197,6 +209,7 @@ const allRoadmaps = {
       },
     ],
   },
+
   'Computer engineering': {
     title: 'Computer Engineering',
     steps: [
@@ -247,60 +260,79 @@ const allRoadmaps = {
     ],
   },
 
-
   'Management Accountant': {
-  title: 'Management Accountant',
-  steps: [
-    {
-      stage: 'Step 1: Master Accounting Fundamentals',
-      description:
-        'Build a strong foundation in accounting principles, financial statements, and cost analysis through Queens College accounting courses.',
-      duration: '1-2 semesters',
-      keySkills: ['Financial Accounting', 'Managerial Accounting', 'Cost Accounting'],
-      resources: ['ACCT 101 & 102 at Queens College', 'Principles of Accounting by Weygandt', 'AccountingCoach'],
-    },
-    {
-      stage: 'Step 2: Learn Financial Analysis & Reporting',
-      description:
-        'Understand how to prepare internal reports for decision-making and analyze business performance.',
-      duration: '1 semester',
-      keySkills: ['Variance Analysis', 'Budgeting', 'Financial Statement Analysis'],
-      resources: ['ACCT 305 at Queens College', 'Harvard Business Review articles', 'Corporate Finance Institute (CFI)'],
-    },
-    {
-      stage: 'Step 3: Gain Technology & Tools Skills',
-      description:
-        'Learn to use accounting and finance software to streamline reporting and analysis.',
-      duration: '2-3 months',
-      keySkills: ['Excel (Advanced)', 'QuickBooks', 'ERP Systems (SAP, Oracle)'],
-      resources: ['Queens College Computer Lab Workshops', 'LinkedIn Learning', 'Microsoft Excel for Accountants'],
-    },
-    {
-      stage: 'Step 4: Apply Knowledge Through Internships',
-      description:
-        'Gain practical experience by interning with NYC-based companies, nonprofits, or government agencies.',
-      duration: '3-6 months',
-      keySkills: ['Budget Preparation', 'Internal Reporting', 'Team Collaboration'],
-      resources: ['Queens College Career Center', 'Indeed', 'Handshake'],
-    },
-    {
-      stage: 'Step 5: Prepare for CMA Certification & Jobs',
-      description:
-        'Study for the Certified Management Accountant (CMA) exam and polish your resume for NYC’s competitive job market.',
-      duration: '3-6 months',
-      keySkills: ['Strategic Planning', 'Ethics in Accounting', 'Professional Networking'],
-      resources: ['IMA CMA Review Course', 'Gleim CMA Review', 'LinkedIn Networking Events in NYC'],
-    },
-  ],
-},
-
-  // Add more career paths here if needed
+    title: 'Management Accountant',
+    steps: [
+      {
+        stage: 'Step 1: Master Accounting Fundamentals',
+        description:
+          'Build a strong foundation in accounting principles, financial statements, and cost analysis through Queens College accounting courses.',
+        duration: '1-2 semesters',
+        keySkills: [
+          'Financial Accounting',
+          'Managerial Accounting',
+          'Cost Accounting',
+        ],
+        resources: [
+          'ACCT 101 & 102 at Queens College',
+          'Principles of Accounting by Weygandt',
+          'AccountingCoach',
+        ],
+      },
+      {
+        stage: 'Step 2: Learn Financial Analysis & Reporting',
+        description:
+          'Understand how to prepare internal reports for decision-making and analyze business performance.',
+        duration: '1 semester',
+        keySkills: ['Variance Analysis', 'Budgeting', 'Financial Statement Analysis'],
+        resources: [
+          'ACCT 305 at Queens College',
+          'Harvard Business Review articles',
+          'Corporate Finance Institute (CFI)',
+        ],
+      },
+      {
+        stage: 'Step 3: Gain Technology & Tools Skills',
+        description:
+          'Learn to use accounting and finance software to streamline reporting and analysis.',
+        duration: '2-3 months',
+        keySkills: ['Excel (Advanced)', 'QuickBooks', 'ERP Systems (SAP, Oracle)'],
+        resources: [
+          'Queens College Computer Lab Workshops',
+          'LinkedIn Learning',
+          'Microsoft Excel for Accountants',
+        ],
+      },
+      {
+        stage: 'Step 4: Apply Knowledge Through Internships',
+        description:
+          'Gain practical experience by interning with NYC-based companies, nonprofits, or government agencies.',
+        duration: '3-6 months',
+        keySkills: ['Budget Preparation', 'Internal Reporting', 'Team Collaboration'],
+        resources: ['Queens College Career Center', 'Indeed', 'Handshake'],
+      },
+      {
+        stage: 'Step 5: Prepare for CMA Certification & Jobs',
+        description:
+          'Study for the Certified Management Accountant (CMA) exam and polish your resume for NYC’s competitive job market.',
+        duration: '3-6 months',
+        keySkills: ['Strategic Planning', 'Ethics in Accounting', 'Professional Networking'],
+        resources: [
+          'IMA CMA Review Course',
+          'Gleim CMA Review',
+          'LinkedIn Networking Events in NYC',
+        ],
+      },
+    ],
+  },
+  // Add more careers if needed
 };
 
 export default function RoadmapPage() {
   const searchParams = useSearchParams();
-  const career = searchParams.get('career') || 'Software Engineer'; // Default to "Software Engineer"
-  const roadmap = allRoadmaps[career];
+  const career = searchParams.get('career') || 'Software Engineer';
+  const careerKey = career as keyof typeof allRoadmaps;
+  const roadmap = allRoadmaps[careerKey];
 
   if (!roadmap) {
     return (
@@ -311,7 +343,7 @@ export default function RoadmapPage() {
         </p>
         <p>Available careers:</p>
         <ul>
-          {Object.keys(allRoadmaps).map(careerKey => (
+          {Object.keys(allRoadmaps).map((careerKey) => (
             <li key={careerKey}>
               <a
                 href={`/roadmap?career=${careerKey}`}
