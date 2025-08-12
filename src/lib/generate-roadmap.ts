@@ -388,7 +388,6 @@ function getMajorSpecificRoadmap(studentData: StudentData): RoadmapData {
       totalDegreeCost: 62000,
     };
   }
-  
 
   // Business specific roadmap
   else if (studentData.major === 'business') {

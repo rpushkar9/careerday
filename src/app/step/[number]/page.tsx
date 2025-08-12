@@ -35,10 +35,17 @@ const roadmapData: RoadmapData = {
           { code: 'ENGL111', name: 'English Composition II', credits: 3 },
           { code: 'ACCT102', name: 'Accounting II', credits: 3 },
           { code: 'ECON102', name: 'Intro to Microeconomics', credits: 3 },
-          { code: 'USED', name: 'U.S. Experience in Its Diversity', credits: 3 },
+          {
+            code: 'USED',
+            name: 'U.S. Experience in Its Diversity',
+            credits: 3,
+          },
           { code: 'LPS', name: 'Life & Physical Science', credits: 4 },
         ],
-        opportunities: ['Career fair accounting panel', 'Business Law bootcamp'],
+        opportunities: [
+          'Career fair accounting panel',
+          'Business Law bootcamp',
+        ],
         volunteerWork: ['Financial literacy outreach'],
         internships: ['Business club administrative assistant'],
         projects: ['Budget tracking model for student org'],
@@ -59,7 +66,7 @@ const roadmapData: RoadmapData = {
         opportunities: [],
         volunteerWork: [],
         internships: [],
-        projects: []
+        projects: [],
       },
       spring: {
         totalCredits: 17,
@@ -74,9 +81,9 @@ const roadmapData: RoadmapData = {
         opportunities: [],
         volunteerWork: [],
         internships: [],
-        projects: []
+        projects: [],
       },
-      totalCost: 0
+      totalCost: 0,
     },
     year3: {
       // Continue with junior and senior courses from QC roadmap plan :contentReference[oaicite:2]{index=2}
@@ -92,7 +99,7 @@ const roadmapData: RoadmapData = {
         opportunities: [],
         volunteerWork: [],
         internships: [],
-        projects: []
+        projects: [],
       },
       spring: {
         totalCredits: 15,
@@ -104,35 +111,41 @@ const roadmapData: RoadmapData = {
         opportunities: [],
         volunteerWork: [],
         internships: [],
-        projects: []
+        projects: [],
       },
-      totalCost: 0
+      totalCost: 0,
     },
     year4: {
       // Adjust or repeat senior structures if needed…
       fall: {
-        totalCredits: 15, tuition: 8000, courses: [ /* electives */],
+        totalCredits: 15,
+        tuition: 8000,
+        courses: [
+          /* electives */
+        ],
         opportunities: [],
         volunteerWork: [],
         internships: [],
-        projects: []
+        projects: [],
       },
       spring: {
-        totalCredits: 15, tuition: 8000, courses: [ /* electives */],
+        totalCredits: 15,
+        tuition: 8000,
+        courses: [
+          /* electives */
+        ],
         opportunities: [],
         volunteerWork: [],
         internships: [],
-        projects: []
+        projects: [],
       },
-      totalCost: 0
+      totalCost: 0,
     },
   },
 };
 
 // const roadmapData: RoadmapData = {
 
-
-  
 //   major: 'Computer Science ',
 //   university: 'Queens College',
 //   totalDegreeCredits: 120,

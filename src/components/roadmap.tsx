@@ -47,8 +47,7 @@ export function Roadmap({ data }: RoadmapProps) {
   const totalYears = 4;
   const yearIndex = Number.parseInt(activeYear.replace('year', ''));
   const progress = (yearIndex / totalYears) * 100;
-const yearData = data.years[activeYear as keyof typeof data.years];
-
+  const yearData = data.years[activeYear as keyof typeof data.years];
 
   return (
     <Card className="w-full">
@@ -228,77 +227,83 @@ const yearData = data.years[activeYear as keyof typeof data.years];
           </TabsContent> */}
 
           <TabsContent value="opportunities" className="space-y-6">
-  <SectionItem
-    title="Internships"
-    icon={<Briefcase className="h-5 w-5 text-blue-500" />}
-    items={[
-      <a
-        href="https://www.qc.cuny.edu/academics/buac/internships/"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Queens College Accounting Internship Program: Gain experience in auditing, taxation, and financial analysis with NYC firms.
-      </a>,
-      <a
-        href="https://www.nysscpa.org/prospective/join/student-membership"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        NYSSCPA Student Membership: Network with accounting professionals and access exclusive internship opportunities.
-      </a>,
-    ]}
-  />
+            <SectionItem
+              title="Internships"
+              icon={<Briefcase className="h-5 w-5 text-blue-500" />}
+              items={[
+                <a
+                  href="https://www.qc.cuny.edu/academics/buac/internships/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Queens College Accounting Internship Program: Gain experience
+                  in auditing, taxation, and financial analysis with NYC firms.
+                </a>,
+                <a
+                  href="https://www.nysscpa.org/prospective/join/student-membership"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  NYSSCPA Student Membership: Network with accounting
+                  professionals and access exclusive internship opportunities.
+                </a>,
+              ]}
+            />
 
-  <SectionItem
-    title="Volunteer Work"
-    icon={<Heart className="h-5 w-5 text-red-500" />}
-    items={[
-      <a
-        href="https://www.irs.gov/volunteers"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Volunteer Income Tax Assistance (VITA): Help prepare tax returns for low-income individuals and families.
-      </a>,
-    ]}
-  />
+            <SectionItem
+              title="Volunteer Work"
+              icon={<Heart className="h-5 w-5 text-red-500" />}
+              items={[
+                <a
+                  href="https://www.irs.gov/volunteers"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Volunteer Income Tax Assistance (VITA): Help prepare tax
+                  returns for low-income individuals and families.
+                </a>,
+              ]}
+            />
 
-  <SectionItem
-    title="Career Fairs"
-    icon={<GraduationCap className="h-5 w-5 text-purple-500" />}
-    items={[
-      <a
-        href="https://career.qc.cuny.edu/events/"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Queens College Business & Accounting Career Fair: Meet employers from public accounting firms, private industry, and government agencies.
-      </a>,
-    ]}
-  />
+            <SectionItem
+              title="Career Fairs"
+              icon={<GraduationCap className="h-5 w-5 text-purple-500" />}
+              items={[
+                <a
+                  href="https://career.qc.cuny.edu/events/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Queens College Business & Accounting Career Fair: Meet
+                  employers from public accounting firms, private industry, and
+                  government agencies.
+                </a>,
+              ]}
+            />
 
-  <SectionItem
-    title="Workshops"
-    icon={<Lightbulb className="h-5 w-5 text-amber-500" />}
-    items={[
-      <a
-        href="https://www.qc.cuny.edu/academics/buac/events/"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        CPA Exam Prep Workshops: Guidance on study strategies and application process.
-      </a>,
-      <a
-        href="https://www.aicpa.org/resources/article/career-paths-in-accounting"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Career Paths in Accounting: Learn about public, private, government, and nonprofit accounting roles.
-      </a>,
-    ]}
-  />
-</TabsContent>
-
+            <SectionItem
+              title="Workshops"
+              icon={<Lightbulb className="h-5 w-5 text-amber-500" />}
+              items={[
+                <a
+                  href="https://www.qc.cuny.edu/academics/buac/events/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  CPA Exam Prep Workshops: Guidance on study strategies and
+                  application process.
+                </a>,
+                <a
+                  href="https://www.aicpa.org/resources/article/career-paths-in-accounting"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Career Paths in Accounting: Learn about public, private,
+                  government, and nonprofit accounting roles.
+                </a>,
+              ]}
+            />
+          </TabsContent>
 
           {/* <TabsContent value="projects" className="space-y-6">
             <h2 className="text-2xl font-semibold text-black">
@@ -396,35 +401,47 @@ const yearData = data.years[activeYear as keyof typeof data.years];
           </TabsContent> */}
 
           <TabsContent value="projects" className="space-y-6">
-  <h2 className="text-2xl font-semibold text-black">
-    Financial Statement Analysis Project
-  </h2>
-  <p className="text-gray-700">
-    Objective: Analyze a publicly traded company’s financial statements to evaluate its financial health and make recommendations.
-  </p>
+            <h2 className="text-2xl font-semibold text-black">
+              Financial Statement Analysis Project
+            </h2>
+            <p className="text-gray-700">
+              Objective: Analyze a publicly traded company’s financial
+              statements to evaluate its financial health and make
+              recommendations.
+            </p>
 
-  <h3 className="text-xl font-semibold text-black mt-6">Task Description</h3>
-  <p className="text-gray-700">
-    You'll review the company's balance sheet, income statement, and cash flow statement, calculate key financial ratios, and prepare a summary report for stakeholders.
-  </p>
+            <h3 className="text-xl font-semibold text-black mt-6">
+              Task Description
+            </h3>
+            <p className="text-gray-700">
+              You'll review the company's balance sheet, income statement, and
+              cash flow statement, calculate key financial ratios, and prepare a
+              summary report for stakeholders.
+            </p>
 
-  <h3 className="text-xl font-semibold text-black mt-6">Steps:</h3>
-  <ul className="list-disc pl-6 text-gray-700">
-    <li>Choose a Fortune 500 company and download its latest annual report.</li>
-    <li>Calculate liquidity, profitability, and leverage ratios.</li>
-    <li>Identify trends by comparing 3 years of financial data.</li>
-    <li>Prepare recommendations for potential investors or management.</li>
-  </ul>
+            <h3 className="text-xl font-semibold text-black mt-6">Steps:</h3>
+            <ul className="list-disc pl-6 text-gray-700">
+              <li>
+                Choose a Fortune 500 company and download its latest annual
+                report.
+              </li>
+              <li>Calculate liquidity, profitability, and leverage ratios.</li>
+              <li>Identify trends by comparing 3 years of financial data.</li>
+              <li>
+                Prepare recommendations for potential investors or management.
+              </li>
+            </ul>
 
-  <h3 className="text-xl font-semibold text-black mt-6">Skills Gained:</h3>
-  <ul className="list-disc pl-6 text-gray-700">
-    <li>Financial statement analysis</li>
-    <li>Ratio calculation and interpretation</li>
-    <li>Report writing for business audiences</li>
-    <li>Business decision-making based on data</li>
-  </ul>
-</TabsContent>
-
+            <h3 className="text-xl font-semibold text-black mt-6">
+              Skills Gained:
+            </h3>
+            <ul className="list-disc pl-6 text-gray-700">
+              <li>Financial statement analysis</li>
+              <li>Ratio calculation and interpretation</li>
+              <li>Report writing for business audiences</li>
+              <li>Business decision-making based on data</li>
+            </ul>
+          </TabsContent>
 
           {/* <TabsContent value="resources">
             <div className="space-y-6">
@@ -521,53 +538,52 @@ const yearData = data.years[activeYear as keyof typeof data.years];
             </div>
           </TabsContent> */}
 
-
           <TabsContent value="resources">
-  <div className="space-y-6">
-    <SectionItem
-      title="Accounting Resources for Queens College Students"
-      icon={<BookOpen className="h-5 w-5 text-primary" />}
-      items={[
-        <a
-          href="https://www.qc.cuny.edu/academics/buac/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Queens College Department of Accounting & Information Systems
-        </a>,
-        <a
-          href="https://www.aicpa.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          American Institute of CPAs (AICPA)
-        </a>,
-        <a
-          href="https://nasba.org/exams/cpaexam/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          CPA Exam Requirements and Registration
-        </a>,
-        <a
-          href="https://www.nysscpa.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          New York State Society of CPAs
-        </a>,
-        <a
-          href="https://corporatefinanceinstitute.com/resources/accounting/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Corporate Finance Institute - Accounting Tutorials
-        </a>,
-      ]}
-    />
-  </div>
-</TabsContent>
-
+            <div className="space-y-6">
+              <SectionItem
+                title="Accounting Resources for Queens College Students"
+                icon={<BookOpen className="h-5 w-5 text-primary" />}
+                items={[
+                  <a
+                    href="https://www.qc.cuny.edu/academics/buac/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Queens College Department of Accounting & Information
+                    Systems
+                  </a>,
+                  <a
+                    href="https://www.aicpa.org/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    American Institute of CPAs (AICPA)
+                  </a>,
+                  <a
+                    href="https://nasba.org/exams/cpaexam/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    CPA Exam Requirements and Registration
+                  </a>,
+                  <a
+                    href="https://www.nysscpa.org/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    New York State Society of CPAs
+                  </a>,
+                  <a
+                    href="https://corporatefinanceinstitute.com/resources/accounting/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Corporate Finance Institute - Accounting Tutorials
+                  </a>,
+                ]}
+              />
+            </div>
+          </TabsContent>
         </Tabs>
       </CardContent>
     </Card>
