@@ -42,6 +42,30 @@ export default function RecommendedJobsPage() {
         matchScore: 70,
       },
       {
+        title: 'Financial Analyst',
+        description:
+          'Analyzes financial data to guide investment and business decisions.',
+        salary: '$95,000',
+        growth: '8%',
+        matchScore: 93,
+      },
+      {
+        title: 'Auditor',
+        description:
+          'Examines financial records to ensure compliance and detect errors or fraud.',
+        salary: '$78,000',
+        growth: '6%',
+        matchScore: 95,
+      },
+      {
+        title: 'Management Accountant',
+        description:
+          'Prepares internal financial reports to aid company decision-making.',
+        salary: '$88,000',
+        growth: '8%',
+        matchScore: 97,
+      },
+      {
         title: 'Software Developer',
         description:
           'Develops and maintains software applications using programming languages.',

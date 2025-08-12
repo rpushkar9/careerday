@@ -246,6 +246,54 @@ const allRoadmaps = {
       },
     ],
   },
+
+
+  'Management Accountant': {
+  title: 'Management Accountant',
+  steps: [
+    {
+      stage: 'Step 1: Master Accounting Fundamentals',
+      description:
+        'Build a strong foundation in accounting principles, financial statements, and cost analysis through Queens College accounting courses.',
+      duration: '1-2 semesters',
+      keySkills: ['Financial Accounting', 'Managerial Accounting', 'Cost Accounting'],
+      resources: ['ACCT 101 & 102 at Queens College', 'Principles of Accounting by Weygandt', 'AccountingCoach'],
+    },
+    {
+      stage: 'Step 2: Learn Financial Analysis & Reporting',
+      description:
+        'Understand how to prepare internal reports for decision-making and analyze business performance.',
+      duration: '1 semester',
+      keySkills: ['Variance Analysis', 'Budgeting', 'Financial Statement Analysis'],
+      resources: ['ACCT 305 at Queens College', 'Harvard Business Review articles', 'Corporate Finance Institute (CFI)'],
+    },
+    {
+      stage: 'Step 3: Gain Technology & Tools Skills',
+      description:
+        'Learn to use accounting and finance software to streamline reporting and analysis.',
+      duration: '2-3 months',
+      keySkills: ['Excel (Advanced)', 'QuickBooks', 'ERP Systems (SAP, Oracle)'],
+      resources: ['Queens College Computer Lab Workshops', 'LinkedIn Learning', 'Microsoft Excel for Accountants'],
+    },
+    {
+      stage: 'Step 4: Apply Knowledge Through Internships',
+      description:
+        'Gain practical experience by interning with NYC-based companies, nonprofits, or government agencies.',
+      duration: '3-6 months',
+      keySkills: ['Budget Preparation', 'Internal Reporting', 'Team Collaboration'],
+      resources: ['Queens College Career Center', 'Indeed', 'Handshake'],
+    },
+    {
+      stage: 'Step 5: Prepare for CMA Certification & Jobs',
+      description:
+        'Study for the Certified Management Accountant (CMA) exam and polish your resume for NYC’s competitive job market.',
+      duration: '3-6 months',
+      keySkills: ['Strategic Planning', 'Ethics in Accounting', 'Professional Networking'],
+      resources: ['IMA CMA Review Course', 'Gleim CMA Review', 'LinkedIn Networking Events in NYC'],
+    },
+  ],
+},
+
   // Add more career paths here if needed
 };
 

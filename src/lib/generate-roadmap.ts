@@ -135,6 +135,7 @@ function getMajorName(majorKey: string): string {
     sociology: 'Sociology',
     art: 'Fine Arts',
     music: 'Music',
+    accountant: 'Accountant',
   };
 
   return majorMap[majorKey] || majorKey;
@@ -387,6 +388,7 @@ function getMajorSpecificRoadmap(studentData: StudentData): RoadmapData {
       totalDegreeCost: 62000,
     };
   }
+  
 
   // Business specific roadmap
   else if (studentData.major === 'business') {

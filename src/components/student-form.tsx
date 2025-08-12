@@ -341,6 +341,7 @@ export function StudentForm() {
                         <SelectItem value="physics">Physics</SelectItem>
                         <SelectItem value="chemistry">Chemistry</SelectItem>
                         <SelectItem value="economics">Economics</SelectItem>
+                         <SelectItem value="accountant">Accountant</SelectItem>
                         <SelectItem value="political_science">
                           Political Science
                         </SelectItem>
