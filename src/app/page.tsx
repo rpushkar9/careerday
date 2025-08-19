@@ -3,46 +3,41 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import Container from 'react-bootstrap/Container';
-// import { Button } from "react-bootstrap";
 import { Button } from '@/components/ui/button';
+import Footer from "@/components/footer";
+import Navbar from '@/components/navbar';
+import { useState } from 'react';
 
-import { useState } from 'react'; // Import useState for component state management
-
-// import Navbar from "@/components/Navbar";
 import './about.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Navbar from '@/components/navbar'; // Adjust the relative path if needed
 
 export default function About() {
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false); // State to toggle profile menu
-  const [showCareerModal, setShowCareerModal] = useState(false); // State to toggle the career modal
+  const [showCareerModal, setShowCareerModal] = useState(false);
 
   return (
     <>
       <Navbar />
 
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-br from-[#6d6bd3] via-[#6d6bd3] to-[#6d6bd3] min-h-[600px] overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://public.readdy.ai/ai/img_res/0f842a5615fc80362a29e48bd4ce0497.jpg')] opacity-20"></div>
-        <div className="max-w-7xl mx-auto px-4 py-20 relative">
+      <div className="relative bg-gradient-to-br from-[#6d6bd3] via-[#5a58b8] to-[#6d6bd3] min-h-[600px] overflow-hidden">
+        <div className="absolute inset-0 bg-[url('https://public.readdy.ai/ai/img_res/0f842a5615fc80362a29e48bd4ce0497.jpg')] bg-cover opacity-20"></div>
+        <div className="max-w-7xl mx-auto px-6 py-28 relative">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="text-white z-10">
-              <h1 className="text-5xl font-bold leading-tight mb-6">
+              <h1 className="text-5xl font-extrabold leading-tight mb-6 drop-shadow-lg">
                 Design Your Future with
-                <span className="block mt-2">AI-Powered Guidance</span>
+                <span className="block mt-2 text-[#ffffff]">AI-Powered Guidance</span>
               </h1>
-              <p className="text-xl  text-white mb-8 leading-relaxed">
-                Discover your perfect career path, explore top educational
-                opportunities, and receive personalized recommendations powered
-                by advanced AI technology.
+              <p className="text-xl text-gray-100 mb-8 leading-relaxed">
+                Discover your perfect career path, explore top educational opportunities,
+                and receive personalized recommendations powered by AI.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/signup">
                   <button
                     onClick={() => setShowCareerModal(true)}
-                    className="!rounded-button bg-white text-[#6d6bd3] px-8 py-4 font-semibold hover:bg-blue-50 transition duration-200 shadow-lg"
+                    className="rounded-full bg-white text-[#6d6bd3] px-8 py-4 font-semibold hover:bg-gray-100 transition duration-200 shadow-lg"
                   >
-                    <i className="fas fa-rocket mr-2"></i>
                     Start Your Journey
                   </button>
                 </Link>
@@ -52,7 +47,8 @@ export default function About() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-16">
+      {/* How It Works Section */}
+      <div className="max-w-7xl mx-auto px-4 py-20">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold mb-4">How It Works</h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -62,52 +58,51 @@ export default function About() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          <div className="text-center p-6 border rounded-lg shadow-sm">
-            <div className="w-16 h-16 bg-[#6d6bd3] rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
-              1
+          {[
+            {
+              num: '1',
+              title: 'Complete the Survey',
+              desc: 'Answer questions about your interests, skills, and values to create your unique profile.',
+            },
+            {
+              num: '2',
+              title: 'Get Personalized Recommendations',
+              desc: 'Our AI analyzes your responses to match you with careers aligned to your strengths.',
+            },
+            {
+              num: '3',
+              title: 'Explore Career Roadmaps',
+              desc: 'Dive deeper into each career with detailed paths for education and advancement.',
+            },
+          ].map((step, i) => (
+            <div
+              key={i}
+              className="text-center p-8 bg-white rounded-2xl shadow-md hover:shadow-xl transition"
+            >
+              <div className="w-16 h-16 bg-[#6d6bd3] rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-6">
+                {step.num}
+              </div>
+              <h3 className="text-xl font-semibold mb-3">{step.title}</h3>
+              <p className="text-gray-600">{step.desc}</p>
             </div>
-            <h3 className="text-xl font-semibold mb-2">Complete the Survey</h3>
-            <p className="text-gray-600">
-              Answer questions about your interests, skills, values, and
-              preferences to create your unique profile.
-            </p>
-          </div>
-
-          <div className="text-center p-6 border rounded-lg shadow-sm">
-            <div className="w-16 h-16 bg-[#6d6bd3] rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
-              2
-            </div>
-            <h3 className="text-xl font-semibold mb-2">
-              Get Personalized Recommendations
-            </h3>
-            <p className="text-gray-600">
-              Our algorithm analyzes your responses to identify careers that
-              match your profile.
-            </p>
-          </div>
-
-          <div className="text-center p-6 border rounded-lg shadow-sm">
-            <div className="w-16 h-16 bg-[#6d6bd3] rounded-full flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4">
-              3
-            </div>
-            <h3 className="text-xl font-semibold mb-2">
-              Explore Career Roadmaps
-            </h3>
-            <p className="text-gray-600">
-              Dive deeper into each recommended career with detailed roadmaps
-              for education, skills, and advancement.
-            </p>
-          </div>
+          ))}
         </div>
 
-        <div className="text-center mt-16">
+        <div className="text-center mt-20">
           <Link href="/survey">
-            <Button size="lg" className="bg-[#6d6bd3] hover:bg-[#5a58b8]">
+            <Button
+              size="lg"
+              className="rounded-full px-10 py-4 bg-[#6d6bd3] hover:bg-[#5a58b8] text-lg font-semibold shadow-lg"
+            >
               Start Your Career Journey
             </Button>
           </Link>
         </div>
       </div>
+
+   
+
+      <Footer />
     </>
   );
 }

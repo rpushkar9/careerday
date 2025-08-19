@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+
 import Container from 'react-bootstrap/Container';
 // import { Button } from "react-bootstrap";
 import { Button } from '@/components/ui/button';
@@ -12,6 +13,7 @@ import { useState } from 'react'; // Import useState for component state managem
 import './about.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Navbar from '@/components/navbar'; // Adjust the relative path if needed
+import Footer from "@/components/footer";
 
 export default function About() {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false); // State to toggle profile menu
@@ -108,6 +110,8 @@ export default function About() {
           </Link>
         </div>
       </div>
+          <Footer />
+
     </>
   );
 }
