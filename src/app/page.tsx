@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Container from 'react-bootstrap/Container';
 import { Button } from '@/components/ui/button';
-import Footer from "@/components/footer";
+import Footer from '@/components/footer';
 import Navbar from '@/components/navbar';
 import { useState } from 'react';
 
@@ -26,11 +26,14 @@ export default function About() {
             <div className="text-white z-10">
               <h1 className="text-5xl font-extrabold leading-tight mb-6 drop-shadow-lg">
                 Design Your Future with
-                <span className="block mt-2 text-[#ffffff]">AI-Powered Guidance</span>
+                <span className="block mt-2 text-[#ffffff]">
+                  AI-Powered Guidance
+                </span>
               </h1>
               <p className="text-xl text-gray-100 mb-8 leading-relaxed">
-                Discover your perfect career path, explore top educational opportunities,
-                and receive personalized recommendations powered by AI.
+                Discover your perfect career path, explore top educational
+                opportunities, and receive personalized recommendations powered
+                by AI.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href="/signup">
@@ -99,8 +102,6 @@ export default function About() {
           </Link>
         </div>
       </div>
-
-   
 
       <Footer />
     </>

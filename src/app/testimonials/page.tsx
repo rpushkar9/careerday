@@ -1,14 +1,12 @@
-"use client";
+'use client';
 
-import React from "react";
-import Navbar from "@/components/navbar";
-import Footer from "@/components/footer";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { User, Network, FileText } from "lucide-react";
+import React from 'react';
+import Navbar from '@/components/navbar';
+import Footer from '@/components/footer';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { User, Network, FileText } from 'lucide-react';
 // import 'bootstrap-icons/font/bootstrap-icons.css';
-
-
 
 interface Testimonial {
   name: string;
@@ -19,25 +17,25 @@ interface Testimonial {
 
 const testimonials: Testimonial[] = [
   {
-    name: "Alex Johnson",
-    role: "High School Student",
+    name: 'Alex Johnson',
+    role: 'High School Student',
     feedback:
-      "CareerDay helped me discover careers I never thought about. The personalized guidance is amazing!",
-    avatar: "/avatars/alex.jpg",
+      'CareerDay helped me discover careers I never thought about. The personalized guidance is amazing!',
+    avatar: '/avatars/alex.jpg',
   },
   {
-    name: "Maria Gomez",
-    role: "College Student",
+    name: 'Maria Gomez',
+    role: 'College Student',
     feedback:
-      "I love how easy it is to explore career paths and get AI-powered recommendations.",
-    avatar: "/avatars/maria.jpg",
+      'I love how easy it is to explore career paths and get AI-powered recommendations.',
+    avatar: '/avatars/maria.jpg',
   },
   {
-    name: "John Lee",
-    role: "High School Student",
+    name: 'John Lee',
+    role: 'High School Student',
     feedback:
-      "The Career Quiz was super helpful in figuring out what I want to do after graduation.",
-    avatar: "/avatars/john.jpg",
+      'The Career Quiz was super helpful in figuring out what I want to do after graduation.',
+    avatar: '/avatars/john.jpg',
   },
 ];
 
@@ -62,25 +60,24 @@ const TestimonialsPage: React.FC = () => {
         </header>
 
         {/* Testimonials Grid */}
-<section className="max-w-7xl mx-auto px-6 py-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-  {testimonials.map((t, index) => (
-    <div
-      key={index}
-      className="bg-white text-[#202022] p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300"
-    >
-      {/* Bootstrap Icon instead of avatar image */}
-      <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center bg-gray-100 text-[#6d6bd3] text-3xl">
-        <i className="bi bi-person-circle"></i>
-      </div>
+        <section className="max-w-7xl mx-auto px-6 py-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          {testimonials.map((t, index) => (
+            <div
+              key={index}
+              className="bg-white text-[#202022] p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300"
+            >
+              {/* Bootstrap Icon instead of avatar image */}
+              <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center bg-gray-100 text-[#6d6bd3] text-3xl">
+                <i className="bi bi-person-circle"></i>
+              </div>
 
-      <p className="mb-4 text-gray-600 italic">"{t.feedback}"</p>
-      <h3 className="font-semibold text-lg text-[#6d6bd3]">{t.name}</h3>
-      <span className="text-sm text-gray-500">{t.role}</span>
-    </div>
-  ))}
-</section>
+              <p className="mb-4 text-gray-600 italic">"{t.feedback}"</p>
+              <h3 className="font-semibold text-lg text-[#6d6bd3]">{t.name}</h3>
+              <span className="text-sm text-gray-500">{t.role}</span>
+            </div>
+          ))}
+        </section>
 
-           
         {/* Career Services Section */}
         <section className="bg-gradient-to-b from-[#6d6bd3] to-[#8b89e6] text-center text-white py-20 px-6 mt-16">
           {/* Heading */}
@@ -88,7 +85,8 @@ const TestimonialsPage: React.FC = () => {
             Ready to Discover Your Future Career?
           </h2>
           <p className="max-w-2xl mx-auto text-lg mb-12 opacity-90">
-           Join thousands of students exploring career paths, building skills, and creating personalized roadmaps with CareerDay.
+            Join thousands of students exploring career paths, building skills,
+            and creating personalized roadmaps with CareerDay.
           </p>
 
           {/* Services Grid */}
@@ -101,7 +99,8 @@ const TestimonialsPage: React.FC = () => {
                   Career Path Exploration
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Learn about industries, roles, and opportunities that match your interests.
+                  Learn about industries, roles, and opportunities that match
+                  your interests.
                 </p>
               </CardContent>
             </Card>
@@ -114,7 +113,8 @@ const TestimonialsPage: React.FC = () => {
                   Skill-Building Challenges
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Gain practical experience through interactive challenges and exercises.
+                  Gain practical experience through interactive challenges and
+                  exercises.
                 </p>
               </CardContent>
             </Card>
@@ -127,7 +127,8 @@ const TestimonialsPage: React.FC = () => {
                   AI-Powered Roadmaps
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Create a personalized career roadmap with actionable steps for success.
+                  Create a personalized career roadmap with actionable steps for
+                  success.
                 </p>
               </CardContent>
             </Card>
@@ -146,36 +147,36 @@ const TestimonialsPage: React.FC = () => {
       </main>
 
       {/* Newsletter Signup Section */}
-        {/* Newsletter Signup Section */}
-<section className="bg-[#ffffff] py-24 px-6 text-center">
-  <h2 className="text-3xl md:text-4xl font-bold text-[#6d6bd3] mb-4">
-    📩 Get Free Career Tips Weekly
-  </h2>
-  <p className="max-w-xl mx-auto text-gray-600 mb-8">
-    Join our newsletter to receive expert career advice, job search strategies, 
-    and resources to help you succeed — straight to your inbox.
-  </p>
+      {/* Newsletter Signup Section */}
+      <section className="bg-[#ffffff] py-24 px-6 text-center">
+        <h2 className="text-3xl md:text-4xl font-bold text-[#6d6bd3] mb-4">
+          📩 Get Free Career Tips Weekly
+        </h2>
+        <p className="max-w-xl mx-auto text-gray-600 mb-8">
+          Join our newsletter to receive expert career advice, job search
+          strategies, and resources to help you succeed — straight to your
+          inbox.
+        </p>
 
-  <form className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-xl mx-auto">
-    <input
-      type="email"
-      placeholder="Enter your email"
-      className="w-full sm:flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#6d6bd3]"
-      required
-    />
-    <Button
-      type="submit"
-      className="bg-[#6d6bd3] text-white font-semibold px-6 py-3 rounded-lg hover:bg-[#5a57c7] transition"
-    >
-      Subscribe
-    </Button>
-  </form>
+        <form className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-xl mx-auto">
+          <input
+            type="email"
+            placeholder="Enter your email"
+            className="w-full sm:flex-1 px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#6d6bd3]"
+            required
+          />
+          <Button
+            type="submit"
+            className="bg-[#6d6bd3] text-white font-semibold px-6 py-3 rounded-lg hover:bg-[#5a57c7] transition"
+          >
+            Subscribe
+          </Button>
+        </form>
 
-  <p className="text-sm text-gray-500 mt-6">
-    No spam, unsubscribe anytime.
-  </p>
-</section>
-
+        <p className="text-sm text-gray-500 mt-6">
+          No spam, unsubscribe anytime.
+        </p>
+      </section>
 
       <Footer />
     </>
