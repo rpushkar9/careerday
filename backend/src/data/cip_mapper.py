@@ -2,10 +2,11 @@
 CIP Mapper for Career Recommendation System
 
 Handles mapping between CIP codes (educational programs) and SOC occupations
-using the real BLS crosswalk data from CIP2020_SOC2018_Crosswalk.csv.
+using the real BLS crosswalk data from CIP2020_SOC2020_SOC2018_Crosswalk.csv.
 """
 
 import pandas as pd
+import sys
 from typing import Dict, List, Optional
 import logging
 from pathlib import Path
@@ -97,12 +98,20 @@ class CIPMapper:
                 f"Available codes include: {', '.join(available_codes)}..."
             )
         
-        # Get mappings for this CIP code
-        mappings = self.crosswalk_data[
-            self.crosswalk_data['CIP2020Code'].astype(str) == cip_code
-        ]
+        # Get mappings for this CIP code (handle both exact and prefix matches)
+        if str(cip_code) in self.cip_codes:
+            # Exact match (e.g., "51.0501")
+            mappings = self.crosswalk_data[
+                self.crosswalk_data['CIP2020Code'].astype(str) == cip_code
+            ]
+        else:
+            # Prefix match (e.g., "5.01" matches "5.0101", "51.05" matches "51.0501", etc.)
+            mappings = self.crosswalk_data[
+                self.crosswalk_data['CIP2020Code'].astype(str).str.startswith(cip_code)
+            ]
         
         if mappings.empty:
+            logger.warning(f"No occupations found for CIP code {cip_code} (exact or prefix match)")
             return []
         
         # Convert to list of dictionaries and enrich with additional data
@@ -148,11 +157,39 @@ class CIPMapper:
         return occupations[:max_results]
     
     def _is_valid_cip_code(self, cip_code: str) -> bool:
-        """Check if CIP code exists in our crosswalk data"""
+        """Check if CIP code exists in our crosswalk data or matches a prefix"""
         if not cip_code:
             return False
         
-        return str(cip_code) in self.cip_codes
+        # Debug: Log what we're checking
+        sys.stderr.write(f"Validating CIP code: '{cip_code}' (type: {type(cip_code)})\n")
+        sys.stderr.write(f"Available CIP codes count: {len(self.cip_codes)}\n")
+        
+        # Check for exact match first
+        if str(cip_code) in self.cip_codes:
+            sys.stderr.write(f"Exact match found: {cip_code}\n")
+            return True
+        
+        # Check for prefix match (e.g., "5.01" matches "5.0101", "51.05" matches "51.0501", etc.)
+        if '.' in cip_code:
+            # Validate format: must be x.xx or xx.xx (1-2 digits before decimal, 2 digits after)
+            parts = cip_code.split('.')
+            if len(parts) == 2 and len(parts[0]) in [1, 2] and len(parts[1]) == 2:
+                prefix = cip_code
+                # Debug: Log what we're looking for
+                sys.stderr.write(f"Looking for prefix: {prefix}\n")
+                sys.stderr.write(f"Available CIP codes (first 10): {sorted(list(self.cip_codes))[:10]}\n")
+                
+                # Check if any 6-digit codes start with this prefix
+                for full_cip in self.cip_codes:
+                    full_cip_str = str(full_cip)
+                    if full_cip_str.startswith(prefix):
+                        sys.stderr.write(f"Found match: {full_cip_str} starts with {prefix}\n")
+                        return True
+                
+                sys.stderr.write(f"No prefix matches found for {prefix}\n")
+        
+        return False
     
     def get_mapping_statistics(self) -> Dict:
         """Get statistics about the crosswalk mappings"""
@@ -196,15 +233,25 @@ class CIPMapper:
         if not self._is_valid_cip_code(cip_code):
             return None
         
-        # Get first occurrence of this CIP code
-        cip_info = self.crosswalk_data[
-            self.crosswalk_data['CIP2020Code'].astype(str) == cip_code
-        ].iloc[0]
+        # Get first occurrence of this CIP code (handle both exact and prefix matches)
+        if str(cip_code) in self.cip_codes:
+            # Exact match
+            cip_info = self.crosswalk_data[
+                self.crosswalk_data['CIP2020Code'].astype(str) == cip_code
+            ].iloc[0]
+        else:
+            # Prefix match - get first matching code
+            prefix_matches = self.crosswalk_data[
+                self.crosswalk_data['CIP2020Code'].astype(str).str.startswith(cip_code)
+            ]
+            if prefix_matches.empty:
+                return None
+            cip_info = prefix_matches.iloc[0]
         
         return {
             'cip_code': cip_info['CIP2020Code'],
             'cip_title': cip_info['CIP2020Title'],
             'total_occupations': len(self.crosswalk_data[
-                self.crosswalk_data['CIP2020Code'].astype(str) == cip_code
+                self.crosswalk_data['CIP2020Code'].astype(str).str.startswith(cip_code)
             ])
         }
