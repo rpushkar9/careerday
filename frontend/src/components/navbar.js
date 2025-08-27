@@ -44,10 +44,10 @@ const Navbar = () => {
             </div>
             {/* Right Side Buttons */}
             <div className="flex items-center space-x-4">
-              <button className="hidden md:flex items-center space-x-2 px-5 py-2.5 bg-blue-50 text-blue-600 hover:bg-blue-100 transition duration-200 rounded-lg">
+              <Link href="/survey" className="hidden md:flex items-center space-x-2 px-5 py-2.5 bg-blue-50 text-blue-600 hover:bg-blue-100 transition duration-200 rounded-lg">
                 <i className="fas fa-compass"></i>
                 <span>Career Quiz</span>
-              </button>
+              </Link>
               {/* Profile Dropdown */}
               <div className="relative">
                 <button

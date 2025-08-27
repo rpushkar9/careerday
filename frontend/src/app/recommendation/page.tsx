@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Navbar from '@/components/navbar';
 
 // Define a Job type
@@ -15,11 +15,29 @@ type Job = {
 export default function RecommendedJobsPage() {
   const [recommendedJobs, setRecommendedJobs] = useState<Job[]>([]); // Use the Job type
   const [university, setUniversity] = useState('');
+  const [major, setMajor] = useState('');
+  const [majorId, setMajorId] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasAttemptedFetch, setHasAttemptedFetch] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Read query parameters on component mount
+  useEffect(() => {
+    const universityParam = searchParams.get('university');
+    const majorParam = searchParams.get('major');
+    const majorIdParam = searchParams.get('major_id');
+
+    if (universityParam) setUniversity(universityParam);
+    if (majorParam) setMajor(majorParam);
+    if (majorIdParam) setMajorId(majorIdParam);
+  }, [searchParams]);
 
   useEffect(() => {
     // Fetch career recommendations from API
     const fetchRecommendations = async () => {
+      setIsLoading(true);
+      setHasAttemptedFetch(true);
       try {
         const response = await fetch('/api/career-recommendations', {
           method: 'POST',
@@ -27,7 +45,8 @@ export default function RecommendedJobsPage() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            major: 'Computer Science', // Default for now
+            major: major || 'Computer Science', // Use major from survey or default
+            cip_code: majorId || '', // Use CIP code from survey
             interests: ['technology', 'problem-solving'],
             skills: ['programming', 'analytics'],
             university: university || 'General',
@@ -36,76 +55,43 @@ export default function RecommendedJobsPage() {
 
         if (response.ok) {
           const data = await response.json();
+
+          // Check if the response contains an error
+          if (data.error) {
+            console.error('API returned error:', data.error);
+            setRecommendedJobs([]); // Clear jobs to show error state
+            return;
+          }
+
+          console.log('Setting recommended jobs:', data);
           setRecommendedJobs(data);
         } else {
           console.error('Failed to fetch recommendations');
-          // Fallback to mock data if API fails
-          setRecommendedJobs([
-            {
-              title: 'Software Engineer',
-              description:
-                'Develops and maintains software applications using programming languages.',
-              salary: '$105,000',
-              growth: '25%',
-              matchScore: 92,
-            },
-            {
-              title: 'Data Scientist',
-              description:
-                'Analyzes large data sets to uncover insights and support decision-making.',
-              salary: '$120,000',
-              growth: '36%',
-              matchScore: 87,
-            },
-            {
-              title: 'Product Manager',
-              description:
-                'Leads product development and strategy for software products.',
-              salary: '$115,000',
-              growth: '28%',
-              matchScore: 85,
-            },
-          ]);
+          setRecommendedJobs([]); // Clear jobs to show error state
         }
       } catch (error) {
         console.error('Error fetching recommendations:', error);
-        // Fallback to mock data on error
-        setRecommendedJobs([
-          {
-            title: 'Software Engineer',
-            description:
-              'Develops and maintains software applications using programming languages.',
-            salary: '$105,000',
-            growth: '25%',
-            matchScore: 92,
-          },
-          {
-            title: 'Data Scientist',
-            description:
-              'Analyzes large data sets to uncover insights and support decision-making.',
-            salary: '$120,000',
-            growth: '36%',
-            matchScore: 87,
-          },
-          {
-            title: 'Product Manager',
-            description:
-              'Leads product development and strategy for software products.',
-            salary: '$115,000',
-            growth: '28%',
-            matchScore: 85,
-          },
-        ]);
+        setRecommendedJobs([]); // Clear jobs to show error state
+      } finally {
+        console.log('Setting loading to false, hasAttemptedFetch:', true);
+        setIsLoading(false);
       }
     };
 
     fetchRecommendations();
-  }, [university]);
+  }, [university, majorId]);
 
   const handleLearnMore = (job: Job) => {
     // Use router.push to navigate to a detailed page for the selected job
     router.push(`/roadmap?career=${encodeURIComponent(job.title)}`);
   };
+
+  // Debug: Log current state
+  console.log('Render state:', {
+    isLoading,
+    hasAttemptedFetch,
+    recommendedJobsLength: recommendedJobs.length,
+  });
 
   return (
     <>
@@ -119,13 +105,25 @@ export default function RecommendedJobsPage() {
             </h1>
             <p className="text-lg mb-4">
               Personalized recommendations based on your profile
-              {university && ` at ${university}`}
             </p>
           </div>
         </div>
       </div>
       <div className="max-w-3xl mx-auto mt-10 p-6 space-y-6">
-        {recommendedJobs.length > 0 ? (
+        {isLoading || recommendedJobs.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-8">
+              <h2 className="text-2xl font-bold text-blue-800 mb-4">
+                Generating Your Recommendations...
+              </h2>
+              <p className="text-blue-600 mb-6">
+                Our AI is analyzing your major and finding the best career
+                matches for you.
+              </p>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            </div>
+          </div>
+        ) : (
           recommendedJobs
             .sort((a, b) => b.matchScore - a.matchScore) // sort by best match
             .slice(0, 3) // take top 3
@@ -196,10 +194,6 @@ export default function RecommendedJobsPage() {
                 </div>
               </div>
             ))
-        ) : (
-          <p className="text-center text-gray-500">
-            No recommendations available.
-          </p>
         )}
       </div>
     </>
