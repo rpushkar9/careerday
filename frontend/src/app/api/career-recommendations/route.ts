@@ -9,8 +9,6 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { major, cip_code, interests, skills, university, top_n = 3 } = body;
 
-    console.log('RAILWAY_BACKEND_URL', RAILWAY_BACKEND_URL);
-
     // Call Railway backend
     const response = await fetch(
       `${RAILWAY_BACKEND_URL}/api/career-recommendations`,
