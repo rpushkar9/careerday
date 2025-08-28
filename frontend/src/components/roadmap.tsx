@@ -232,6 +232,7 @@ export function Roadmap({ data }: RoadmapProps) {
               icon={<Briefcase className="h-5 w-5 text-blue-500" />}
               items={[
                 <a
+                  key="internship-1"
                   href="https://www.qc.cuny.edu/academics/buac/internships/"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -240,6 +241,7 @@ export function Roadmap({ data }: RoadmapProps) {
                   in auditing, taxation, and financial analysis with NYC firms.
                 </a>,
                 <a
+                  key="internship-2"
                   href="https://www.nysscpa.org/prospective/join/student-membership"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -255,6 +257,7 @@ export function Roadmap({ data }: RoadmapProps) {
               icon={<Heart className="h-5 w-5 text-red-500" />}
               items={[
                 <a
+                  key="volunteer-1"
                   href="https://www.irs.gov/volunteers"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -270,6 +273,7 @@ export function Roadmap({ data }: RoadmapProps) {
               icon={<GraduationCap className="h-5 w-5 text-purple-500" />}
               items={[
                 <a
+                  key="career-fair-1"
                   href="https://career.qc.cuny.edu/events/"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -286,6 +290,7 @@ export function Roadmap({ data }: RoadmapProps) {
               icon={<Lightbulb className="h-5 w-5 text-amber-500" />}
               items={[
                 <a
+                  key="workshop-1"
                   href="https://www.qc.cuny.edu/academics/buac/events/"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -294,6 +299,7 @@ export function Roadmap({ data }: RoadmapProps) {
                   application process.
                 </a>,
                 <a
+                  key="workshop-2"
                   href="https://www.aicpa.org/resources/article/career-paths-in-accounting"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -414,9 +420,9 @@ export function Roadmap({ data }: RoadmapProps) {
               Task Description
             </h3>
             <p className="text-gray-700">
-              You'll review the company's balance sheet, income statement, and
-              cash flow statement, calculate key financial ratios, and prepare a
-              summary report for stakeholders.
+              You&apos;ll review the company&apos;s balance sheet, income
+              statement, and cash flow statement, calculate key financial
+              ratios, and prepare a summary report for stakeholders.
             </p>
 
             <h3 className="text-xl font-semibold text-black mt-6">Steps:</h3>
@@ -545,6 +551,7 @@ export function Roadmap({ data }: RoadmapProps) {
                 icon={<BookOpen className="h-5 w-5 text-primary" />}
                 items={[
                   <a
+                    key="resource-1"
                     href="https://www.qc.cuny.edu/academics/buac/"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -553,6 +560,7 @@ export function Roadmap({ data }: RoadmapProps) {
                     Systems
                   </a>,
                   <a
+                    key="resource-2"
                     href="https://www.aicpa.org/"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -560,6 +568,7 @@ export function Roadmap({ data }: RoadmapProps) {
                     American Institute of CPAs (AICPA)
                   </a>,
                   <a
+                    key="resource-3"
                     href="https://nasba.org/exams/cpaexam/"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -567,6 +576,7 @@ export function Roadmap({ data }: RoadmapProps) {
                     CPA Exam Requirements and Registration
                   </a>,
                   <a
+                    key="resource-4"
                     href="https://www.nysscpa.org/"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -574,6 +584,7 @@ export function Roadmap({ data }: RoadmapProps) {
                     New York State Society of CPAs
                   </a>,
                   <a
+                    key="resource-5"
                     href="https://corporatefinanceinstitute.com/resources/accounting/"
                     target="_blank"
                     rel="noopener noreferrer"

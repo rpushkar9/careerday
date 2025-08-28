@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Navbar from '@/components/navbar';
 
@@ -12,7 +12,7 @@ type Job = {
   matchScore: number;
 };
 
-export default function RecommendedJobsPage() {
+function RecommendedJobsContent() {
   const [recommendedJobs, setRecommendedJobs] = useState<Job[]>([]); // Use the Job type
   const [university, setUniversity] = useState('');
   const [major, setMajor] = useState('');
@@ -79,7 +79,7 @@ export default function RecommendedJobsPage() {
     };
 
     fetchRecommendations();
-  }, [university, majorId]);
+  }, [university, majorId, major]);
 
   const handleLearnMore = (job: Job) => {
     // Use router.push to navigate to a detailed page for the selected job
@@ -197,5 +197,13 @@ export default function RecommendedJobsPage() {
         )}
       </div>
     </>
+  );
+}
+
+export default function RecommendedJobsPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <RecommendedJobsContent />
+    </Suspense>
   );
 }

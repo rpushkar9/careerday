@@ -71,7 +71,9 @@ const TestimonialsPage: React.FC = () => {
                 <i className="bi bi-person-circle"></i>
               </div>
 
-              <p className="mb-4 text-gray-600 italic">"{t.feedback}"</p>
+              <p className="mb-4 text-gray-600 italic">
+                &ldquo;{t.feedback}&rdquo;
+              </p>
               <h3 className="font-semibold text-lg text-[#6d6bd3]">{t.name}</h3>
               <span className="text-sm text-gray-500">{t.role}</span>
             </div>
