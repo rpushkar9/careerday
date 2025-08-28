@@ -73,6 +73,32 @@ async def root():
 async def health_check():
     return {"status": "healthy"}
 
+@app.get("/debug")
+async def debug_info():
+    """Debug endpoint to help troubleshoot Railway deployment issues"""
+    return {
+        "status": "running",
+        "environment": {
+            "PORT": os.environ.get("PORT", "Not set"),
+            "RAILWAY_ENVIRONMENT": os.environ.get("RAILWAY_ENVIRONMENT", "Not set"),
+            "RAILWAY_PROJECT_ID": os.environ.get("RAILWAY_PROJECT_ID", "Not set"),
+            "RAILWAY_SERVICE_ID": os.environ.get("RAILWAY_SERVICE_ID", "Not set"),
+        },
+        "paths": {
+            "script_dir": str(script_dir),
+            "current_dir": str(current_dir),
+            "backend_dir": str(backend_dir),
+            "src_dir": str(src_dir),
+            "data_dir": str(data_dir),
+        },
+        "python_path": sys.path[:5],  # First 5 entries to avoid huge response
+        "files": {
+            "script_dir_files": [f.name for f in script_dir.glob("*")],
+            "src_dir_files": [f.name for f in src_dir.glob("*")] if src_dir.exists() else [],
+            "data_dir_files": [f.name for f in data_dir.glob("*")] if data_dir.exists() else [],
+        }
+    }
+
 @app.post("/api/career-recommendations")
 async def get_career_recommendations(request: CareerRequest):
     try:
@@ -91,4 +117,6 @@ async def get_career_recommendations(request: CareerRequest):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    # Use PORT environment variable (Railway) or default to 8000 (localhost)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
