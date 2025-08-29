@@ -189,3 +189,6 @@
   color: white;
   margin-left: 11%;
 }
+html {
+  scroll-behavior: smooth;
+}
