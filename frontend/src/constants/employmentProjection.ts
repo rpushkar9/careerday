@@ -1,3 +1,7 @@
+/**
+ * Data information for BLS Employment Projections: https://www.bls.gov/emp/documentation/definitions.htm
+ */
+
 const ENTRY_LEVEL_EDUCATION = [
     'Doctoral or professional degree',
     'Master\'s degree',
@@ -9,4 +13,10 @@ const ENTRY_LEVEL_EDUCATION = [
     'No formal educational credential',
 ]
 
-export default ENTRY_LEVEL_EDUCATION;
+const WORK_EXPERIENCE_REQUIRED = [
+    '5 years or more',
+    'Less than 5 years',
+    'None',
+]
+
+export { ENTRY_LEVEL_EDUCATION, WORK_EXPERIENCE_REQUIRED };
