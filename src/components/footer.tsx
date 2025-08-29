@@ -2,15 +2,13 @@
 import Link from 'next/link';
 import { animate } from 'framer-motion';
 
-
-  const Footer = () => {
-
+const Footer = () => {
   const scrollToFAQ = () => {
     const faq = document.getElementById('faq');
     if (faq) {
       animate(0, faq.offsetTop, {
         duration: 0.8,
-        onUpdate: (latest) => window.scrollTo(0, latest),
+        onUpdate: latest => window.scrollTo(0, latest),
       });
     }
   };
@@ -36,17 +34,17 @@ import { animate } from 'framer-motion';
                 About Us
               </Link>
             </li>
-           
-         <li>
-  <a
-    href="https://mail.google.com/mail/?view=cm&to=sheylavperez@gmail.com&su=Hello&body=Hi%20Sheyla"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-white hover:text-white"
-  >
-    Contact
-  </a>
-</li>
+
+            <li>
+              <a
+                href="https://mail.google.com/mail/?view=cm&to=sheylavperez@gmail.com&su=Hello&body=Hi%20Sheyla"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-white hover:text-white"
+              >
+                Contact
+              </a>
+            </li>
 
             {/* <li>
               <Link href="/blog" className="text-white hover:text-white">
