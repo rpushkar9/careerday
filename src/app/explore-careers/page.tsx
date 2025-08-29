@@ -1,54 +1,66 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Filters from "@/components/explore-careers/Filters";
-import QuizBanner from "@/components/explore-careers/QuizBanner";
-import CareerCard from "@/components/explore-careers/CareerCard";
-import SearchBar from "@/components/explore-careers/SearchBar";
+import { useState } from 'react';
+import Filters from '@/components/explore-careers/Filters';
+import QuizBanner from '@/components/explore-careers/QuizBanner';
+import CareerCard from '@/components/explore-careers/CareerCard';
+import SearchBar from '@/components/explore-careers/SearchBar';
 
-import { motion } from "framer-motion";
+import { motion } from 'framer-motion';
 
 export default function CareerDatabasePage() {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
 
   const careers = [
     {
-      title: "Software Engineer",
+      title: 'Software Engineer',
       description:
-        "Design, develop, test, and maintain computer applications to solve problems and meet user needs",
-      majors: ["Computer Science", "Software Engineering", "Computer Engineering"],
-      income: "$60-80k",
+        'Design, develop, test, and maintain computer applications to solve problems and meet user needs',
+      majors: [
+        'Computer Science',
+        'Software Engineering',
+        'Computer Engineering',
+      ],
+      income: '$60-80k',
       education: "Bachelor's degree",
     },
     {
-      title: "UX Designer",
+      title: 'UX Designer',
       description:
-        "Research, prototype, and refine interfaces to enhance overall user experience with a product or service",
-      majors: ["Human-Computer Interaction", "Graphic Design", "Computer Science"],
-      income: "$60-80k",
+        'Research, prototype, and refine interfaces to enhance overall user experience with a product or service',
+      majors: [
+        'Human-Computer Interaction',
+        'Graphic Design',
+        'Computer Science',
+      ],
+      income: '$60-80k',
       education: "Bachelor's degree",
     },
     {
-      title: "Pharmacist",
+      title: 'Pharmacist',
       description:
-        "Prepare, dispense, and provide guidance on medications, ensuring their safe use for patients",
-      majors: ["Pharmaceutical Sciences", "Biology", "Chemistry", "Biochemistry"],
-      income: "$40-60k",
+        'Prepare, dispense, and provide guidance on medications, ensuring their safe use for patients',
+      majors: [
+        'Pharmaceutical Sciences',
+        'Biology',
+        'Chemistry',
+        'Biochemistry',
+      ],
+      income: '$40-60k',
       education: "Bachelor's degree",
     },
     {
-      title: "Accountant",
+      title: 'Accountant',
       description:
         "Review and analyze financial records, tracking a company's or individual's income, expenses, and tax liabilities",
-      majors: ["Accounting", "Business Management", "Finance"],
-      income: "$40-60k",
+      majors: ['Accounting', 'Business Management', 'Finance'],
+      income: '$40-60k',
       education: "Bachelor's degree",
     },
   ];
 
   return (
     <>
-  
       <main className="min-h-screen bg-gradient-to-b from-white to-slate-50 text-slate-800 py-16 px-6 md:px-16">
         {/* Page Header */}
         <section className="text-center mb-16">
@@ -91,15 +103,13 @@ export default function CareerDatabasePage() {
           {/* Career Cards */}
           <section className="flex-1 flex flex-col gap-6">
             {careers
-              .filter((c) =>
-                c.title.toLowerCase().includes(search.toLowerCase())
-              )
+              .filter(c => c.title.toLowerCase().includes(search.toLowerCase()))
               .map((career, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, y: 10 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-50px" }}
+                  viewport={{ once: true, margin: '-50px' }}
                   transition={{ duration: 0.4, delay: i * 0.1 }}
                   className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300"
                 >
@@ -109,7 +119,6 @@ export default function CareerDatabasePage() {
           </section>
         </div>
       </main>
-     
     </>
   );
 }

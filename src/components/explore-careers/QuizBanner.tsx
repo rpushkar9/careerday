@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 
 export default function QuizBanner() {
   return (
@@ -13,16 +13,15 @@ export default function QuizBanner() {
           Take this quiz and let us guide you with personalized career options.
         </p>
       </div>
-<Button
-  className="rounded-full px-6 py-2 text-white shadow-sm transition hover:bg-[#5b59c0] focus:outline-none focus:ring-0 active:bg-[#5b59c0]"
-  style={{
-    backgroundColor: "#6d6bd3",
-    color: "#ffffff",
-  }}
->
-  Take the Quiz
-</Button>
-
+      <Button
+        className="rounded-full px-6 py-2 text-white shadow-sm transition hover:bg-[#5b59c0] focus:outline-none focus:ring-0 active:bg-[#5b59c0]"
+        style={{
+          backgroundColor: '#6d6bd3',
+          color: '#ffffff',
+        }}
+      >
+        Take the Quiz
+      </Button>
     </div>
   );
 }

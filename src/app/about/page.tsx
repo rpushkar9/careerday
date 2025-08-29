@@ -11,13 +11,11 @@ import { useState } from 'react'; // Import useState for component state managem
 
 // import Navbar from "@/components/Navbar";
 
-
 import { motion } from 'framer-motion';
 
 export default function AboutPage() {
   return (
     <>
-
       <main className="min-h-screen bg-gradient-to-b from-white to-slate-50 text-slate-800">
         {/* Hero */}
         <section className="relative overflow-hidden">
@@ -311,8 +309,6 @@ export default function AboutPage() {
             </div>
           </div>
         </section> */}
-
-     
       </main>
     </>
   );

@@ -8,16 +8,11 @@ import Footer from '@/components/footer';
 import Navbar from '@/components/navbar';
 import { useState } from 'react';
 
-
-
-
 export default function About() {
   const [showCareerModal, setShowCareerModal] = useState(false);
 
   return (
     <>
-
-
       {/* Hero Section */}
       <div className="relative bg-gradient-to-br from-[#6d6bd3] via-[#5a58b8] to-[#6d6bd3] min-h-[600px] overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://public.readdy.ai/ai/img_res/0f842a5615fc80362a29e48bd4ce0497.jpg')] bg-cover opacity-20"></div>
@@ -102,8 +97,6 @@ export default function About() {
           </Link>
         </div>
       </div>
-
-
     </>
   );
 }

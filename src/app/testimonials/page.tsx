@@ -42,8 +42,6 @@ const testimonials: Testimonial[] = [
 const TestimonialsPage: React.FC = () => {
   return (
     <>
-
-
       <main className="bg-white min-h-screen font-sans">
         {/* Testimonials Grid */}
 
@@ -177,7 +175,6 @@ const TestimonialsPage: React.FC = () => {
           No spam, unsubscribe anytime.
         </p>
       </section>
-
     </>
   );
 };
