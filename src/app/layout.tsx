@@ -4,7 +4,7 @@ import Navbar from '@/components/navbar';
 import Footer from '@/components/footer';
 
 export const metadata: Metadata = {
-  title: 'CareerDay',
+  title: 'CareerDayy',
   description: 'Created with love',
   generator: 'dev',
   icons: {
