@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   title: 'CareerDay',
   description: 'Created with love',
   generator: 'dev',
+   icons: {
+    icon: '/careerday_logo.jpeg', // path inside public/
+  },
 };
 
 export default function RootLayout({

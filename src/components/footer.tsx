@@ -18,7 +18,7 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Logo & About */}
         <div>
-          <h2 className="text-2xl font-bold">CareerDay</h2>
+          <h2 className="text-2xl font-bold">CareerDayy</h2>
           <p className="mt-3 text-sm">
             Helping students discover careers, build skills, and achieve their
             goals with personalized guidance.
@@ -126,7 +126,7 @@ const Footer = () => {
 
       {/* Bottom Bar */}
       <div className="border-t border-gray-700 mt-8 pt-4 text-center text-sm">
-        © {new Date().getFullYear()} CareerDay. All rights reserved.
+        © {new Date().getFullYear()} CareerDayy. All rights reserved.
       </div>
     </footer>
   );

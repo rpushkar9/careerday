@@ -16,7 +16,7 @@ const Navbar = () => {
                 <i className="fas fa-road text-[#6d6bd3] text-3xl mr-3"></i>
                 <Link href="/">
                   <span className="text-2xl font-bold bg-gradient-to-r from-[#6d6bd3] to-[#6d6bd3] text-transparent bg-clip-text">
-                    CareerDay
+                    CareerDayy
                   </span>
                 </Link>
               </div>
