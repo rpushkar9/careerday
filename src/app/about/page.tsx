@@ -10,17 +10,14 @@ import { Button } from '@/components/ui/button';
 import { useState } from 'react'; // Import useState for component state management
 
 // import Navbar from "@/components/Navbar";
-import './about.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Navbar from '@/components/navbar'; // Adjust the relative path if needed
-import Footer from '@/components/footer';
+
 
 import { motion } from 'framer-motion';
 
 export default function AboutPage() {
   return (
     <>
-      <Navbar />
+
       <main className="min-h-screen bg-gradient-to-b from-white to-slate-50 text-slate-800">
         {/* Hero */}
         <section className="relative overflow-hidden">
@@ -315,7 +312,7 @@ export default function AboutPage() {
           </div>
         </section> */}
 
-        <Footer />
+     
       </main>
     </>
   );

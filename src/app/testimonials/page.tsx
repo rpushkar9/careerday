@@ -42,7 +42,7 @@ const testimonials: Testimonial[] = [
 const TestimonialsPage: React.FC = () => {
   return (
     <>
-      <Navbar />
+
 
       <main className="bg-white min-h-screen font-sans">
         {/* Testimonials Grid */}
@@ -178,7 +178,6 @@ const TestimonialsPage: React.FC = () => {
         </p>
       </section>
 
-      <Footer />
     </>
   );
 };

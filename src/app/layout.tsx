@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import '../styles/globals.css';
+import Navbar from '@/components/navbar';
+import Footer from '@/components/footer';
 
 export const metadata: Metadata = {
   title: 'CareerDay',
@@ -14,7 +16,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="bg-white text-slate-800 transition-all duration-300">
+        <Navbar />
+        <main className="min-h-screen">
+          {children}
+        </main>
+        <Footer />
+      </body>
     </html>
   );
 }
+

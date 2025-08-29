@@ -8,15 +8,15 @@ import Footer from '@/components/footer';
 import Navbar from '@/components/navbar';
 import { useState } from 'react';
 
-import './about.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
+
+
 
 export default function About() {
   const [showCareerModal, setShowCareerModal] = useState(false);
 
   return (
     <>
-      <Navbar />
+
 
       {/* Hero Section */}
       <div className="relative bg-gradient-to-br from-[#6d6bd3] via-[#5a58b8] to-[#6d6bd3] min-h-[600px] overflow-hidden">
@@ -103,7 +103,7 @@ export default function About() {
         </div>
       </div>
 
-      <Footer />
+
     </>
   );
 }
