@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/navbar';
+import { ENTRY_LEVEL_EDUCATION } from '@/constants/employmentProjection';
 
 // Types for college and major data
 interface CollegeMajorInfo {
@@ -18,6 +19,7 @@ interface SurveyForm {
   university: string;
   major: string;
   cip_code: string;
+  degree: string;
 }
 
 export default function SurveyPage() {
@@ -29,6 +31,7 @@ export default function SurveyPage() {
     university: '',
     major: '',
     cip_code: '',
+    degree: "Bachelor's degree",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -125,6 +128,7 @@ export default function SurveyPage() {
           major: formData.major,
           university: formData.university,
           cip_code: formData.cip_code,
+          degree: formData.degree,
           interests: [], // Will be expanded in future
           skills: [], // Will be expanded in future
         }),
@@ -234,6 +238,33 @@ export default function SurveyPage() {
                 {filteredMajors.map((major, index) => (
                   <option key={index} value={major}>
                     {major}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Degree Selection */}
+            <div>
+              <label
+                htmlFor="degree"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Select Your Degree Level
+              </label>
+              <select
+                id="degree"
+                value={formData.degree}
+                onChange={e => handleInputChange('degree', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#6d6bd3] focus:border-[#6d6bd3]"
+                required
+                disabled={isLoading}
+              >
+                <option value="">
+                  {isLoading ? 'Loading degrees...' : 'Choose a degree...'}
+                </option>
+                {ENTRY_LEVEL_EDUCATION.map((degree, index) => (
+                  <option key={index} value={degree}>
+                    {degree}
                   </option>
                 ))}
               </select>
