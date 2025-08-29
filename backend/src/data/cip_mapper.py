@@ -10,6 +10,7 @@ import sys
 from typing import Dict, List, Optional
 import logging
 from pathlib import Path
+from ..constants.employmentProjection import ENTRY_LEVEL_EDUCATION, WORK_EXPERIENCE_REQUIRED
 
 logger = logging.getLogger(__name__)
 
@@ -85,8 +86,39 @@ class CIPMapper:
         except Exception as e:
             logger.warning(f"Failed to load supporting data: {e}")
     
-    def get_related_occupations(self, cip_code: str, max_results: int = 10) -> List[Dict]:
-        """Get related SOC occupations for a given CIP code"""
+    def _get_education_hierarchy(self, max_education: str) -> List[str]:
+        """Get education levels up to and including the specified max level"""
+        try:
+            max_index = ENTRY_LEVEL_EDUCATION.index(max_education)
+            return ENTRY_LEVEL_EDUCATION[max_index:]
+        except ValueError:
+            logger.warning(f"Invalid education level: {max_education}, using default (Bachelor's degree)")
+            return ENTRY_LEVEL_EDUCATION[2:]  # Bachelor's degree and below
+    
+    def _get_experience_hierarchy(self, max_experience: str) -> List[str]:
+        """Get work experience levels up to and including the specified max level"""
+        try:
+            max_index = WORK_EXPERIENCE_REQUIRED.index(max_experience)
+            return WORK_EXPERIENCE_REQUIRED[max_index:]
+        except ValueError:
+            logger.warning(f"Invalid work experience level: {max_experience}, using default (None)")
+            return WORK_EXPERIENCE_REQUIRED[2:]  # None
+    
+    def get_related_occupations(self, cip_code: str, max_results: int = 10, 
+                               entry_level_education: str = "Bachelor's degree",
+                               work_experience: str = "None",
+                               education_filter_type: str = "hierarchy",
+                               experience_filter_type: str = "hierarchy") -> List[Dict]:
+        """Get related SOC occupations for a given CIP code with education and experience filtering
+        
+        Args:
+            cip_code: The CIP code to search for
+            max_results: Maximum number of results to return
+            entry_level_education: Maximum education level to include
+            work_experience: Maximum work experience to include
+            education_filter_type: "hierarchy" (include all levels up to max) or "strict" (exact match only)
+            experience_filter_type: "hierarchy" (include all levels up to max) or "strict" (exact match only)
+        """
         if not self.crosswalk_data is not None:
             raise RuntimeError("Crosswalk data not loaded")
         
@@ -114,6 +146,27 @@ class CIPMapper:
             logger.warning(f"No occupations found for CIP code {cip_code} (exact or prefix match)")
             return []
         
+        # Validate filter types
+        valid_filter_types = ["hierarchy", "strict"]
+        if education_filter_type not in valid_filter_types:
+            raise ValueError(f"education_filter_type must be one of {valid_filter_types}")
+        if experience_filter_type not in valid_filter_types:
+            raise ValueError(f"experience_filter_type must be one of {valid_filter_types}")
+        
+        # Get filtering levels based on filter type
+        if education_filter_type == "hierarchy":
+            allowed_education_levels = self._get_education_hierarchy(entry_level_education)
+        else:  # strict
+            allowed_education_levels = [entry_level_education]
+            
+        if experience_filter_type == "hierarchy":
+            allowed_experience_levels = self._get_experience_hierarchy(work_experience)
+        else:  # strict
+            allowed_experience_levels = [work_experience]
+        
+        logger.info(f"Education filtering ({education_filter_type}): {allowed_education_levels}")
+        logger.info(f"Experience filtering ({experience_filter_type}): {allowed_experience_levels}")
+        
         # Convert to list of dictionaries and enrich with additional data
         occupations = []
         for _, row in mappings.iterrows():
@@ -134,12 +187,29 @@ class CIPMapper:
                 ]
                 if not proj_match.empty:
                     proj_row = proj_match.iloc[0]
+                    
+                    # Get education and experience requirements
+                    education_req = proj_row.get('Typical Entry-Level Education')
+                    experience_req = proj_row.get('Work Experience in a Related Occupation')
+                    
+                    # Apply filtering based on hierarchy
+                    if education_req and education_req not in allowed_education_levels:
+                        continue  # Skip if education requirement doesn't meet criteria
+                    
+                    if experience_req and experience_req not in allowed_experience_levels:
+                        continue  # Skip if experience requirement doesn't meet criteria
+                    
                     occupation.update({
                         'employment_2023': proj_row.get('Employment 2023'),
                         'employment_2033': proj_row.get('Employment 2033'),
                         'growth_pct': proj_row.get('Employment Percent Change, 2023-2033'),
-                        'education_level': proj_row.get('Typical Entry-Level Education')
+                        'education_level': education_req,
+                        'work_experience': experience_req
                     })
+                else:
+                    # If no projections data, still include the occupation but without filtering
+                    # This ensures we don't lose occupations that might not have complete projection data
+                    pass
             
             # Add OEWS wage data if available
             if self.oews_data is not None:
@@ -155,6 +225,39 @@ class CIPMapper:
         
         # Limit results
         return occupations[:max_results]
+    
+    def get_related_occupations_with_filters(self, cip_code: str, max_results: int = 10,
+                                           filters: Dict[str, any] = None) -> List[Dict]:
+        """Get related SOC occupations with flexible filtering options
+        
+        Args:
+            cip_code: The CIP code to search for
+            max_results: Maximum number of results to return
+            filters: Dictionary with filtering options:
+                - entry_level_education: Maximum education level to include
+                - work_experience: Maximum work experience to include
+                - education_filter_type: "hierarchy" or "strict"
+                - experience_filter_type: "hierarchy" or "strict"
+                
+        Example:
+            filters = {
+                "entry_level_education": "Bachelor's degree",
+                "work_experience": "None",
+                "education_filter_type": "strict",      # Only Bachelor's degree
+                "experience_filter_type": "hierarchy"  # None, Less than 5 years, 5+ years
+            }
+        """
+        if filters is None:
+            filters = {}
+        
+        return self.get_related_occupations(
+            cip_code=cip_code,
+            max_results=max_results,
+            entry_level_education=filters.get("entry_level_education", "Bachelor's degree"),
+            work_experience=filters.get("work_experience", "None"),
+            education_filter_type=filters.get("education_filter_type", "hierarchy"),
+            experience_filter_type=filters.get("experience_filter_type", "hierarchy")
+        )
     
     def _is_valid_cip_code(self, cip_code: str) -> bool:
         """Check if CIP code exists in our crosswalk data or matches a prefix"""
@@ -200,7 +303,9 @@ class CIPMapper:
             'total_mappings': len(self.crosswalk_data),
             'unique_cip_codes': self.crosswalk_data['CIP2020Code'].nunique(),
             'unique_soc_codes': self.crosswalk_data['SOC2018Code'].nunique(),
-            'data_source': 'BLS_Crosswalk_2020'
+            'data_source': 'BLS_Crosswalk_2020',
+            'available_education_levels': ENTRY_LEVEL_EDUCATION,
+            'available_experience_levels': WORK_EXPERIENCE_REQUIRED
         }
         
         return stats
