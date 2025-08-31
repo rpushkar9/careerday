@@ -72,7 +72,11 @@ class CareerAPIWrapper:
         interests: List[str] = None, 
         skills: List[str] = None,
         university: str = None,
-        top_n: int = 3
+        top_n: int = 3,
+        entry_level_education: str = "Bachelor's degree",
+        work_experience: str = "None",
+        education_filter_type: str = "hierarchy",
+        experience_filter_type: str = "hierarchy"
     ) -> List[Dict[str, Any]]:
         """
         Get top career recommendations based on user input
@@ -84,6 +88,10 @@ class CareerAPIWrapper:
             skills: List of user skills
             university: User's university (optional)
             top_n: Number of recommendations to return
+            entry_level_education: Maximum education level to include
+            work_experience: Maximum work experience to include
+            education_filter_type: "hierarchy" or "strict" filtering for education
+            experience_filter_type: "hierarchy" or "strict" filtering for experience
             
         Returns:
             List of career recommendation dictionaries
@@ -112,7 +120,11 @@ class CareerAPIWrapper:
                         'interests': interests or [],
                         'skills': skills or [],
                         'major': major
-                    }
+                    },
+                    entry_level_education=entry_level_education,
+                    work_experience=work_experience,
+                    education_filter_type=education_filter_type,
+                    experience_filter_type=experience_filter_type
                 )
                 
                 sys.stderr.write(f"Created request: {request}\n")
