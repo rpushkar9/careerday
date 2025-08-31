@@ -131,6 +131,10 @@ export default function SurveyPage() {
           degree: formData.degree,
           interests: [], // Will be expanded in future
           skills: [], // Will be expanded in future
+          entry_level_education: formData.degree,
+          work_experience: 'None',
+          education_filter_type: 'hierarchy',
+          experience_filter_type: 'hierarchy',
         }),
       });
 

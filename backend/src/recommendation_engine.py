@@ -27,6 +27,10 @@ class RecommendationRequest:
     preferences: Optional[Dict[str, Any]] = None
     max_results: int = 3
     include_metadata: bool = True
+    entry_level_education: str = "Bachelor's degree"
+    work_experience: str = "None"
+    education_filter_type: str = "hierarchy"
+    experience_filter_type: str = "hierarchy"
 
 @dataclass
 class RecommendationResponse:
@@ -96,7 +100,11 @@ class RecommendationEngine:
             # Get related occupations
             occupations = self.cip_mapper.get_related_occupations(
                 request.cip_code, 
-                max_results=request.max_results * 2  # Get more for diversification
+                max_results=request.max_results * 2,  # Get more for diversification
+                entry_level_education=request.entry_level_education,
+                work_experience=request.work_experience,
+                education_filter_type=request.education_filter_type,
+                experience_filter_type=request.experience_filter_type
             )
             
             if not occupations:

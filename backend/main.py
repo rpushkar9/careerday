@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from typing import List, Optional
 import json
 import sys
@@ -64,6 +64,17 @@ class CareerRequest(BaseModel):
     skills: Optional[List[str]] = []
     university: Optional[str] = ""
     top_n: Optional[int] = 3
+    # New filtering options
+    entry_level_education: Optional[str] = "Bachelor's degree"
+    work_experience: Optional[str] = "None"
+    education_filter_type: Optional[str] = "hierarchy"  # "hierarchy" or "strict"
+    experience_filter_type: Optional[str] = "hierarchy"  # "hierarchy" or "strict"
+
+    @validator("education_filter_type", "experience_filter_type")
+    def validate_filter_types(cls, v):
+        if v not in ["hierarchy", "strict"]:
+            raise ValueError("Filter type must be either 'hierarchy' or 'strict'")
+        return v
 
 @app.get("/")
 async def root():
@@ -101,6 +112,36 @@ async def debug_info():
 
 @app.post("/api/career-recommendations")
 async def get_career_recommendations(request: CareerRequest):
+    """
+    Get career recommendations based on major, CIP code, interests, and skills.
+    
+    **New Filtering Options:**
+    
+    - **entry_level_education**: Maximum education level to include
+      - Options: "Less than high school", "High school", "Some college", "Associate's degree", "Bachelor's degree", "Master's degree", "Doctoral degree"
+    
+    - **work_experience**: Maximum work experience to include  
+      - Options: "None", "Less than 5 years", "5+ years"
+    
+    - **education_filter_type**: How to filter education levels
+      - "hierarchy": Include all levels up to and including the specified max (default)
+      - "strict": Only include the exact specified education level
+    
+    - **experience_filter_type**: How to filter work experience
+      - "hierarchy": Include all levels up to and including the specified max (default)
+      - "strict": Only include the exact specified experience level
+    
+    **Example Request:**
+    ```json
+    {
+      "cip_code": "51.0501",
+      "entry_level_education": "Bachelor's degree",
+      "work_experience": "None",
+      "education_filter_type": "strict",      // Only Bachelor's degree
+      "experience_filter_type": "hierarchy"  // None, Less than 5 years, 5+ years
+    }
+    ```
+    """
     try:
         wrapper = CareerAPIWrapper()
         recommendations = wrapper.get_career_recommendations(
@@ -109,7 +150,12 @@ async def get_career_recommendations(request: CareerRequest):
             interests=request.interests,
             skills=request.skills,
             university=request.university,
-            top_n=request.top_n
+            top_n=request.top_n,
+            # Pass the new filtering parameters
+            entry_level_education=request.entry_level_education,
+            work_experience=request.work_experience,
+            education_filter_type=request.education_filter_type,
+            experience_filter_type=request.experience_filter_type
         )
         return recommendations
     except Exception as e:

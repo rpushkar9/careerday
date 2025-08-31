@@ -10,7 +10,7 @@ import sys
 from typing import Dict, List, Optional
 import logging
 from pathlib import Path
-from ..constants.employmentProjection import ENTRY_LEVEL_EDUCATION, WORK_EXPERIENCE_REQUIRED
+from constants.employmentProjection import ENTRY_LEVEL_EDUCATION, WORK_EXPERIENCE_REQUIRED
 
 logger = logging.getLogger(__name__)
 
