@@ -286,7 +286,7 @@ export default function SurveyPage() {
                 <option value="">
                   {isLoading ? 'Loading degrees...' : 'Choose a degree...'}
                 </option>
-                {ENTRY_LEVEL_EDUCATION.map((degree, index) => (
+                {ENTRY_LEVEL_EDUCATION.slice(0, 5).map((degree, index) => (
                   <option key={index} value={degree}>
                     {degree}
                   </option>
