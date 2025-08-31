@@ -36,6 +36,14 @@ function RecommendedJobsContent() {
   useEffect(() => {
     // Fetch career recommendations from API
     const fetchRecommendations = async () => {
+      // Check if we have the required CIP code
+      if (!majorId) {
+        console.error('No CIP code provided');
+        setIsLoading(false);
+        setHasAttemptedFetch(true);
+        return;
+      }
+
       setIsLoading(true);
       setHasAttemptedFetch(true);
       try {
@@ -50,6 +58,8 @@ function RecommendedJobsContent() {
             interests: ['technology', 'problem-solving'],
             skills: ['programming', 'analytics'],
             university: university || 'General',
+            entry_level_education: "Bachelor's degree",
+            // No need to pass work_experience since it is "None" by default
           }),
         });
 
@@ -110,7 +120,7 @@ function RecommendedJobsContent() {
         </div>
       </div>
       <div className="max-w-3xl mx-auto mt-10 p-6 space-y-6">
-        {isLoading || recommendedJobs.length === 0 ? (
+        {isLoading ? (
           <div className="text-center py-12">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-8">
               <h2 className="text-2xl font-bold text-blue-800 mb-4">
@@ -121,6 +131,43 @@ function RecommendedJobsContent() {
                 matches for you.
               </p>
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            </div>
+          </div>
+        ) : !majorId ? (
+          <div className="text-center py-12">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-8">
+              <h2 className="text-2xl font-bold text-red-800 mb-4">
+                Missing Information
+              </h2>
+              <p className="text-red-600 mb-6">
+                No major/CIP code provided. Please go back to the survey to
+                select your major.
+              </p>
+              <button
+                onClick={() => router.push('/survey')}
+                className="bg-[#6d6bd3] text-white px-6 py-3 rounded-md hover:bg-[#5a58b8] transition-colors"
+              >
+                Go to Survey
+              </button>
+            </div>
+          </div>
+        ) : recommendedJobs.length === 0 ? (
+          <div className="text-center py-12">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-8">
+              <h2 className="text-2xl font-bold text-yellow-800 mb-4">
+                No Recommendations Found
+              </h2>
+              <p className="text-yellow-600 mb-6">
+                We couldn't find career recommendations for your major and
+                degree level. This might be due to insufficient data or specific
+                filtering requirements.
+              </p>
+              <button
+                onClick={() => router.push('/survey')}
+                className="bg-[#6d6bd3] text-white px-6 py-3 rounded-md hover:bg-[#5a58b8] transition-colors"
+              >
+                Try Different Options
+              </button>
             </div>
           </div>
         ) : (

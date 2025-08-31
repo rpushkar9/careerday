@@ -139,12 +139,32 @@ export default function SurveyPage() {
       });
 
       if (response.ok) {
-        // Redirect to recommendations page with the CIP code as major_id
-        router.push(
-          `/recommendation?major_id=${encodeURIComponent(formData.cip_code)}&university=${encodeURIComponent(formData.university)}&major=${encodeURIComponent(formData.major)}`
-        );
+        const data = await response.json();
+
+        // Check if we got any recommendations
+        if (data && Array.isArray(data) && data.length > 0) {
+          // Redirect to recommendations page with the CIP code as major_id
+          router.push(
+            `/recommendation?major_id=${encodeURIComponent(formData.cip_code)}&university=${encodeURIComponent(formData.university)}&major=${encodeURIComponent(formData.major)}`
+          );
+        } else {
+          // No recommendations found
+          setError(
+            'No career recommendations found for this major and degree level. ' +
+              'This could happen if:\n' +
+              '• The major requires a different education level\n' +
+              '• The CIP code is not in our database\n' +
+              '• No matching occupations meet your criteria\n\n' +
+              'Please try:\n' +
+              '• Selecting a different degree level\n' +
+              '• Choosing a different major\n' +
+              '• Contacting support if the issue persists'
+          );
+          setIsLoading(false);
+        }
       } else {
         setError('Failed to submit survey. Please try again.');
+        setIsLoading(false);
       }
     } catch (err) {
       setError('An error occurred. Please try again.');
@@ -277,7 +297,7 @@ export default function SurveyPage() {
             {/* Error Display */}
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
-                {error}
+                <div className="whitespace-pre-line">{error}</div>
               </div>
             )}
 
