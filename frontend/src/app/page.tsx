@@ -5,7 +5,6 @@ import Link from 'next/link';
 import Container from 'react-bootstrap/Container';
 import { Button } from '@/components/ui/button';
 import Footer from '@/components/footer';
-import Navbar from '@/components/navbar';
 import { useState } from 'react';
 
 export default function About() {

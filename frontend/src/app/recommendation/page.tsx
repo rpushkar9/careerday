@@ -1,7 +1,6 @@
 'use client';
 import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Navbar from '@/components/navbar';
 
 // Define a Job type
 type Job = {
@@ -105,7 +104,6 @@ function RecommendedJobsContent() {
 
   return (
     <>
-      <Navbar />
       <div className="relative bg-gradient-to-br from-[#6d6bd3] via-[#6d6bd3] to-[#6d6bd3] h-[200px] overflow-hidden">
         <div className="absolute inset-0 bg-[url('https://public.readdy.ai/ai/img_res/0f842a5615fc80362a29e48bd4ce0497.jpg')] bg-cover bg-center opacity-20"></div>
         <div className="max-w-7xl mx-auto px-4 py-20 relative h-full flex items-center justify-center">

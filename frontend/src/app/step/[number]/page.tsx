@@ -1,7 +1,6 @@
 import { Roadmap } from '@/components/roadmap'; // Adjust path according to your project structure
 import type { RoadmapData } from '@/lib/types'; // Import the types as needed
 import './step.css';
-import Navbar from '@/components/navbar';
 
 // Example roadmap data to pass into the component
 
@@ -307,7 +306,6 @@ const roadmapData: RoadmapData = {
 export default function StepNumberPage() {
   return (
     <>
-      <Navbar />
       <div className="container mx-auto p-4 mt-8">
         {' '}
         {/* Added margin-top to create space */}

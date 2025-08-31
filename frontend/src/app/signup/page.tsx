@@ -2,11 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation'; // Import router for navigation
-import Navbar from '@/components/navbar';
 import './signup.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import MajorJobFinder from '@/components/major-job-finder';
-import { Container } from 'postcss';
 
 export default function StudentQuestionnaire() {
   const router = useRouter(); // Initialize router
@@ -40,7 +38,6 @@ export default function StudentQuestionnaire() {
 
   return (
     <>
-      <Navbar />
       <main className="min-h-screen p-4 md:p-24 max-w-5xl mx-auto">
         <div className="space-y-7">
           <div className="text-center space-y-2">

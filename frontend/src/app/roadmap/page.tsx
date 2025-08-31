@@ -2,7 +2,6 @@
 
 import { useSearchParams } from 'next/navigation';
 import StepOne from '@/components/stepone';
-import Navbar from '@/components/navbar';
 
 // Type definitions
 type Step = {
@@ -376,7 +375,6 @@ export default function RoadmapPage() {
 
   return (
     <>
-      <Navbar />
       <div className="max-w-4xl mx-auto mt-10 p-6 space-y-6">
         <h1 className="text-3xl font-bold text-center mb-8 text-[#6d6bd3]">
           Roadmap for {roadmap.title}
