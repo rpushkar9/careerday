@@ -6,7 +6,7 @@ import Footer from '@/components/footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { User, Network, FileText } from 'lucide-react';
-// import 'bootstrap-icons/font/bootstrap-icons.css';
+import { motion } from 'framer-motion';
 
 interface Testimonial {
   name: string;
@@ -39,14 +39,26 @@ const testimonials: Testimonial[] = [
   },
 ];
 
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  show: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.2, duration: 0.6 },
+  }),
+};
+
 const TestimonialsPage: React.FC = () => {
   return (
     <>
       <main className="bg-white min-h-screen font-sans">
-        {/* Testimonials Grid */}
-
         {/* Header */}
-        <header className="text-center py-16 px-6 text-[#202022]">
+        <motion.header
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center py-16 px-6 text-[#202022]"
+        >
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-[#6d6bd3]">
             What Students Say About CareerDay
           </h1>
@@ -55,16 +67,20 @@ const TestimonialsPage: React.FC = () => {
             skills, and achieve their goals with personalized guidance and
             AI-powered insights.
           </p>
-        </header>
+        </motion.header>
 
         {/* Testimonials Grid */}
         <section className="max-w-7xl mx-auto px-6 py-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {testimonials.map((t, index) => (
-            <div
+            <motion.div
               key={index}
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true }}
+              custom={index}
               className="bg-white text-[#202022] p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300"
             >
-              {/* Bootstrap Icon instead of avatar image */}
               <div className="w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center bg-gray-100 text-[#6d6bd3] text-3xl">
                 <i className="bi bi-person-circle"></i>
               </div>
@@ -72,13 +88,18 @@ const TestimonialsPage: React.FC = () => {
               <p className="mb-4 text-gray-600 italic">"{t.feedback}"</p>
               <h3 className="font-semibold text-lg text-[#6d6bd3]">{t.name}</h3>
               <span className="text-sm text-gray-500">{t.role}</span>
-            </div>
+            </motion.div>
           ))}
         </section>
 
         {/* Career Services Section */}
-        <section className="bg-gradient-to-b from-[#6d6bd3] to-[#8b89e6] text-center text-white py-20 px-6 mt-16">
-          {/* Heading */}
+        <motion.section
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="bg-gradient-to-b from-[#6d6bd3] to-[#8b89e6] text-center text-white py-20 px-6 mt-16"
+        >
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Ready to Discover Your Future Career?
           </h2>
@@ -87,66 +108,58 @@ const TestimonialsPage: React.FC = () => {
             and creating personalized roadmaps with CareerDay.
           </p>
 
-          {/* Services Grid */}
           <div className="grid gap-8 md:grid-cols-3 max-w-5xl mx-auto">
-            {/* Card 1 */}
-            <Card className="bg-white border-0 shadow-md text-[#202022]">
-              <CardContent className="flex flex-col items-center p-6 space-y-3">
-                <User className="w-10 h-10 text-[#6d6bd3]" />
-                <h3 className="text-lg font-semibold text-[#6d6bd3]">
-                  Career Path Exploration
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Learn about industries, roles, and opportunities that match
-                  your interests.
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Card 2 */}
-            <Card className="bg-white border-0 shadow-md text-[#202022]">
-              <CardContent className="flex flex-col items-center p-6 space-y-3">
-                <Network className="w-10 h-10 text-[#6d6bd3]" />
-                <h3 className="text-lg font-semibold text-[#6d6bd3]">
-                  Skill-Building Challenges
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Gain practical experience through interactive challenges and
-                  exercises.
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Card 3 */}
-            <Card className="bg-white border-0 shadow-md text-[#202022]">
-              <CardContent className="flex flex-col items-center p-6 space-y-3">
-                <FileText className="w-10 h-10 text-[#6d6bd3]" />
-                <h3 className="text-lg font-semibold text-[#6d6bd3]">
-                  AI-Powered Roadmaps
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Create a personalized career roadmap with actionable steps for
-                  success.
-                </p>
-              </CardContent>
-            </Card>
+            {[ 
+              { icon: User, title: 'Career Path Exploration', desc: 'Learn about industries, roles, and opportunities that match your interests.' },
+              { icon: Network, title: 'Skill-Building Challenges', desc: 'Gain practical experience through interactive challenges and exercises.' },
+              { icon: FileText, title: 'AI-Powered Roadmaps', desc: 'Create a personalized career roadmap with actionable steps for success.' }
+            ].map((card, i) => (
+              <motion.div
+                key={i}
+                variants={fadeUp}
+                initial="hidden"
+                whileInView="show"
+                viewport={{ once: true }}
+                custom={i}
+              >
+                <Card className="bg-white border-0 shadow-md text-[#202022]">
+                  <CardContent className="flex flex-col items-center p-6 space-y-3">
+                    <card.icon className="w-10 h-10 text-[#6d6bd3]" />
+                    <h3 className="text-lg font-semibold text-[#6d6bd3]">
+                      {card.title}
+                    </h3>
+                    <p className="text-sm text-gray-600">{card.desc}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </div>
 
-          {/* CTA Button */}
-          <div className="mt-12">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="mt-12"
+          >
             <Button
               size="lg"
               className="bg-white text-[#6d6bd3] font-semibold hover:bg-gray-100"
             >
               Get Started on Your Career Journey
             </Button>
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
       </main>
 
       {/* Newsletter Signup Section */}
-      {/* Newsletter Signup Section */}
-      <section className="bg-[#ffffff] py-24 px-6 text-center">
+      <motion.section
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8 }}
+        className="bg-[#ffffff] py-24 px-6 text-center"
+      >
         <h2 className="text-3xl md:text-4xl font-bold text-[#6d6bd3] mb-4">
           📩 Get Free Career Tips Weekly
         </h2>
@@ -174,7 +187,7 @@ const TestimonialsPage: React.FC = () => {
         <p className="text-sm text-gray-500 mt-6">
           No spam, unsubscribe anytime.
         </p>
-      </section>
+      </motion.section>
     </>
   );
 };
