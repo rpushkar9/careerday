@@ -109,10 +109,22 @@ const TestimonialsPage: React.FC = () => {
           </p>
 
           <div className="grid gap-8 md:grid-cols-3 max-w-5xl mx-auto">
-            {[ 
-              { icon: User, title: 'Career Path Exploration', desc: 'Learn about industries, roles, and opportunities that match your interests.' },
-              { icon: Network, title: 'Skill-Building Challenges', desc: 'Gain practical experience through interactive challenges and exercises.' },
-              { icon: FileText, title: 'AI-Powered Roadmaps', desc: 'Create a personalized career roadmap with actionable steps for success.' }
+            {[
+              {
+                icon: User,
+                title: 'Career Path Exploration',
+                desc: 'Learn about industries, roles, and opportunities that match your interests.',
+              },
+              {
+                icon: Network,
+                title: 'Skill-Building Challenges',
+                desc: 'Gain practical experience through interactive challenges and exercises.',
+              },
+              {
+                icon: FileText,
+                title: 'AI-Powered Roadmaps',
+                desc: 'Create a personalized career roadmap with actionable steps for success.',
+              },
             ].map((card, i) => (
               <motion.div
                 key={i}
