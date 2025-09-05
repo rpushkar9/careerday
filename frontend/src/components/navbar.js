@@ -28,12 +28,6 @@ const Navbar = () => {
                 >
                   Explore Careers
                 </Link>
-                {/* <Link
-                  href="/resources"
-                  className="text-[#6d6bd3] hover:text-[#5a57c1] font-medium"
-                >
-                  Resources
-                </Link> */}
                 <Link
                   href="/testimonials"
                   className="text-[#6d6bd3] hover:text-[#5a57c1] font-medium"

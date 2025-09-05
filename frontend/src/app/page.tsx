@@ -86,7 +86,7 @@ export default function About() {
         </div>
 
         <div className="text-center mt-20">
-          <Link href="/survey">
+          <Link href="/general-account">
             <Button
               size="lg"
               className="rounded-full px-10 py-4 bg-[#6d6bd3] hover:bg-[#5a58b8] text-lg font-semibold shadow-lg"
