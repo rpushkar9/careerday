@@ -17,13 +17,12 @@ export default function GeneralAccountPage() {
 
     if (isLogin) {
       console.log('Logging in...');
-      // 👉 If you want login to also go to questions, keep this the same
-      router.push('/general-account/questions');
     } else {
       console.log('Creating account...');
-      // 👉 After signup → send them to the background questions
-      router.push('/general-account/questions');
     }
+
+    // After login or signup → go to background questions
+    router.push('/general-account/questions');
   };
 
   return (
@@ -90,14 +89,16 @@ export default function GeneralAccountPage() {
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-slate-500">
-          Already have an account?{' '}
-          <a
-            href="/login"
-            className="text-[#6d6bd3] font-medium hover:underline"
+        {/* Toggle between login / signup */}
+        <p className="text-center text-slate-600 mt-6">
+          {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
+          <button
+            type="button"
+            onClick={() => setIsLogin(!isLogin)}
+            className="text-[#6d6bd3] font-semibold hover:underline"
           >
-            Log In
-          </a>
+            {isLogin ? 'Sign Up' : 'Log In'}
+          </button>
         </p>
 
         {/* Optional link to continue without account */}
