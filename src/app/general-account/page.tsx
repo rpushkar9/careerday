@@ -1,109 +1,116 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-export default function SignupPage() {
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    password: '',
-  });
-
+export default function GeneralAccountPage() {
+  const [isLogin, setIsLogin] = useState(true);
   const router = useRouter();
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', form);
 
-    // after signup success -> go to next step
-    router.push('/general-account/next-step');
+    if (isLogin) {
+      console.log('Logging in...');
+      // 👉 If you want login to also go to questions, keep this the same
+      router.push('/general-account/questions');
+    } else {
+      console.log('Creating account...');
+      // 👉 After signup → send them to the background questions
+      router.push('/general-account/questions');
+    }
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white to-slate-50 text-slate-800 py-16 px-6 md:px-16 flex items-center justify-center">
+    <main className="min-h-screen bg-gradient-to-b from-white to-slate-50 flex items-center justify-center px-6 py-16 md:px-12">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8"
+        className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8"
       >
-        <motion.h1 className="text-3xl md:text-4xl font-extrabold text-center tracking-tight">
-          Create <span className="text-[#6d6bd3]">Your Account</span>
+        {/* Header */}
+        <motion.h1 className="text-3xl md:text-4xl font-extrabold text-center mb-6">
+          {isLogin ? (
+            'Welcome Back'
+          ) : (
+            <>
+              Create <span className="text-[#6d6bd3]">Your Account</span>
+            </>
+          )}
         </motion.h1>
-
-        <motion.p className="mt-3 text-center text-slate-600 text-base">
-          Sign up to explore careers, build skills, and design your future.
-        </motion.p>
+        <p className="text-center text-slate-600 mb-8">
+          {isLogin
+            ? 'Log in to access your personalized career journey.'
+            : 'Sign up to start your career exploration with AI-powered guidance.'}
+        </p>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-5">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {!isLogin && (
+            <div>
+              <Label htmlFor="name">Full Name</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="Enter your name"
+                className="rounded-xl mt-1"
+              />
+            </div>
+          )}
           <div>
-            <label className="block text-sm font-medium text-slate-600 mb-1">
-              Full Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              required
-              className="w-full rounded-xl border border-slate-300 px-4 py-3 text-base focus:ring-2 focus:ring-[#6d6bd3] focus:outline-none"
-              placeholder="John Anderson"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-600 mb-1">
-              Email
-            </label>
-            <input
+            <Label htmlFor="email">Email Address</Label>
+            <Input
+              id="email"
               type="email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              required
-              className="w-full rounded-xl border border-slate-300 px-4 py-3 text-base focus:ring-2 focus:ring-[#6d6bd3] focus:outline-none"
-              placeholder="you@example.com"
+              placeholder="Enter your email"
+              className="rounded-xl mt-1"
             />
           </div>
-
           <div>
-            <label className="block text-sm font-medium text-slate-600 mb-1">
-              Password
-            </label>
-            <input
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
               type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              required
-              className="w-full rounded-xl border border-slate-300 px-4 py-3 text-base focus:ring-2 focus:ring-[#6d6bd3] focus:outline-none"
-              placeholder="••••••••"
+              placeholder="Enter your password"
+              className="rounded-xl mt-1"
             />
           </div>
 
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
+          <Button
             type="submit"
-            className="w-full bg-[#6d6bd3] text-white rounded-xl py-3 font-semibold text-lg shadow-md hover:shadow-xl transition-all duration-300"
+            className="w-full mt-2 bg-[#6d6bd3] hover:bg-[#5a58c2] text-white rounded-xl py-6 text-lg font-semibold shadow-md"
           >
-            Sign Up
-          </motion.button>
+            {isLogin ? 'Log In' : 'Sign Up'}
+          </Button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-slate-500">
-          Already have an account?{' '}
-          <a href="/login" className="text-[#6d6bd3] font-medium hover:underline">
-            Log In
-          </a>
+        {/* Switch between login / signup */}
+        <p className="text-center text-slate-600 mt-6">
+          {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
+          <button
+            type="button"
+            onClick={() => setIsLogin(!isLogin)}
+            className="text-[#6d6bd3] font-semibold hover:underline"
+          >
+            {isLogin ? 'Sign Up' : 'Log In'}
+          </button>
         </p>
+
+        {/* Optional link to continue without account */}
+        <div className="text-center mt-8">
+          <Link
+            href="/explore-careers"
+            className="text-sm text-slate-500 hover:text-slate-700"
+          >
+            Continue without an account →
+          </Link>
+        </div>
       </motion.div>
     </main>
   );

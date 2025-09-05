@@ -20,7 +20,7 @@ export default function NextStepPage() {
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Link href="/questions">
+          <Link href="/general-account/questions">
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -35,7 +35,7 @@ export default function NextStepPage() {
             </motion.div>
           </Link>
 
-          <Link href="/careers">
+          <Link href="/explore-careers">
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
