@@ -1,0 +1,11 @@
+{
+  "extends": ["next", "prettier"],
+  "plugins": ["prettier"],
+  "rules": {
+    "prettier/prettier": "error",
+    "prefer-const": "error",
+    "no-var": "error",
+    "react/jsx-key": "warn",
+    "react/no-unescaped-entities": "warn"
+  }
+}

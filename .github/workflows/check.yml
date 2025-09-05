@@ -3,7 +3,7 @@ name: Check
 on:
   push:
     branches:
-      - '**'
+      - "**"
 
 jobs:
   format:
@@ -13,21 +13,22 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
 
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'pnpm'
-
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
 
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
       - name: Install dependencies
+        working-directory: ./frontend
         run: pnpm install
 
       - name: Check formatting
+        working-directory: ./frontend
         run: pnpm run format:check
 
   lint:
@@ -37,21 +38,22 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
 
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'pnpm'
-
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
 
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
       - name: Install dependencies
+        working-directory: ./frontend
         run: pnpm install
 
       - name: Run linter
+        working-directory: ./frontend
         run: pnpm run lint
 
   build:
@@ -61,21 +63,22 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
 
-      - name: Set up Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'pnpm'
-
       - name: Install pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
 
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
       - name: Install dependencies
+        working-directory: ./frontend
         run: pnpm install
 
       - name: Run build
+        working-directory: ./frontend
         env:
           PUSHER_APP_ID: ${{ secrets.PUSHER_APP_ID }}
           NEXT_PUBLIC_PUSHER_APP_KEY: ${{ vars.NEXT_PUBLIC_PUSHER_APP_KEY }}

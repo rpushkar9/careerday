@@ -1,0 +1,15 @@
+# Scripts
+__pycache__/
+
+# Virtual environment
+.venv/
+
+# Cursor
+.cursor/
+
+# Intermediate
+raw/
+output/
+
+# Environment
+.env
