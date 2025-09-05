@@ -5,7 +5,13 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useRouter } from 'next/navigation';
 
@@ -20,14 +26,14 @@ export default function CareerQuizPage() {
   });
 
   const handleChange = (field: string, value: string) => {
-    setForm((prev) => ({ ...prev, [field]: value }));
+    setForm(prev => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Quiz Answers:', form);
     // 👉 Route to results or next quiz step
-    router.push('/explore-careers'); 
+    router.push('/explore-careers');
   };
 
   return (
@@ -42,7 +48,8 @@ export default function CareerQuizPage() {
             Tell Us About Yourself
           </CardTitle>
           <p className="text-center text-slate-600 mt-2">
-            Answer a few quick questions so we can recommend the best career paths for you.
+            Answer a few quick questions so we can recommend the best career
+            paths for you.
           </p>
         </CardHeader>
 
@@ -55,7 +62,7 @@ export default function CareerQuizPage() {
                 id="school"
                 placeholder="Enter your school"
                 value={form.school}
-                onChange={(e) => handleChange('school', e.target.value)}
+                onChange={e => handleChange('school', e.target.value)}
               />
             </div>
 
@@ -66,14 +73,14 @@ export default function CareerQuizPage() {
                 id="major"
                 placeholder="Enter your major"
                 value={form.major}
-                onChange={(e) => handleChange('major', e.target.value)}
+                onChange={e => handleChange('major', e.target.value)}
               />
             </div>
 
             {/* Gender */}
             <div>
               <Label>Gender (Optional)</Label>
-              <Select onValueChange={(v) => handleChange('gender', v)}>
+              <Select onValueChange={v => handleChange('gender', v)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select gender" />
                 </SelectTrigger>
@@ -89,7 +96,7 @@ export default function CareerQuizPage() {
             {/* First-Gen */}
             <div>
               <Label>Are you a first-generation college student?</Label>
-              <Select onValueChange={(v) => handleChange('firstGen', v)}>
+              <Select onValueChange={v => handleChange('firstGen', v)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select option" />
                 </SelectTrigger>
@@ -108,7 +115,7 @@ export default function CareerQuizPage() {
                 id="careerInterest"
                 placeholder="e.g. UX Design, Engineering, Healthcare"
                 value={form.careerInterest}
-                onChange={(e) => handleChange('careerInterest', e.target.value)}
+                onChange={e => handleChange('careerInterest', e.target.value)}
               />
             </div>
 
