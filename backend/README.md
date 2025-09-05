@@ -1,6 +1,6 @@
-# CareerMatch Backend
+# CareerDay Backend
 
-This directory contains the migrated Python backend engines from the original CareerMatch project.
+This directory contains the recommendation engine for CareerDay.
 
 ## Structure
 
@@ -32,4 +32,3 @@ pip install -r requirements.txt
 ## Integration
 
 These engines are designed to be called from Next.js API routes to provide career recommendations to the frontend.
-
