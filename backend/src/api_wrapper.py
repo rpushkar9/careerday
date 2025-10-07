@@ -15,7 +15,7 @@ from typing import Dict, List, Any, Optional
 logging.basicConfig(
     level=logging.INFO,
     format='%(levelname)s:%(name)s:%(message)s',
-    stream=sys.stderr  # Redirect all logs to stderr
+    stream=sys.stderr
 )
 
 # Add the engines directory to Python path
@@ -39,7 +39,6 @@ class CareerAPIWrapper:
         """Initialize the API wrapper with all necessary engines"""
         try:
             # Initialize data manager with correct paths
-            # Data files are in ../data relative to src/
             data_dir = Path(__file__).parent.parent / "data"
             from data.data_manager import DataConfig
             config = DataConfig(data_dir=str(data_dir))
@@ -52,18 +51,7 @@ class CareerAPIWrapper:
             self.cip_mapper = CIPMapper(data_dir=str(data_dir))
             
         except Exception as e:
-            # Silent initialization error for production
-            pass
-    
-    def _clean_output(self):
-        """Ensure only JSON goes to stdout, everything else to stderr"""
-        # Redirect any remaining stdout to stderr
-        import io
-        import contextlib
-        
-        # Capture stdout and redirect to stderr
-        with contextlib.redirect_stdout(sys.stderr):
-            pass
+            sys.stderr.write(f"Initialization error: {e}\n")
     
     def get_career_recommendations(
         self, 
@@ -80,110 +68,87 @@ class CareerAPIWrapper:
     ) -> List[Dict[str, Any]]:
         """
         Get top career recommendations based on user input
-        
-        Args:
-            major: User's major/field of study
-            cip_code: CIP code for the major program
-            interests: List of user interests
-            skills: List of user skills
-            university: User's university (optional)
-            top_n: Number of recommendations to return
-            entry_level_education: Maximum education level to include
-            work_experience: Maximum work experience to include
-            education_filter_type: "hierarchy" or "strict" filtering for education
-            experience_filter_type: "hierarchy" or "strict" filtering for experience
-            
-        Returns:
-            List of career recommendation dictionaries
+
+        Safely handles skills and interests as lists to prevent Python list index errors.
         """
         try:
-            # Debug logging
+            # Ensure lists
+            interests = interests or []
+            skills = skills or []
+
             sys.stderr.write(f"get_career_recommendations called with: major={major}, cip_code={cip_code}\n")
-            
-            # If we have a CIP code, use the real recommendation engine
-            if cip_code and cip_code.strip():
-                sys.stderr.write(f"Processing CIP code: {cip_code}\n")
-                
-                # Initialize the recommendation engine
-                if not self.recommendation_engine.initialize():
-                    sys.stderr.write("Recommendation engine initialization failed\n")
-                    raise Exception("Recommendation engine initialization failed")
-                
-                sys.stderr.write("Recommendation engine initialized successfully\n")
-                
-                # Create recommendation request
-                from recommendation_engine import RecommendationRequest
-                request = RecommendationRequest(
-                    cip_code=cip_code,
-                    max_results=top_n,
-                    preferences={
-                        'interests': interests or [],
-                        'skills': skills or [],
-                        'major': major
-                    },
-                    entry_level_education=entry_level_education,
-                    work_experience=work_experience,
-                    education_filter_type=education_filter_type,
-                    experience_filter_type=experience_filter_type
-                )
-                
-                sys.stderr.write(f"Created request: {request}\n")
-                
-                # Get real recommendations
-                response = self.recommendation_engine.get_recommendations(request)
-                sys.stderr.write(f"Got response with {len(response.recommendations)} recommendations\n")
-                
-                # Convert to frontend format
-                recommendations = []
-                for rec in response.recommendations:
-                    # Extract growth percentage from employment data
-                    growth = "N/A"
-                    if rec.get('growth_10yr_pct'):
+            sys.stderr.write(f"Skills: {skills}\nInterests: {interests}\n")
+
+            if not cip_code or not cip_code.strip():
+                raise Exception("CIP code is required for career recommendations")
+
+            # Initialize the recommendation engine
+            if not self.recommendation_engine.initialize():
+                raise Exception("Recommendation engine initialization failed")
+
+            # Create recommendation request
+            from recommendation_engine import RecommendationRequest
+            request = RecommendationRequest(
+                cip_code=cip_code,
+                max_results=top_n,
+                preferences={
+                    'interests': interests,
+                    'skills': skills,
+                    'major': major
+                },
+                entry_level_education=entry_level_education,
+                work_experience=work_experience,
+                education_filter_type=education_filter_type,
+                experience_filter_type=experience_filter_type
+            )
+
+            # Get recommendations
+            response = self.recommendation_engine.get_recommendations(request)
+
+            # Convert to frontend format safely
+            recommendations = []
+            for rec in response.recommendations:
+                # Safely calculate growth
+                growth = "N/A"
+                try:
+                    if rec.get('growth_10yr_pct') is not None:
                         growth = f"{rec['growth_10yr_pct']}%"
                     elif rec.get('employment_2023') and rec.get('employment_2033'):
-                        # Calculate growth if we have employment numbers
-                        try:
-                            emp_2023 = float(rec['employment_2023'])
-                            emp_2033 = float(rec['employment_2033'])
-                            if emp_2023 > 0:
-                                growth_pct = ((emp_2033 - emp_2023) / emp_2023) * 100
-                                growth = f"{growth_pct:.1f}%"
-                        except (ValueError, TypeError):
-                            growth = "N/A"
-                    
-                    # Extract salary from OEWS data
+                        emp_2023 = float(rec['employment_2023'])
+                        emp_2033 = float(rec['employment_2033'])
+                        if emp_2023 > 0:
+                            growth_pct = ((emp_2033 - emp_2023) / emp_2023) * 100
+                            growth = f"{growth_pct:.1f}%"
+                except Exception:
+                    growth = "N/A"
+
+                # Safely extract salary
+                salary = "N/A"
+                try:
+                    if rec.get('median_pay_usd') is not None:
+                        salary = f"${int(rec['median_pay_usd']):,}"
+                except Exception:
                     salary = "N/A"
-                    if rec.get('median_pay_usd'):
-                        try:
-                            salary = f"${int(rec['median_pay_usd']):,}"
-                        except (ValueError, TypeError):
-                            salary = "N/A"
-                    
-                    recommendations.append({
-                        "title": rec['title'],
-                        "description": rec['description'] or f"Career in {rec.get('soc_title', major)}",
-                        "salary": salary,
-                        "growth": growth,
-                        "matchScore": int(rec.get('confidence_score', 85) * 100), # Convert to percentage
-                        "soc_code": rec.get('soc', ''),
-                        "soc_title": rec.get('title', ''),
-                        "cip_code": cip_code
-                    })
-                
-                return recommendations[:top_n]
-            
-            # No CIP code provided - this is an error condition
-            sys.stderr.write("No CIP code provided\n")
-            raise Exception("CIP code is required for career recommendations")
-            
+
+                recommendations.append({
+                    "title": rec.get('title', major),
+                    "description": rec.get('description') or f"Career in {rec.get('soc_title', major)}",
+                    "salary": salary,
+                    "growth": growth,
+                    "matchScore": int(rec.get('confidence_score', 0) * 100),
+                    "soc_code": rec.get('soc', ''),
+                    "soc_title": rec.get('title', ''),
+                    "cip_code": cip_code
+                })
+
+            return recommendations[:top_n]
+
         except Exception as e:
-            # Log the exception details
-            sys.stderr.write(f"Exception in get_career_recommendations: {e}\n")
             import traceback
+            sys.stderr.write(f"Exception in get_career_recommendations: {e}\n")
             sys.stderr.write(f"Traceback: {traceback.format_exc()}\n")
-            # Re-raise the exception to be handled by the caller
             raise
-    
+
     def get_career_details(self, career_title: str) -> Optional[Dict[str, Any]]:
         """Get detailed information about a specific career"""
         try:
@@ -213,13 +178,12 @@ def main():
             skills=["programming", "analytics"]
         )
         
-        # Ensure only JSON goes to stdout
         sys.stdout.write(json.dumps(recommendations, indent=2))
         sys.stdout.flush()
         
         # Test without CIP code (should throw error)
         try:
-            mock_recommendations = wrapper.get_career_recommendations(
+            wrapper.get_career_recommendations(
                 major="Computer Science",
                 interests=["technology", "problem-solving"],
                 skills=["programming", "analytics"]

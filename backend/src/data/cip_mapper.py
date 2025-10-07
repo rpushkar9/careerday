@@ -54,97 +54,98 @@ class CIPMapper:
             proj_file = self.data_dir / "Employment Projections.csv"
             if proj_file.exists():
                 self.projections_data = pd.read_csv(proj_file)
-                # Clean occupation codes
-                self.projections_data['Occupation Code'] = (
-                    self.projections_data['Occupation Code']
-                    .str.replace('="', '')
-                    .str.replace('"', '')
-                    .str.strip()
-                )
+                # Clean the occupation code column
+                if 'Occupation Code' in self.projections_data.columns:
+                    self.projections_data['Occupation Code'] = (
+                        self.projections_data['Occupation Code']
+                        .astype(str)
+                        .str.replace('="', '')
+                        .str.replace('"', '')
+                        .str.strip()
+                    )
                 logger.info(f"Loaded {len(self.projections_data)} employment projections")
+                logger.info(f"Projections columns: {list(self.projections_data.columns)}")
+            else:
+                logger.warning(f"Employment projections file not found: {proj_file}")
             
             # Load OEWS data
             oews_file = self.data_dir / "OEWS2023.csv"
             if oews_file.exists():
-                # Load only key columns for efficiency
-                self.oews_data = pd.read_csv(
-                    oews_file,
-                    usecols=['OCC_CODE', 'A_MEDIAN', 'TOT_EMP'],
-                    dtype={'OCC_CODE': 'string', 'A_MEDIAN': 'string', 'TOT_EMP': 'string'}
-                )
-                # Filter to national data and detailed occupations
+                self.oews_data = pd.read_csv(oews_file, low_memory=False)
+                
+                # Keep only rows with valid occupation codes and wages
                 self.oews_data = self.oews_data[
                     (self.oews_data['OCC_CODE'].notna()) &
                     (self.oews_data['A_MEDIAN'].notna())
                 ]
-                # Convert to numeric
-                self.oews_data['A_MEDIAN'] = pd.to_numeric(self.oews_data['A_MEDIAN'], errors='coerce')
-                self.oews_data['TOT_EMP'] = pd.to_numeric(self.oews_data['TOT_EMP'], errors='coerce')
+                
+                # Convert to numeric, handling '#' and other non-numeric values
+                self.oews_data['A_MEDIAN'] = pd.to_numeric(
+                    self.oews_data['A_MEDIAN'].astype(str).str.replace('#', '').str.replace(',', ''), 
+                    errors='coerce'
+                )
+                self.oews_data['TOT_EMP'] = pd.to_numeric(
+                    self.oews_data['TOT_EMP'].astype(str).str.replace('#', '').str.replace(',', ''), 
+                    errors='coerce'
+                )
+                
+                # Remove rows where wage conversion failed
                 self.oews_data = self.oews_data.dropna(subset=['A_MEDIAN'])
-                logger.info(f"Loaded {len(self.oews_data)} OEWS records")
+                
+                logger.info(f"Loaded {len(self.oews_data)} OEWS records with valid wages")
                 
         except Exception as e:
             logger.warning(f"Failed to load supporting data: {e}")
+            import traceback
+            logger.warning(traceback.format_exc())
     
     def _get_education_hierarchy(self, max_education: str) -> List[str]:
-        """Get education levels up to and including the specified max level"""
         try:
             max_index = ENTRY_LEVEL_EDUCATION.index(max_education)
             return ENTRY_LEVEL_EDUCATION[max_index:]
         except ValueError:
             logger.warning(f"Invalid education level: {max_education}, using default (Bachelor's degree)")
-            return ENTRY_LEVEL_EDUCATION[2:]  # Bachelor's degree and below
+            return ENTRY_LEVEL_EDUCATION[2:]
     
     def _get_experience_hierarchy(self, max_experience: str) -> List[str]:
-        """Get work experience levels up to and including the specified max level"""
         try:
             max_index = WORK_EXPERIENCE_REQUIRED.index(max_experience)
             return WORK_EXPERIENCE_REQUIRED[max_index:]
         except ValueError:
             logger.warning(f"Invalid work experience level: {max_experience}, using default (None)")
-            return WORK_EXPERIENCE_REQUIRED[2:]  # None
+            return WORK_EXPERIENCE_REQUIRED[2:]
     
-    def get_related_occupations(self, cip_code: str, max_results: int = 10, 
+    def get_related_occupations(self, cip_code: str, max_results: int = 3, 
                                entry_level_education: str = "Bachelor's degree",
                                work_experience: str = "None",
                                education_filter_type: str = "hierarchy",
                                experience_filter_type: str = "hierarchy") -> List[Dict]:
-        """Get related SOC occupations for a given CIP code with education and experience filtering
+        """Get related SOC occupations for a given CIP code with filtering"""
         
-        Args:
-            cip_code: The CIP code to search for
-            max_results: Maximum number of results to return
-            entry_level_education: Maximum education level to include
-            work_experience: Maximum work experience to include
-            education_filter_type: "hierarchy" (include all levels up to max) or "strict" (exact match only)
-            experience_filter_type: "hierarchy" (include all levels up to max) or "strict" (exact match only)
-        """
-        if not self.crosswalk_data is not None:
-            raise RuntimeError("Crosswalk data not loaded")
+        if self.crosswalk_data is None or self.crosswalk_data.empty:
+            raise RuntimeError("Crosswalk data not loaded or empty")
         
-        # Validate CIP code
         if not self._is_valid_cip_code(cip_code):
-            available_codes = sorted(list(self.cip_codes))[:10]  # Show first 10 for reference
+            available_codes = sorted(list(self.cip_codes))[:10]
             raise ValueError(
-                f"Invalid CIP code: {cip_code}. "
-                f"Available codes include: {', '.join(available_codes)}..."
+                f"Invalid CIP code: {cip_code}. Available codes include: {', '.join(available_codes)}..."
             )
         
-        # Get mappings for this CIP code (handle both exact and prefix matches)
+        # Get all mappings for this CIP code
         if str(cip_code) in self.cip_codes:
-            # Exact match (e.g., "51.0501")
             mappings = self.crosswalk_data[
                 self.crosswalk_data['CIP2020Code'].astype(str) == cip_code
             ]
         else:
-            # Prefix match (e.g., "5.01" matches "5.0101", "51.05" matches "51.0501", etc.)
             mappings = self.crosswalk_data[
                 self.crosswalk_data['CIP2020Code'].astype(str).str.startswith(cip_code)
             ]
         
         if mappings.empty:
-            logger.warning(f"No occupations found for CIP code {cip_code} (exact or prefix match)")
+            logger.warning(f"No occupations found for CIP code {cip_code}")
             return []
+        
+        logger.info(f"Found {len(mappings)} occupations for CIP {cip_code}")
         
         # Validate filter types
         valid_filter_types = ["hierarchy", "strict"]
@@ -153,22 +154,20 @@ class CIPMapper:
         if experience_filter_type not in valid_filter_types:
             raise ValueError(f"experience_filter_type must be one of {valid_filter_types}")
         
-        # Get filtering levels based on filter type
+        # Determine allowed education and experience levels
         if education_filter_type == "hierarchy":
             allowed_education_levels = self._get_education_hierarchy(entry_level_education)
-        else:  # strict
+        else:
             allowed_education_levels = [entry_level_education]
             
         if experience_filter_type == "hierarchy":
             allowed_experience_levels = self._get_experience_hierarchy(work_experience)
-        else:  # strict
+        else:
             allowed_experience_levels = [work_experience]
         
-        logger.info(f"Education filtering ({education_filter_type}): {allowed_education_levels}")
-        logger.info(f"Experience filtering ({experience_filter_type}): {allowed_experience_levels}")
-        
-        # Convert to list of dictionaries and enrich with additional data
         occupations = []
+        filtered_out = 0
+        
         for _, row in mappings.iterrows():
             soc_code = row['SOC2018Code']
             
@@ -180,25 +179,32 @@ class CIPMapper:
                 'source': 'BLS_Crosswalk'
             }
             
-            # Add employment projections if available
+            # Try to enrich with projection data
+            should_include = True
             if self.projections_data is not None:
                 proj_match = self.projections_data[
                     self.projections_data['Occupation Code'] == soc_code
                 ]
+                
                 if not proj_match.empty:
                     proj_row = proj_match.iloc[0]
-                    
-                    # Get education and experience requirements
                     education_req = proj_row.get('Typical Entry-Level Education')
                     experience_req = proj_row.get('Work Experience in a Related Occupation')
                     
-                    # Apply filtering based on hierarchy
-                    if education_req and education_req not in allowed_education_levels:
-                        continue  # Skip if education requirement doesn't meet criteria
+                    # ONLY filter if we have projection data AND it doesn't match
+                    if pd.notna(education_req) and education_req not in allowed_education_levels:
+                        logger.debug(f"Filtering {soc_code}: education {education_req} not in {allowed_education_levels}")
+                        filtered_out += 1
+                        should_include = False
+                        continue
+                        
+                    if pd.notna(experience_req) and experience_req not in allowed_experience_levels:
+                        logger.debug(f"Filtering {soc_code}: experience {experience_req} not in {allowed_experience_levels}")
+                        filtered_out += 1
+                        should_include = False
+                        continue
                     
-                    if experience_req and experience_req not in allowed_experience_levels:
-                        continue  # Skip if experience requirement doesn't meet criteria
-                    
+                    # Add projection data to occupation
                     occupation.update({
                         'employment_2023': proj_row.get('Employment 2023'),
                         'employment_2033': proj_row.get('Employment 2033'),
@@ -207,95 +213,54 @@ class CIPMapper:
                         'work_experience': experience_req
                     })
                 else:
-                    # If no projections data, still include the occupation but without filtering
-                    # This ensures we don't lose occupations that might not have complete projection data
-                    pass
+                    # No projection data found - INCLUDE the occupation anyway
+                    logger.debug(f"No projection data for {soc_code}, including anyway")
             
-            # Add OEWS wage data if available
+            # Enrich with OEWS wage data
             if self.oews_data is not None:
+                # Try to find matching OEWS data
                 oews_match = self.oews_data[self.oews_data['OCC_CODE'] == soc_code]
+                
                 if not oews_match.empty:
                     oews_row = oews_match.iloc[0]
-                    occupation.update({
-                        'median_wage': oews_row.get('A_MEDIAN'),
-                        'total_employment': oews_row.get('TOT_EMP')
-                    })
+                    median_wage = oews_row.get('A_MEDIAN')
+                    total_emp = oews_row.get('TOT_EMP')
+                    
+                    if pd.notna(median_wage):
+                        occupation['median_wage'] = float(median_wage)
+                    if pd.notna(total_emp):
+                        occupation['total_employment'] = float(total_emp)
+                    
+                    logger.debug(f"Found OEWS data for {soc_code}: wage=${median_wage}, emp={total_emp}")
+                else:
+                    logger.debug(f"No OEWS data found for {soc_code}")
             
-            occupations.append(occupation)
+            if should_include:
+                occupations.append(occupation)
         
-        # Limit results
+        logger.info(f"Returning {len(occupations)} occupations (filtered out {filtered_out})")
+        
         return occupations[:max_results]
     
-    def get_related_occupations_with_filters(self, cip_code: str, max_results: int = 10,
-                                           filters: Dict[str, any] = None) -> List[Dict]:
-        """Get related SOC occupations with flexible filtering options
-        
-        Args:
-            cip_code: The CIP code to search for
-            max_results: Maximum number of results to return
-            filters: Dictionary with filtering options:
-                - entry_level_education: Maximum education level to include
-                - work_experience: Maximum work experience to include
-                - education_filter_type: "hierarchy" or "strict"
-                - experience_filter_type: "hierarchy" or "strict"
-                
-        Example:
-            filters = {
-                "entry_level_education": "Bachelor's degree",
-                "work_experience": "None",
-                "education_filter_type": "strict",      # Only Bachelor's degree
-                "experience_filter_type": "hierarchy"  # None, Less than 5 years, 5+ years
-            }
-        """
-        if filters is None:
-            filters = {}
-        
-        return self.get_related_occupations(
-            cip_code=cip_code,
-            max_results=max_results,
-            entry_level_education=filters.get("entry_level_education", "Bachelor's degree"),
-            work_experience=filters.get("work_experience", "None"),
-            education_filter_type=filters.get("education_filter_type", "hierarchy"),
-            experience_filter_type=filters.get("experience_filter_type", "hierarchy")
-        )
-    
     def _is_valid_cip_code(self, cip_code: str) -> bool:
-        """Check if CIP code exists in our crosswalk data or matches a prefix"""
         if not cip_code:
             return False
         
-        # Debug: Log what we're checking
-        sys.stderr.write(f"Validating CIP code: '{cip_code}' (type: {type(cip_code)})\n")
-        sys.stderr.write(f"Available CIP codes count: {len(self.cip_codes)}\n")
+        sys.stderr.write(f"Validating CIP code: '{cip_code}'\n")
         
-        # Check for exact match first
         if str(cip_code) in self.cip_codes:
-            sys.stderr.write(f"Exact match found: {cip_code}\n")
             return True
         
-        # Check for prefix match (e.g., "5.01" matches "5.0101", "51.05" matches "51.0501", etc.)
         if '.' in cip_code:
-            # Validate format: must be x.xx or xx.xx (1-2 digits before decimal, 2 digits after)
             parts = cip_code.split('.')
-            if len(parts) == 2 and len(parts[0]) in [1, 2] and len(parts[1]) == 2:
+            if len(parts) == 2 and len(parts[0]) in [1,2] and len(parts[1]) == 4:
                 prefix = cip_code
-                # Debug: Log what we're looking for
-                sys.stderr.write(f"Looking for prefix: {prefix}\n")
-                sys.stderr.write(f"Available CIP codes (first 10): {sorted(list(self.cip_codes))[:10]}\n")
-                
-                # Check if any 6-digit codes start with this prefix
                 for full_cip in self.cip_codes:
-                    full_cip_str = str(full_cip)
-                    if full_cip_str.startswith(prefix):
-                        sys.stderr.write(f"Found match: {full_cip_str} starts with {prefix}\n")
+                    if str(full_cip).startswith(prefix):
                         return True
-                
-                sys.stderr.write(f"No prefix matches found for {prefix}\n")
-        
         return False
     
     def get_mapping_statistics(self) -> Dict:
-        """Get statistics about the crosswalk mappings"""
         if self.crosswalk_data is None:
             return {}
         
@@ -311,19 +276,15 @@ class CIPMapper:
         return stats
     
     def get_available_cip_codes(self, search_term: str = None, limit: int = 50) -> List[Dict]:
-        """Get available CIP codes with optional search"""
         if self.crosswalk_data is None:
             return []
         
-        # Get unique CIP codes with their titles
         cip_summary = self.crosswalk_data[['CIP2020Code', 'CIP2020Title']].drop_duplicates()
         
         if search_term:
-            # Filter by search term
             mask = cip_summary['CIP2020Title'].str.contains(search_term, case=False, na=False)
             cip_summary = cip_summary[mask]
         
-        # Limit results and format
         results = []
         for _, row in cip_summary.head(limit).iterrows():
             results.append({
@@ -334,18 +295,14 @@ class CIPMapper:
         return results
     
     def get_cip_info(self, cip_code: str) -> Optional[Dict]:
-        """Get detailed information about a specific CIP code"""
         if not self._is_valid_cip_code(cip_code):
             return None
         
-        # Get first occurrence of this CIP code (handle both exact and prefix matches)
         if str(cip_code) in self.cip_codes:
-            # Exact match
             cip_info = self.crosswalk_data[
                 self.crosswalk_data['CIP2020Code'].astype(str) == cip_code
             ].iloc[0]
         else:
-            # Prefix match - get first matching code
             prefix_matches = self.crosswalk_data[
                 self.crosswalk_data['CIP2020Code'].astype(str).str.startswith(cip_code)
             ]

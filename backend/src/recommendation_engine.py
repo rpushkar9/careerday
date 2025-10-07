@@ -12,6 +12,7 @@ import pandas as pd
 from typing import Dict, List, Optional, Any
 import logging
 from dataclasses import dataclass
+from pathlib import Path
 
 from data.data_manager import DataManager, DataConfig
 from data.cip_mapper import CIPMapper
@@ -50,6 +51,11 @@ class RecommendationEngine:
         self.scoring_engine = None
         self.skills_engine = None
         self._initialized = False
+        
+        # Data enrichment DataFrames
+        self.oews_df = None
+        self.soc_definitions_df = None
+        self.employment_projections_df = None
     
     def initialize(self) -> bool:
         """Initialize the recommendation engine with all components"""
@@ -62,6 +68,9 @@ class RecommendationEngine:
             # Load all data
             if not self.data_manager.load_all_data():
                 raise RuntimeError("Failed to load data")
+            
+            # Load enrichment data
+            self._load_enrichment_data()
             
             # Validate data integrity
             validation_results = self.data_manager.validate_data_integrity()
@@ -85,6 +94,221 @@ class RecommendationEngine:
             logger.error(f"Failed to initialize recommendation engine: {e}")
             return False
     
+    def _load_enrichment_data(self):
+        """Load additional data for enriching recommendations"""
+        try:
+            data_dir = Path(self.data_config.data_dir)
+            
+            # Load OEWS data (wage information)
+            oews_path = data_dir / "OEWS2023.csv"
+            if oews_path.exists():
+                self.oews_df = pd.read_csv(oews_path)
+                logger.info(f"Loaded OEWS data: {len(self.oews_df)} rows")
+                logger.info(f"OEWS columns: {list(self.oews_df.columns)}")
+            else:
+                logger.warning(f"OEWS data not found at {oews_path}")
+            
+            # Load SOC definitions (descriptions)
+            soc_def_path = data_dir / "2018 SOC Definitions.csv"
+            if soc_def_path.exists():
+                self.soc_definitions_df = pd.read_csv(soc_def_path)
+                logger.info(f"Loaded SOC definitions: {len(self.soc_definitions_df)} rows")
+                logger.info(f"SOC definitions columns: {list(self.soc_definitions_df.columns)}")
+            else:
+                logger.warning(f"SOC definitions not found at {soc_def_path}")
+            
+            # Load employment projections (growth data)
+            emp_proj_path = data_dir / "Employment Projections 2023-2033.csv"
+            if emp_proj_path.exists():
+                self.employment_projections_df = pd.read_csv(emp_proj_path)
+                logger.info(f"Loaded employment projections: {len(self.employment_projections_df)} rows")
+            else:
+                logger.warning(f"Employment projections not found at {emp_proj_path}")
+                
+        except Exception as e:
+            logger.error(f"Error loading enrichment data: {e}")
+    
+    def _enrich_occupation(self, occupation: Dict) -> Dict:
+        """Enrich occupation with wage, description, and growth data"""
+        soc_code = occupation.get('soc_code', '')
+        
+        try:
+            # Enrich with OEWS wage data
+            if self.oews_df is not None and soc_code:
+                wage_data = self._get_wage_data(soc_code)
+                if wage_data:
+                    occupation.update(wage_data)
+            
+            # Enrich with SOC description
+            if self.soc_definitions_df is not None and soc_code:
+                description = self._get_soc_description(soc_code)
+                if description:
+                    occupation['description'] = description
+            
+            # Enrich with employment projections
+            if self.employment_projections_df is not None and soc_code:
+                projection_data = self._get_projection_data(soc_code)
+                if projection_data:
+                    occupation.update(projection_data)
+                    
+        except Exception as e:
+            logger.warning(f"Error enriching occupation {soc_code}: {e}")
+        
+        return occupation
+    
+    def _get_wage_data(self, soc_code: str) -> Optional[Dict]:
+        """Extract wage data from OEWS"""
+        try:
+            clean_soc = soc_code.replace('-', '')
+            
+            # Find SOC code column
+            soc_col = None
+            for col in ['OCC_CODE', 'SOC_CODE', 'O*NET-SOC Code', 'SOC']:
+                if col in self.oews_df.columns:
+                    soc_col = col
+                    break
+            
+            if not soc_col:
+                return None
+            
+            # Match the SOC code
+            mask = self.oews_df[soc_col].astype(str).str.replace('-', '') == clean_soc
+            matches = self.oews_df[mask]
+            
+            if len(matches) == 0:
+                return None
+            
+            row = matches.iloc[0]
+            result = {}
+            
+            # Extract annual median wage
+            for wage_col in ['A_MEDIAN', 'H_MEDIAN', 'ANNUAL MEDIAN WAGE', 'Median Annual Wage']:
+                if wage_col in row.index and pd.notna(row[wage_col]):
+                    try:
+                        wage_str = str(row[wage_col]).replace(',', '').replace('$', '').strip()
+                        if wage_str and wage_str != '#':
+                            result['median_wage'] = float(wage_str)
+                            break
+                    except (ValueError, AttributeError):
+                        pass
+            
+            # Extract employment
+            for emp_col in ['TOT_EMP', 'EMPLOYMENT', 'Total Employment']:
+                if emp_col in row.index and pd.notna(row[emp_col]):
+                    try:
+                        emp_str = str(row[emp_col]).replace(',', '').strip()
+                        if emp_str and emp_str != '#':
+                            result['total_employment'] = float(emp_str)
+                            break
+                    except (ValueError, AttributeError):
+                        pass
+            
+            return result if result else None
+            
+        except Exception as e:
+            logger.warning(f"Error getting wage data for {soc_code}: {e}")
+            return None
+    
+    def _get_soc_description(self, soc_code: str) -> Optional[str]:
+        """Extract description from SOC definitions"""
+        try:
+            clean_soc = soc_code.replace('-', '')
+            
+            # Find SOC code column
+            soc_col = None
+            for col in ['SOC Code', 'O*NET-SOC Code', 'SOC_CODE', 'Code']:
+                if col in self.soc_definitions_df.columns:
+                    soc_col = col
+                    break
+            
+            if not soc_col:
+                return None
+            
+            # Match the SOC code
+            mask = self.soc_definitions_df[soc_col].astype(str).str.replace('-', '') == clean_soc
+            matches = self.soc_definitions_df[mask]
+            
+            if len(matches) == 0:
+                return None
+            
+            row = matches.iloc[0]
+            
+            # Find description column
+            for desc_col in ['Definition', 'Description', 'SOC Definition', 'Illustrative Examples']:
+                if desc_col in row.index and pd.notna(row[desc_col]):
+                    return str(row[desc_col]).strip()
+            
+            return None
+            
+        except Exception as e:
+            logger.warning(f"Error getting description for {soc_code}: {e}")
+            return None
+    
+    def _get_projection_data(self, soc_code: str) -> Optional[Dict]:
+        """Extract employment projection data"""
+        try:
+            clean_soc = soc_code.replace('-', '')
+            
+            # Find SOC code column
+            soc_col = None
+            for col in ['SOC', 'SOC_CODE', 'Occupation Code', 'Code']:
+                if col in self.employment_projections_df.columns:
+                    soc_col = col
+                    break
+            
+            if not soc_col:
+                return None
+            
+            # Match the SOC code
+            mask = self.employment_projections_df[soc_col].astype(str).str.replace('-', '') == clean_soc
+            matches = self.employment_projections_df[mask]
+            
+            if len(matches) == 0:
+                return None
+            
+            row = matches.iloc[0]
+            result = {}
+            
+            # Extract 2023 employment
+            for col in ['2023', 'Employment 2023', 'Employment_2023']:
+                if col in row.index and pd.notna(row[col]):
+                    try:
+                        result['employment_2023'] = float(str(row[col]).replace(',', ''))
+                        break
+                    except (ValueError, AttributeError):
+                        pass
+            
+            # Extract 2033 employment
+            for col in ['2033', 'Employment 2033', 'Employment_2033']:
+                if col in row.index and pd.notna(row[col]):
+                    try:
+                        result['employment_2033'] = float(str(row[col]).replace(',', ''))
+                        break
+                    except (ValueError, AttributeError):
+                        pass
+            
+            # Calculate growth percentage if we have both years
+            if 'employment_2023' in result and 'employment_2033' in result:
+                if result['employment_2023'] > 0:
+                    growth = ((result['employment_2033'] - result['employment_2023']) / result['employment_2023']) * 100
+                    result['growth_pct'] = round(growth, 1)
+            
+            # Check for pre-calculated growth percentage
+            for col in ['Change, percent', 'Growth %', 'Percent Change']:
+                if col in row.index and pd.notna(row[col]):
+                    try:
+                        growth_str = str(row[col]).replace('%', '').replace(',', '').strip()
+                        result['growth_pct'] = float(growth_str)
+                        break
+                    except (ValueError, AttributeError):
+                        pass
+            
+            return result if result else None
+            
+        except Exception as e:
+            logger.warning(f"Error getting projection data for {soc_code}: {e}")
+            return None
+    
     def get_recommendations(self, request: RecommendationRequest) -> RecommendationResponse:
         """Generate career recommendations for a given CIP code"""
         if not self._initialized:
@@ -97,10 +321,10 @@ class RecommendationEngine:
             if not self._is_valid_cip_code(request.cip_code):
                 raise ValueError(f"Invalid CIP code: {request.cip_code}")
             
-            # Get related occupations
+            # Get related occupations - Request MORE to ensure we get enough after filtering
             occupations = self.cip_mapper.get_related_occupations(
                 request.cip_code, 
-                max_results=request.max_results * 2,  # Get more for diversification
+                max_results=request.max_results * 5,  # Get 5x more for better filtering
                 entry_level_education=request.entry_level_education,
                 work_experience=request.work_experience,
                 education_filter_type=request.education_filter_type,
@@ -111,6 +335,14 @@ class RecommendationEngine:
                 logger.warning(f"No occupations found for CIP code: {request.cip_code}")
                 return self._create_empty_response(request)
             
+            logger.info(f"Found {len(occupations)} occupations before enrichment")
+            
+            # ENRICH each occupation with wage/description/growth data
+            enriched_occupations = []
+            for occ in occupations:
+                enriched_occ = self._enrich_occupation(occ)
+                enriched_occupations.append(enriched_occ)
+            
             # Extract skills for CIP code if skills engine is available
             if self.skills_engine:
                 cip_info = self.cip_mapper.get_cip_info(request.cip_code)
@@ -120,7 +352,7 @@ class RecommendationEngine:
                     extracted_skills = self.skills_engine.extract_skills_from_text(cip_text, max_skills=20)
                     
                     # Add skills to each occupation for context
-                    for occupation in occupations:
+                    for occupation in enriched_occupations:
                         occupation['cip_skills'] = [skill.name for skill in extracted_skills]
             
             # Apply scoring preferences if provided
@@ -129,9 +361,11 @@ class RecommendationEngine:
             
             # Score and rank occupations
             ranked_occupations = self.scoring_engine.rank_occupations(
-                occupations, 
+                enriched_occupations, 
                 top_n=request.max_results
             )
+            
+            logger.info(f"Ranked {len(ranked_occupations)} occupations")
             
             # Format recommendations
             formatted_recommendations = self._format_recommendations(ranked_occupations)
@@ -148,6 +382,8 @@ class RecommendationEngine:
             
         except Exception as e:
             logger.error(f"Error generating recommendations: {e}")
+            import traceback
+            logger.error(traceback.format_exc())
             raise
     
     def _is_valid_cip_code(self, cip_code: str) -> bool:
@@ -183,10 +419,16 @@ class RecommendationEngine:
         formatted = []
         
         for occupation in occupations:
+            # Use the enriched description if available
+            description = occupation.get('description')
+            if not description or description.startswith("Occupation mapped from"):
+                # Fallback to generic description
+                description = f"Career opportunity in {occupation.get('soc_title', 'this field')}"
+            
             formatted_occ = {
                 'soc': occupation['soc_code'],
                 'title': occupation['soc_title'],
-                'description': f"Occupation mapped from {occupation.get('cip_title', 'CIP code')}",
+                'description': description,
                 'skills_overlap': round(occupation.get('skill_score', 0), 3),
                 'median_pay_usd': occupation.get('median_wage'),
                 'growth_10yr_pct': occupation.get('growth_pct'),
@@ -338,6 +580,11 @@ class RecommendationEngine:
             'data_summary': self.data_manager.get_data_summary() if self.data_manager else None,
             'mapping_stats': self.cip_mapper.get_mapping_statistics() if self.cip_mapper else None,
             'skills_engine_available': self.skills_engine is not None,
+            'enrichment_data_loaded': {
+                'oews': self.oews_df is not None,
+                'soc_definitions': self.soc_definitions_df is not None,
+                'employment_projections': self.employment_projections_df is not None
+            },
             'skills_config': {
                 'api_available': self.skills_engine._api_available if self.skills_engine else False,
                 'fallback_enabled': self.skills_config.fallback_to_local if self.skills_config else False

@@ -21,6 +21,7 @@ export default function ProfileSetupPage() {
   const [form, setForm] = useState({
     school: '',
     major: '',
+    cipCode: '',
     year: '',
     gender: '',
     firstGen: '',
@@ -32,6 +33,18 @@ export default function ProfileSetupPage() {
 
   const handleChange = (field: string, value: string) => {
     setForm(prev => ({ ...prev, [field]: value }));
+    console.log('Profile updated:', { ...form, [field]: value });
+  };
+
+  const handleMajorChange = (value: string) => {
+    // Value format: "Major Name|CIP_CODE"
+    const [majorName, cipCode] = value.split('|');
+    setForm(prev => ({ 
+      ...prev, 
+      major: majorName,
+      cipCode: cipCode 
+    }));
+    console.log('Major selected:', majorName, 'CIP:', cipCode);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -49,29 +62,59 @@ export default function ProfileSetupPage() {
 
       const user = JSON.parse(userStr);
 
-      // Send profile data to backend
-      const res = await fetch('http://localhost:5001/api/users/profile', {
-        method: 'PUT',
+      // Parse skills from textarea to array
+      const skillsArray = form.skills
+        .split(',')
+        .map(s => s.trim())
+        .filter(s => s);
+
+      // Prepare data for your FastAPI backend
+      const profileData = {
+        email: user.email || user.id + '@cuny.edu',
+        school: form.school,
+        major: form.major,
+        cip_code: form.cipCode,
+        year: form.year,
+        gender: form.gender || null,
+        first_generation_student: form.firstGen === 'yes' ? true : form.firstGen === 'no' ? false : null,
+        passions: form.interests,
+        skills: skillsArray,
+        career_goals: form.careerGoals,
+      };
+
+      console.log('Sending to backend:', profileData);
+
+      // Call your FastAPI backend
+      const res = await fetch('http://localhost:8000/api/student-profile', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: user.id,
-          ...form,
-        }),
+        body: JSON.stringify(profileData),
       });
 
       const data = await res.json();
 
-      if (!res.ok) throw new Error(data.message);
+      if (!res.ok) {
+        throw new Error(data.detail || 'Failed to get career recommendations');
+      }
 
-      console.log('Profile updated:', data);
+      console.log('Career recommendations:', data);
+
+      // Store recommendations in localStorage
+      localStorage.setItem('careerRecommendations', JSON.stringify(data.top_3_careers));
       
-      // Update user in localStorage
-      localStorage.setItem('user', JSON.stringify(data.user));
+      // Update user profile in localStorage
+      const updatedUser = {
+        ...user,
+        profile: profileData,
+      };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
 
       // Redirect to career matches
       router.push('/career-matches');
+      
     } catch (err: any) {
-      alert(err.message || 'Failed to save profile');
+      console.error('Error:', err);
+      alert(err.message || 'Failed to get career recommendations');
     } finally {
       setLoading(false);
     }
@@ -128,16 +171,37 @@ export default function ProfileSetupPage() {
               </Select>
             </div>
 
-            {/* Major */}
+            {/* Major with CIP Code */}
             <div>
-              <Label htmlFor="major">Major/Field of Study</Label>
-              <Input
-                id="major"
-                placeholder="e.g., Computer Science"
-                value={form.major}
-                onChange={e => handleChange('major', e.target.value)}
-                required
-              />
+              <Label>Major/Field of Study</Label>
+              <Select onValueChange={handleMajorChange} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select your major" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Computer Science|11.0701">Computer Science</SelectItem>
+                  <SelectItem value="Business Administration|52.0201">Business Administration</SelectItem>
+                  <SelectItem value="Nursing|51.3801">Nursing</SelectItem>
+                  <SelectItem value="Psychology|42.0101">Psychology</SelectItem>
+                  <SelectItem value="Accounting|52.0301">Accounting</SelectItem>
+                  <SelectItem value="Biology|26.0101">Biology</SelectItem>
+                  <SelectItem value="Criminal Justice|43.0104">Criminal Justice</SelectItem>
+                  <SelectItem value="Education|13.0101">Education</SelectItem>
+                  <SelectItem value="English|23.0101">English</SelectItem>
+                  <SelectItem value="Finance|52.0801">Finance</SelectItem>
+                  <SelectItem value="Marketing|52.1401">Marketing</SelectItem>
+                  <SelectItem value="Mathematics|27.0101">Mathematics</SelectItem>
+                  <SelectItem value="Engineering|14.0101">Engineering</SelectItem>
+                  <SelectItem value="Social Work|44.0701">Social Work</SelectItem>
+                  <SelectItem value="Communication|09.0101">Communication</SelectItem>
+                  <SelectItem value="Art/Design|50.0401">Art/Design</SelectItem>
+                  <SelectItem value="Political Science|45.1001">Political Science</SelectItem>
+                  <SelectItem value="Economics|45.0601">Economics</SelectItem>
+                </SelectContent>
+              </Select>
+              {form.cipCode && (
+                <p className="text-xs text-gray-500 mt-1">CIP Code: {form.cipCode}</p>
+              )}
             </div>
 
             {/* Year */}
@@ -148,12 +212,12 @@ export default function ProfileSetupPage() {
                   <SelectValue placeholder="Select your year" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="freshman">Freshman</SelectItem>
-                  <SelectItem value="sophomore">Sophomore</SelectItem>
-                  <SelectItem value="junior">Junior</SelectItem>
-                  <SelectItem value="senior">Senior</SelectItem>
-                  <SelectItem value="graduate">Graduate Student</SelectItem>
-                  <SelectItem value="recent-grad">Recent Graduate</SelectItem>
+                  <SelectItem value="Freshman">Freshman</SelectItem>
+                  <SelectItem value="Sophomore">Sophomore</SelectItem>
+                  <SelectItem value="Junior">Junior</SelectItem>
+                  <SelectItem value="Senior">Senior</SelectItem>
+                  <SelectItem value="Graduate Student">Graduate Student</SelectItem>
+                  <SelectItem value="Recent Graduate">Recent Graduate</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -166,10 +230,10 @@ export default function ProfileSetupPage() {
                   <SelectValue placeholder="Select gender" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="female">Female</SelectItem>
-                  <SelectItem value="male">Male</SelectItem>
-                  <SelectItem value="nonbinary">Non-binary</SelectItem>
-                  <SelectItem value="preferNot">Prefer not to say</SelectItem>
+                  <SelectItem value="Female">Female</SelectItem>
+                  <SelectItem value="Male">Male</SelectItem>
+                  <SelectItem value="Non-binary">Non-binary</SelectItem>
+                  <SelectItem value="Prefer not to say">Prefer not to say</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -204,15 +268,16 @@ export default function ProfileSetupPage() {
 
             {/* Skills */}
             <div>
-              <Label htmlFor="skills">What are your top skills?</Label>
+              <Label htmlFor="skills">What are your top skills? (comma separated)</Label>
               <Textarea
                 id="skills"
-                placeholder="e.g., Coding, communication, design, leadership, research..."
+                placeholder="e.g., Python, Communication, Leadership, Data Analysis, Problem Solving"
                 value={form.skills}
                 onChange={e => handleChange('skills', e.target.value)}
                 required
                 rows={3}
               />
+              <p className="text-xs text-gray-500 mt-1">Separate each skill with a comma</p>
             </div>
 
             {/* Career Goals */}
@@ -233,7 +298,7 @@ export default function ProfileSetupPage() {
               disabled={loading}
               className="w-full mt-6 bg-[#6d6bd3] hover:bg-[#5a58b8] text-white rounded-xl py-6 text-lg font-semibold shadow-md disabled:opacity-50"
             >
-              {loading ? 'Saving...' : 'Find My Career Matches'}
+              {loading ? 'Getting Your Career Matches...' : 'Find My Career Matches 🎯'}
             </Button>
           </form>
         </CardContent>

@@ -1,390 +1,322 @@
+#!/usr/bin/env python3
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
 from typing import List, Optional
-import json
-import sys
 import os
+import sys
 from pathlib import Path
 
-# Set up proper Python path for Railway
+# Add src directory to Python path
 script_dir = Path(__file__).parent.absolute()
-current_dir = Path.cwd()
-
-print(f"Script directory: {script_dir}")
-print(f"Current working directory: {current_dir}")
-
-backend_dir = script_dir
-src_dir = backend_dir / "src"
-engines_dir = src_dir / "engines"
-data_dir = backend_dir / "data"
-
-# Add all necessary directories to Python path
-sys.path.insert(0, str(backend_dir))
+src_dir = script_dir / "src"
 sys.path.insert(0, str(src_dir))
-sys.path.insert(0, str(engines_dir))
-sys.path.insert(0, str(data_dir))
-
-os.environ['DATA_DIR'] = str(data_dir)
-
-print(f"Backend directory: {backend_dir}")
-print(f"Source directory: {src_dir}")
-print(f"Data directory: {data_dir}")
 
 try:
     from api_wrapper import CareerAPIWrapper
-    print("✓ Successfully imported CareerAPIWrapper")
-except ImportError as e:
-    print(f"❌ Import error: {e}")
-    raise
-
-# Try to import Lightcast integration (optional)
-lightcast_available = False
-try:
-    from lightcast_engine import LightcastCareerEnhancer
-    lightcast_available = True
-    print("✓ Lightcast integration available")
-except ImportError as e:
-    print("⚠️  Lightcast integration not available (optional)")
-    print(f"   To enable: 1) Add lightcast_engine.py to /src/ 2) Set LIGHTCAST credentials")
+    wrapper = CareerAPIWrapper()
+    sys.stderr.write("✓ CareerAPIWrapper initialized successfully\n")
+except Exception as e:
+    sys.stderr.write(f"✗ Failed to initialize CareerAPIWrapper: {e}\n")
+    wrapper = None
 
 app = FastAPI(
     title="CUNY CareerDay API",
     version="2.0.0",
-    description="Career recommendations with optional Lightcast enhancement"
+    description="Career recommendations with CareerAPIWrapper integration"
 )
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, restrict to your frontend domain
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"]
 )
 
-
-class CareerRequest(BaseModel):
-    """Career recommendation request model"""
-    major: Optional[str] = ""
-    cip_code: Optional[str] = ""
-    interests: Optional[List[str]] = []
-    skills: Optional[List[str]] = []
-    university: Optional[str] = ""
-    top_n: Optional[int] = 3
-    
-    # Existing filtering options
-    entry_level_education: Optional[str] = "Bachelor's degree"
-    work_experience: Optional[str] = "None"
-    education_filter_type: Optional[str] = "hierarchy"
-    experience_filter_type: Optional[str] = "hierarchy"
-    
-    # NEW: Lightcast enhancement
-    use_lightcast: Optional[bool] = False
-
-    @validator("education_filter_type", "experience_filter_type")
-    def validate_filter_types(cls, v):
-        if v not in ["hierarchy", "strict"]:
-            raise ValueError("Filter type must be 'hierarchy' or 'strict'")
-        return v
-
-
 class StudentProfile(BaseModel):
-    """Complete CUNY student profile"""
     email: str
-    school: str  # e.g., "Baruch College"
+    school: str
     major: str
     cip_code: Optional[str] = ""
-    year: str  # Freshman, Sophomore, Junior, Senior, Graduate, Recent Graduate
+    year: str
     gender: Optional[str] = None
     first_generation_student: Optional[bool] = None
-    passions: str  # What are you passionate about?
-    skills: List[str]  # Top skills
-    career_goals: str  # Career goals
-
+    passions: str
+    skills: List[str]
+    career_goals: str
 
 @app.get("/")
 async def root():
-    """API root endpoint"""
-    return {
-        "message": "CUNY CareerDay API",
-        "version": "2.0.0",
-        "status": "running",
-        "features": {
-            "base_recommendations": True,
-            "lightcast_enhancement": lightcast_available,
-            "student_profiles": True
-        },
-        "endpoints": {
-            "recommendations": "/api/career-recommendations",
-            "profile": "/api/student-profile",
-            "lightcast_only": "/api/lightcast-recommendations",
-            "health": "/health",
-            "docs": "/docs"
-        }
-    }
+    return {"message": "CUNY CareerDay API", "status": "running"}
 
-
-@app.get("/health")
-async def health_check():
-    """Health check endpoint"""
-    return {
-        "status": "healthy",
-        "lightcast_enabled": lightcast_available,
-        "timestamp": str(Path(__file__).stat().st_mtime)
-    }
-
-
-@app.get("/debug")
-async def debug_info():
-    """Debug endpoint for troubleshooting"""
-    return {
-        "status": "running",
-        "environment": {
-            "PORT": os.environ.get("PORT", "Not set"),
-            "RAILWAY_ENV": os.environ.get("RAILWAY_ENVIRONMENT", "Not set"),
-            "LIGHTCAST_ID": "Set" if os.environ.get("LIGHTCAST_CLIENT_ID") else "Not set",
-            "LIGHTCAST_SECRET": "Set" if os.environ.get("LIGHTCAST_CLIENT_SECRET") else "Not set",
-        },
-        "paths": {
-            "backend_dir": str(backend_dir),
-            "src_dir": str(src_dir),
-            "data_dir": str(data_dir),
-        },
-        "files": {
-            "backend_files": [f.name for f in backend_dir.glob("*.py")],
-            "src_files": [f.name for f in src_dir.glob("*.py")] if src_dir.exists() else [],
-            "data_files": [f.name for f in data_dir.glob("*")] if data_dir.exists() else [],
-        },
-        "features": {
-            "lightcast_available": lightcast_available
-        }
-    }
-
-
-@app.post("/api/career-recommendations")
-async def get_career_recommendations(request: CareerRequest):
-    """
-    Get top 3 career recommendations based on major, skills, and interests.
+@app.get("/api/debug/cip/{cip_code}")
+async def debug_cip_code(cip_code: str):
+    """Debug endpoint to check what careers exist for a CIP code"""
+    if not wrapper:
+        raise HTTPException(status_code=500, detail="CareerAPIWrapper not initialized")
     
-    **Parameters:**
-    - **major**: Student's major (e.g., "Computer Science")
-    - **cip_code**: CIP code for the major (e.g., "11.0701")
-    - **skills**: List of student skills
-    - **interests**: List of interests/passions
-    - **top_n**: Number of recommendations (default: 3)
-    - **use_lightcast**: Enhance with real-time job market data (default: false)
-    
-    **Lightcast Enhancement:**
-    When `use_lightcast=true`, each recommendation includes:
-    - Real-time job postings count
-    - Median salary data
-    - Job growth projections
-    - Required skills breakdown
-    - Typical education/experience requirements
-    
-    **Example:**
-    ```json
-    {
-      "major": "Computer Science",
-      "cip_code": "11.0701",
-      "skills": ["Python", "Data Analysis", "SQL"],
-      "interests": ["Technology", "Problem Solving"],
-      "use_lightcast": true,
-      "top_n": 3
-    }
-    ```
-    """
     try:
-        # Get base recommendations from your existing system
-        wrapper = CareerAPIWrapper()
-        recommendations = wrapper.get_career_recommendations(
-            major=request.major,
-            cip_code=request.cip_code,
-            interests=request.interests,
-            skills=request.skills,
-            university=request.university,
-            top_n=request.top_n,
-            entry_level_education=request.entry_level_education,
-            work_experience=request.work_experience,
-            education_filter_type=request.education_filter_type,
-            experience_filter_type=request.experience_filter_type
-        )
+        sys.stderr.write(f"\n=== DEBUG CIP CODE: {cip_code} ===\n")
         
-        # Enhance with Lightcast if requested
-        if request.use_lightcast:
-            if not lightcast_available:
-                recommendations["lightcast_status"] = "unavailable"
-                recommendations["note"] = "Lightcast not configured. Set LIGHTCAST_CLIENT_ID and LIGHTCAST_CLIENT_SECRET."
-            else:
-                try:
-                    enhancer = LightcastCareerEnhancer()
-                    careers = recommendations.get("careers", [])
-                    
-                    if careers:
-                        enhanced_careers = enhancer.enrich_recommendations(careers)
-                        recommendations["careers"] = enhanced_careers
-                        recommendations["lightcast_enhanced"] = True
-                        recommendations["lightcast_status"] = "success"
-                    
-                except Exception as e:
-                    print(f"⚠️  Lightcast enhancement failed: {e}")
-                    recommendations["lightcast_status"] = "error"
-                    recommendations["lightcast_error"] = str(e)
+        # Check if wrapper has cip_mapper
+        if hasattr(wrapper, 'cip_mapper'):
+            # Get related occupations for this CIP
+            occupations = wrapper.cip_mapper.get_related_occupations(
+                cip_code=cip_code,
+                max_results=50,  # Get up to 50 to see how many exist
+                education_filter_type="hierarchy",
+                experience_filter_type="hierarchy"
+            )
+            
+            sys.stderr.write(f"Found {len(occupations)} occupations for CIP {cip_code}\n")
+            
+            # Log first few
+            for i, occ in enumerate(occupations[:10]):
+                sys.stderr.write(f"  {i+1}. {occ.get('soc_title')} ({occ.get('soc_code')})\n")
+                sys.stderr.write(f"      Education: {occ.get('education_level', 'N/A')}\n")
+                sys.stderr.write(f"      Experience: {occ.get('work_experience', 'N/A')}\n")
+            
+            return {
+                "cip_code": cip_code,
+                "total_occupations_found": len(occupations),
+                "sample_occupations": [
+                    {
+                        "soc_code": occ.get('soc_code'),
+                        "title": occ.get('soc_title'),
+                        "education": occ.get('education_level', 'N/A'),
+                        "experience": occ.get('work_experience', 'N/A'),
+                        "median_wage": occ.get('median_wage', 'N/A'),
+                        "employment_2023": occ.get('employment_2023', 'N/A')
+                    }
+                    for occ in occupations[:10]
+                ]
+            }
         else:
-            recommendations["lightcast_enhanced"] = False
-        
-        return recommendations
-        
+            return {"error": "CIP mapper not available"}
+            
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        import traceback
+        sys.stderr.write(f"Error in debug endpoint: {e}\n")
+        sys.stderr.write(traceback.format_exc())
+        return {"error": str(e), "traceback": traceback.format_exc()}
 
-
-@app.post("/api/lightcast-recommendations")
-async def get_lightcast_recommendations(request: CareerRequest):
-    """
-    Get career recommendations ONLY from Lightcast (bypasses your base system).
-    Useful for comparing Lightcast results with your existing engine.
-    
-    **Requires:** Lightcast API credentials
-    
-    **Example:**
-    ```json
-    {
-      "skills": ["Python", "Machine Learning", "Data Analysis"],
-      "interests": ["Healthcare", "Technology"],
-      "top_n": 3
-    }
-    ```
-    """
-    if not lightcast_available:
-        raise HTTPException(
-            status_code=503,
-            detail="Lightcast not available. Set LIGHTCAST_CLIENT_ID and LIGHTCAST_CLIENT_SECRET environment variables."
-        )
-    
-    try:
-        enhancer = LightcastCareerEnhancer()
-        
-        careers = enhancer.get_skills_based_careers(
-            skills=request.skills,
-            interests=request.interests,
-            top_n=request.top_n
-        )
-        
-        return {
-            "success": True,
-            "source": "lightcast_only",
-            "count": len(careers),
-            "careers": careers,
-            "note": "These recommendations are generated purely from Lightcast skill matching"
-        }
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/api/student-profile")
 async def create_student_profile(profile: StudentProfile):
     """
-    Save a complete CUNY student profile and get top 3 career recommendations.
-    
-    This endpoint:
-    1. Saves the student profile (ready for database integration)
-    2. Generates personalized career recommendations
-    3. Optionally enhances with Lightcast data
-    
-    **Example:**
-    ```json
-    {
-      "email": "john.doe@baruch.cuny.edu",
-      "school": "Baruch College",
-      "major": "Computer Science",
-      "cip_code": "11.0701",
-      "year": "Junior",
-      "gender": "Male",
-      "first_generation_student": false,
-      "passions": "I love solving complex problems and building things with code",
-      "skills": ["Python", "JavaScript", "SQL", "Git", "Problem Solving"],
-      "career_goals": "I want to work as a software engineer at a tech company"
-    }
-    ```
+    Create student profile and generate top 3 career recommendations.
     """
+    if not wrapper:
+        raise HTTPException(status_code=500, detail="CareerAPIWrapper not initialized")
+
     try:
-        # TODO: Save profile to database
-        # conn = get_db_connection()
-        # cursor.execute("INSERT INTO student_profiles ...")
-        
-        # Generate recommendations
-        career_request = CareerRequest(
+        # Log incoming request
+        sys.stderr.write(f"\n{'='*60}\n")
+        sys.stderr.write(f"📋 Student Profile Request\n")
+        sys.stderr.write(f"{'='*60}\n")
+        sys.stderr.write(f"School: {profile.school}\n")
+        sys.stderr.write(f"Major: {profile.major}\n")
+        sys.stderr.write(f"CIP Code: {profile.cip_code}\n")
+        sys.stderr.write(f"Skills: {profile.skills}\n")
+        sys.stderr.write(f"Passions: {profile.passions}\n")
+        sys.stderr.write(f"{'='*60}\n\n")
+
+        # Validate CIP code
+        if not profile.cip_code or not profile.cip_code.strip():
+            sys.stderr.write("⚠️  WARNING: No CIP code provided\n")
+            raise HTTPException(
+                status_code=400, 
+                detail="CIP code is required. Please provide a valid CIP code for the major."
+            )
+
+        # Use passions as a single interest
+        interests = [profile.passions] if profile.passions else []
+
+        # Get career recommendations with higher top_n to see if more exist
+        sys.stderr.write(f"🔍 Calling recommendation engine with top_n=10 (to debug)...\n")
+        recommendations = wrapper.get_career_recommendations(
             major=profile.major,
             cip_code=profile.cip_code,
-            interests=[profile.passions],
+            interests=interests,
             skills=profile.skills,
-            top_n=3,
-            use_lightcast=lightcast_available  # Auto-enable if available
+            top_n=10  # Request 10 to see how many are actually available
         )
+
+        sys.stderr.write(f"✓ Got {len(recommendations)} recommendations total\n")
         
-        recommendations = await get_career_recommendations(career_request)
+        # Log all recommendations for debugging
+        for i, rec in enumerate(recommendations):
+            sys.stderr.write(f"  {i+1}. {rec.get('title')} - Score: {rec.get('matchScore', 0)}\n")
         
+        # Take top 3
+        top_3 = recommendations[:3]
+        
+        # Log if we got fewer than 3
+        if len(top_3) < 3:
+            sys.stderr.write(f"⚠️  WARNING: Only {len(top_3)} recommendations available!\n")
+            sys.stderr.write(f"   - CIP code: {profile.cip_code}\n")
+            sys.stderr.write(f"   - Major: {profile.major}\n")
+            sys.stderr.write(f"   - This suggests limited career data for this CIP code\n")
+
         return {
             "success": True,
-            "message": "Profile created successfully",
             "student": {
                 "email": profile.email,
                 "school": profile.school,
                 "major": profile.major,
                 "year": profile.year
             },
-            "top_3_careers": recommendations.get("careers", [])[:3],
-            "full_recommendations": recommendations
+            "top_3_careers": top_3,
+            "debug": {
+                "cip_code_used": profile.cip_code,
+                "total_found": len(recommendations),
+                "returned": len(top_3)
+            }
         }
-        
+
+    except HTTPException:
+        raise
     except Exception as e:
+        import traceback
+        sys.stderr.write(f"\n❌ ERROR in create_student_profile\n")
+        sys.stderr.write(f"{'='*60}\n")
+        sys.stderr.write(f"Error: {e}\n")
+        sys.stderr.write(f"{'='*60}\n")
+        sys.stderr.write(f"Full traceback:\n{traceback.format_exc()}\n")
+        sys.stderr.write(f"{'='*60}\n\n")
         raise HTTPException(status_code=500, detail=str(e))
-
-
-@app.get("/api/test-lightcast")
-async def test_lightcast_connection():
-    """
-    Test Lightcast API connection and functionality.
-    Use this to verify your credentials are working.
-    """
-    if not lightcast_available:
-        return {
-            "available": False,
-            "message": "Lightcast integration not installed",
-            "instructions": [
-                "1. Add lightcast_engine.py to /src/ directory",
-                "2. Set LIGHTCAST_CLIENT_ID environment variable",
-                "3. Set LIGHTCAST_CLIENT_SECRET environment variable",
-                "4. Restart the application"
-            ]
-        }
-    
-    try:
-        from lightcast_engine import test_lightcast
-        
-        # Run test
-        success = test_lightcast()
-        
-        return {
-            "available": True,
-            "test_result": "passed" if success else "failed",
-            "message": "Lightcast is working correctly" if success else "Lightcast test failed"
-        }
-        
-    except Exception as e:
-        return {
-            "available": True,
-            "test_result": "failed",
-            "error": str(e)
-        }
-
 
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))
-    print(f"\n🚀 Starting CUNY CareerDay API on port {port}")
-    print(f"📍 Lightcast: {'✓ Enabled' if lightcast_available else '✗ Disabled'}")
-    print(f"📚 Docs: http://localhost:{port}/docs\n")
+    sys.stderr.write(f"\n🚀 Starting server on port {port}...\n\n")
     uvicorn.run(app, host="0.0.0.0", port=port)
+
+
+    """
+ADD THESE LINES TO YOUR EXISTING main.py
+Don't replace your file - just add these parts!
+"""
+
+# ==============================================================================
+# 1. ADD THESE IMPORTS AT THE TOP (after your existing imports)
+# ==============================================================================
+
+# Add these to your import section
+from src.roadmap_generator import (
+    RoadmapGenerator, 
+    StudentProfile, 
+    CareerGoal,
+    UniversityResources
+)
+from src.university_scraper import UniversityResourceFetcher
+
+# ==============================================================================
+# 2. ADD THIS ENDPOINT (after your existing endpoints)
+# ==============================================================================
+
+@app.post("/api/generate-roadmap")
+async def generate_roadmap(request: dict):
+    """
+    Generate a personalized 4-year career roadmap using AI.
+    
+    Request body:
+    {
+        "name": "Student Name",
+        "email": "student@cuny.edu",
+        "school": "Queens College",
+        "major": "Computer Science",
+        "year": "Sophomore",
+        "skills": ["Python", "JavaScript"],
+        "interests": "AI and machine learning",
+        "career_goals": "Become a software engineer",
+        "career_title": "Software Developers",
+        "soc_code": "15-1252",
+        "career_description": "Design and develop software",
+        "salary": "$120,730",
+        "growth": "25%"
+    }
+    """
+    try:
+        sys.stderr.write(f"\n{'='*60}\n")
+        sys.stderr.write(f"🗺️  Roadmap Generation Request\n")
+        sys.stderr.write(f"{'='*60}\n")
+        sys.stderr.write(f"School: {request.get('school')}\n")
+        sys.stderr.write(f"Major: {request.get('major')}\n")
+        sys.stderr.write(f"Career: {request.get('career_title')}\n")
+        sys.stderr.write(f"{'='*60}\n\n")
+        
+        # Create student profile
+        student = StudentProfile(
+            name=request.get('name', 'Student'),
+            email=request.get('email'),
+            school=request.get('school'),
+            major=request.get('major'),
+            year=request.get('year'),
+            skills=request.get('skills', []),
+            interests=request.get('interests', ''),
+            career_goals=request.get('career_goals', '')
+        )
+        
+        # Create career goal
+        career = CareerGoal(
+            title=request.get('career_title'),
+            soc_code=request.get('soc_code', ''),
+            description=request.get('career_description', ''),
+            salary=request.get('salary', 'N/A'),
+            growth=request.get('growth', 'N/A')
+        )
+        
+        # Get university resources
+        sys.stderr.write(f"📚 Fetching resources for {student.school}...\n")
+        resource_fetcher = UniversityResourceFetcher()
+        resources_dict = resource_fetcher.get_resources(student.school)
+        
+        # Convert dict to UniversityResources dataclass
+        university_resources = UniversityResources(
+            career_services_url=resources_dict.get('career_services_url', ''),
+            cs_department_url=resources_dict.get('cs_department_url', ''),
+            clubs=resources_dict.get('clubs', []),
+            internship_programs=resources_dict.get('internship_programs', []),
+            writing_center_url=resources_dict.get('writing_center_url', ''),
+            student_life_url=resources_dict.get('student_life_url', '')
+        )
+        
+        # Generate roadmap using AI
+        sys.stderr.write(f"🤖 Generating AI roadmap...\n")
+        generator = RoadmapGenerator()
+        roadmap = generator.generate_roadmap(student, career, university_resources)
+        
+        sys.stderr.write(f"✓ Roadmap generated successfully!\n\n")
+        
+        return {
+            "success": True,
+            "roadmap": roadmap,
+            "student": {
+                "name": student.name,
+                "school": student.school,
+                "major": student.major,
+                "year": student.year
+            },
+            "career": {
+                "title": career.title,
+                "salary": career.salary,
+                "growth": career.growth
+            }
+        }
+        
+    except Exception as e:
+        import traceback
+        sys.stderr.write(f"\n❌ ERROR in generate_roadmap\n")
+        sys.stderr.write(f"{'='*60}\n")
+        sys.stderr.write(f"Error: {e}\n")
+        sys.stderr.write(f"{'='*60}\n")
+        sys.stderr.write(f"Full traceback:\n{traceback.format_exc()}\n")
+        sys.stderr.write(f"{'='*60}\n\n")
+        raise HTTPException(status_code=500, detail=str(e))
+
+# ==============================================================================
+# 3. THAT'S IT! Your existing code stays the same
+# ==============================================================================
