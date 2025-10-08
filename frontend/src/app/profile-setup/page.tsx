@@ -85,7 +85,7 @@ export default function ProfileSetupPage() {
       console.log('Sending to backend:', profileData);
 
       // Call your FastAPI backend
-      const res = await fetch('http://localhost:8000/api/student-profile', {
+      const res = await fetch('http://localhost:5001/api/student-profile', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(profileData),

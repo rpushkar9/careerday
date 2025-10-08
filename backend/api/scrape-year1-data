@@ -1,0 +1,33 @@
+@app.post("/api/scrape-year1-data")
+from year1_scraper import Year1CourseScraper
+
+async def scrape_year1_data(request: dict):
+    """
+    Scrape Year 1 course data from university websites
+    """
+    try:
+        sys.stderr.write(f"\n{'='*60}\n")
+        sys.stderr.write(f"📚 Year 1 Data Request (Live Scraping)\n")
+        sys.stderr.write(f"{'='*60}\n")
+        sys.stderr.write(f"University: {request.get('university')}\n")
+        sys.stderr.write(f"Major: {request.get('major')}\n")
+        sys.stderr.write(f"{'='*60}\n\n")
+        
+        # Import the scraper
+        from year1_scraper import Year1CourseScraper
+        
+        scraper = Year1CourseScraper()
+        year1_data = scraper.scrape_year1_courses(
+            university=request.get('university'),
+            major=request.get('major')
+        )
+        
+        sys.stderr.write(f"✓ Year 1 data scraped successfully\n\n")
+        
+        return year1_data
+        
+    except Exception as e:
+        import traceback
+        sys.stderr.write(f"\n❌ ERROR: {e}\n")
+        sys.stderr.write(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
