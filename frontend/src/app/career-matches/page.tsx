@@ -73,6 +73,29 @@ export default function CareerMatchesPage() {
     }
   };
 
+  const handleGenerateRoadmap = (career: CareerMatch) => {
+    const userStr = localStorage.getItem('user');
+    const user = userStr ? JSON.parse(userStr) : {};
+    const profile = user.profile || {};
+    
+    const params = new URLSearchParams({
+      name: user.name || 'Student',
+      email: user.email || '',
+      school: profile.school || 'CUNY',
+      major: profile.major || userMajor,
+      year: profile.year || 'Sophomore',
+      skills: (profile.skills || []).join(','),
+      interests: profile.passions || profile.interests || '',
+      career_goals: profile.career_goals || `Become a ${career.title}`,
+      career_title: career.title,
+      soc_code: career.soc_code,
+      career_description: career.description,
+      salary: career.salary,
+      growth: career.growth,
+    });
+    router.push(`/roadmap?${params.toString()}`);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-slate-50">
@@ -198,10 +221,18 @@ export default function CareerMatchesPage() {
                   </div>
 
                   <div className="pt-4 border-t border-slate-200">
-                    <div className="flex items-center justify-between text-xs text-slate-400">
+                    <div className="flex items-center justify-between text-xs text-slate-400 mb-4">
                       <span>SOC Code: {career.soc_code}</span>
                       <span>CIP Code: {career.cip_code}</span>
                     </div>
+                    
+                    {/* NEW: Generate Roadmap Button */}
+                    <Button
+                      onClick={() => handleGenerateRoadmap(career)}
+                      className="w-full bg-[#6d6bd3] hover:bg-[#5a58b8] text-white py-6 text-lg"
+                    >
+                      🗺️ Generate Career Roadmap
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
