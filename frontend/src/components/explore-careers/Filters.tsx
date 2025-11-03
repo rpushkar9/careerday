@@ -28,7 +28,7 @@ export default function Filters({ onFilterChange }: FiltersProps) {
     onFilterChange({
       educationLevel,
       minSalary,
-      industry
+      industry,
     });
   };
 
@@ -39,7 +39,7 @@ export default function Filters({ onFilterChange }: FiltersProps) {
     setTimeout(() => {
       let minSalary = null;
       const currentSalary = value.includes('$') ? value : salaryRange;
-      
+
       if (currentSalary === '$40-60k') minSalary = 40;
       else if (currentSalary === '$60-80k') minSalary = 60;
       else if (currentSalary === '$80-100k') minSalary = 80;
@@ -48,7 +48,7 @@ export default function Filters({ onFilterChange }: FiltersProps) {
       onFilterChange({
         educationLevel: setter === setEducationLevel ? value : educationLevel,
         minSalary,
-        industry: setter === setIndustry ? value : industry
+        industry: setter === setIndustry ? value : industry,
       });
     }, 0);
   };
@@ -60,10 +60,10 @@ export default function Filters({ onFilterChange }: FiltersProps) {
       {/* Industry */}
       <div>
         <label className="block font-medium mb-2 text-gray-700">Industry</label>
-        <select 
+        <select
           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#6d6bd3] transition"
           value={industry}
-          onChange={(e) => handleChange(setIndustry, e.target.value)}
+          onChange={e => handleChange(setIndustry, e.target.value)}
         >
           <option value="">All Industries</option>
           <option value="finance">Finance</option>
@@ -77,11 +77,13 @@ export default function Filters({ onFilterChange }: FiltersProps) {
 
       {/* Salary */}
       <div>
-        <label className="block font-medium mb-2 text-gray-700">Salary Range</label>
-        <select 
+        <label className="block font-medium mb-2 text-gray-700">
+          Salary Range
+        </label>
+        <select
           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#6d6bd3] transition"
           value={salaryRange}
-          onChange={(e) => handleChange(setSalaryRange, e.target.value)}
+          onChange={e => handleChange(setSalaryRange, e.target.value)}
         >
           <option value="">All Salaries</option>
           <option value="$40-60k">$40k - $60k</option>
@@ -93,18 +95,22 @@ export default function Filters({ onFilterChange }: FiltersProps) {
 
       {/* Education */}
       <div>
-        <label className="block font-medium mb-2 text-gray-700">Education Level</label>
-        <select 
+        <label className="block font-medium mb-2 text-gray-700">
+          Education Level
+        </label>
+        <select
           className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#6d6bd3] transition"
           value={educationLevel}
-          onChange={(e) => handleChange(setEducationLevel, e.target.value)}
+          onChange={e => handleChange(setEducationLevel, e.target.value)}
         >
           <option value="">All Education Levels</option>
           <option value="High school diploma or equivalent">High School</option>
           <option value="Associate's degree">Associate's Degree</option>
           <option value="Bachelor's degree">Bachelor's Degree</option>
           <option value="Master's degree">Master's Degree</option>
-          <option value="Doctoral or professional degree">PhD/Professional</option>
+          <option value="Doctoral or professional degree">
+            PhD/Professional
+          </option>
         </select>
       </div>
 
@@ -117,7 +123,7 @@ export default function Filters({ onFilterChange }: FiltersProps) {
           onFilterChange({
             educationLevel: '',
             minSalary: null,
-            industry: ''
+            industry: '',
           });
         }}
         className="w-full mt-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition font-medium"

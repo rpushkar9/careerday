@@ -55,7 +55,6 @@
 //   );
 // }
 
-
 'use client';
 
 import { Button } from '@/components/ui/button';
@@ -79,14 +78,20 @@ export default function CareerCard({
   education,
   soc_code,
   growth,
-  employment
+  employment,
 }: CareerCardProps) {
   const handleLearnMore = () => {
     // Open O*NET page
     if (soc_code) {
-      window.open(`https://www.onetonline.org/link/summary/${soc_code}`, '_blank');
+      window.open(
+        `https://www.onetonline.org/link/summary/${soc_code}`,
+        '_blank'
+      );
     } else {
-      window.open(`https://www.onetonline.org/find/quick?s=${encodeURIComponent(title)}`, '_blank');
+      window.open(
+        `https://www.onetonline.org/find/quick?s=${encodeURIComponent(title)}`,
+        '_blank'
+      );
     }
   };
 
@@ -110,21 +115,23 @@ export default function CareerCard({
           <span className="font-semibold text-gray-800">Majors:</span>{' '}
           {majors.join(', ')}
         </p>
-        
+
         {/* Additional Info */}
         <div className="flex gap-4 text-sm text-gray-600 mt-3">
           {growth && growth !== 'N/A' && (
             <div>
-              <span className="font-semibold">Growth:</span> {formatGrowth(growth)}
+              <span className="font-semibold">Growth:</span>{' '}
+              {formatGrowth(growth)}
             </div>
           )}
           {employment && employment !== 'N/A' && (
             <div>
-              <span className="font-semibold">Jobs (2023):</span> {employment.toLocaleString()}
+              <span className="font-semibold">Jobs (2023):</span>{' '}
+              {employment.toLocaleString()}
             </div>
           )}
         </div>
-        
+
         {soc_code && (
           <p className="text-xs text-gray-400 mt-2">SOC Code: {soc_code}</p>
         )}
@@ -137,11 +144,13 @@ export default function CareerCard({
       >
         <div>
           <p className="text-sm text-gray-600">Median Yearly Income</p>
-          <p className="text-lg font-bold text-gray-900">{formatIncome(income)}</p>
+          <p className="text-lg font-bold text-gray-900">
+            {formatIncome(income)}
+          </p>
           <p className="text-sm text-gray-600 mt-3">Most Common Education</p>
           <p className="font-bold text-gray-900 text-sm">{education}</p>
         </div>
-        
+
         <Button
           onClick={handleLearnMore}
           className="mt-4 w-full font-medium text-white rounded-full shadow-sm transition"

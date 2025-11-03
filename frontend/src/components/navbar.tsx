@@ -41,10 +41,16 @@ export default function Navbar() {
 
             {/* Navigation Links */}
             <div className="hidden md:flex space-x-8">
-              <Link href="/explore-careers" className="text-[#6d6bd3] hover:text-[#5a57c1] font-medium">
+              <Link
+                href="/explore-careers"
+                className="text-[#6d6bd3] hover:text-[#5a57c1] font-medium"
+              >
                 Explore Careers
               </Link>
-              <Link href="/testimonials" className="text-[#6d6bd3] hover:text-[#5a57c1] font-medium">
+              <Link
+                href="/testimonials"
+                className="text-[#6d6bd3] hover:text-[#5a57c1] font-medium"
+              >
                 Success Stories
               </Link>
             </div>
@@ -69,15 +75,24 @@ export default function Navbar() {
                       <p className="font-medium text-gray-800">{user.name}</p>
                       <p className="text-sm text-gray-500">{user.email}</p>
                     </div>
-                    <Link href="/account-settings" className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50">
+                    <Link
+                      href="/account-settings"
+                      className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50"
+                    >
                       <i className="fas fa-user-cog w-5 text-gray-400"></i>
                       <span className="ml-3">Account Settings</span>
                     </Link>
-                    <Link href="/dashboard" className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50">
+                    <Link
+                      href="/dashboard"
+                      className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50"
+                    >
                       <i className="fas fa-chart-line w-5 text-gray-400"></i>
                       <span className="ml-3">My Progress</span>
                     </Link>
-                    <Link href="/saved-paths" className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50">
+                    <Link
+                      href="/saved-paths"
+                      className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50"
+                    >
                       <i className="fas fa-bookmark w-5 text-gray-400"></i>
                       <span className="ml-3">Saved Paths</span>
                     </Link>

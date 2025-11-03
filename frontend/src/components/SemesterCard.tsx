@@ -45,11 +45,16 @@ export default function SemesterCard({
         className="w-full flex items-center justify-between p-6 bg-gradient-to-r from-gray-50 to-gray-100 hover:from-gray-100 hover:to-gray-200 transition-colors"
       >
         <div className="flex items-center gap-4 text-left">
-          <div className={`w-3 h-16 rounded-full bg-gradient-to-b ${config.color}`} />
+          <div
+            className={`w-3 h-16 rounded-full bg-gradient-to-b ${config.color}`}
+          />
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-1">{config.name}</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-1">
+              {config.name}
+            </h2>
             <p className="text-gray-600">
-              {courses.length} courses • {totalCredits} credits • ${tuition.toLocaleString()}
+              {courses.length} courses • {totalCredits} credits • $
+              {tuition.toLocaleString()}
             </p>
           </div>
         </div>
@@ -69,7 +74,9 @@ export default function SemesterCard({
           >
             {/* Courses Section */}
             <div className="mb-8">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">Courses</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                Courses
+              </h3>
               {courses.length > 0 ? (
                 <ul className="grid md:grid-cols-2 gap-4">
                   {courses.map((course, idx) => (
@@ -80,9 +87,13 @@ export default function SemesterCard({
                       <p className="font-bold text-gray-900">
                         {course.code} — {course.name}
                       </p>
-                      <p className="text-gray-600 text-sm">{course.credits} credits</p>
+                      <p className="text-gray-600 text-sm">
+                        {course.credits} credits
+                      </p>
                       {course.description && (
-                        <p className="text-gray-500 text-sm mt-1">{course.description}</p>
+                        <p className="text-gray-500 text-sm mt-1">
+                          {course.description}
+                        </p>
                       )}
                     </li>
                   ))}
@@ -95,7 +106,9 @@ export default function SemesterCard({
             {/* Opportunities Section */}
             <div className="grid md:grid-cols-2 gap-8">
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">Opportunities</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  Opportunities
+                </h3>
                 {opportunities.length > 0 ? (
                   <ul className="list-disc list-inside text-gray-700 space-y-1">
                     {opportunities.map((item, idx) => (
@@ -103,12 +116,16 @@ export default function SemesterCard({
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-gray-500 italic">No opportunities listed.</p>
+                  <p className="text-gray-500 italic">
+                    No opportunities listed.
+                  </p>
                 )}
               </div>
 
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">Volunteer Work</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  Volunteer Work
+                </h3>
                 {volunteerWork.length > 0 ? (
                   <ul className="list-disc list-inside text-gray-700 space-y-1">
                     {volunteerWork.map((item, idx) => (
@@ -116,7 +133,9 @@ export default function SemesterCard({
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-gray-500 italic">No volunteer work added.</p>
+                  <p className="text-gray-500 italic">
+                    No volunteer work added.
+                  </p>
                 )}
               </div>
             </div>
@@ -124,7 +143,9 @@ export default function SemesterCard({
             {/* Internships / Projects Section */}
             <div className="grid md:grid-cols-2 gap-8 mt-8">
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">Internships</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  Internships
+                </h3>
                 {internships.length > 0 ? (
                   <ul className="list-disc list-inside text-gray-700 space-y-1">
                     {internships.map((item, idx) => (
@@ -137,7 +158,9 @@ export default function SemesterCard({
               </div>
 
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-3">Projects</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  Projects
+                </h3>
                 {projects.length > 0 ? (
                   <ul className="list-disc list-inside text-gray-700 space-y-1">
                     {projects.map((item, idx) => (

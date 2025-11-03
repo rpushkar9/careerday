@@ -6,34 +6,37 @@ export default function NextSteps() {
   const steps = [
     {
       title: 'Register for Classes',
-      description: 'Use your university portal to enroll in the courses listed above',
-      status: 'upcoming'
+      description:
+        'Use your university portal to enroll in the courses listed above',
+      status: 'upcoming',
     },
     {
       title: 'Attend Orientation',
-      description: 'Learn about campus resources, meet fellow students, and get oriented',
-      status: 'upcoming'
+      description:
+        'Learn about campus resources, meet fellow students, and get oriented',
+      status: 'upcoming',
     },
     {
       title: 'Connect with Advisor',
       description: 'Schedule a meeting to review your plan and ask questions',
-      status: 'upcoming'
+      status: 'upcoming',
     },
     {
       title: 'Join Student Organizations',
       description: 'Explore clubs related to your major and interests',
-      status: 'upcoming'
+      status: 'upcoming',
     },
     {
       title: 'Set Up Study Space',
       description: 'Create an organized environment for focused learning',
-      status: 'upcoming'
+      status: 'upcoming',
     },
     {
       title: 'Review Financial Aid',
-      description: 'Ensure all paperwork is complete and understand your aid package',
-      status: 'upcoming'
-    }
+      description:
+        'Ensure all paperwork is complete and understand your aid package',
+      status: 'upcoming',
+    },
   ];
 
   return (
@@ -64,7 +67,9 @@ export default function NextSteps() {
           >
             <div className="flex-shrink-0 mt-1">
               <div className="w-8 h-8 rounded-full bg-[#6d6bd3]/10 border-2 border-[#6d6bd3] flex items-center justify-center">
-                <span className="text-[#6d6bd3] font-bold text-sm">{idx + 1}</span>
+                <span className="text-[#6d6bd3] font-bold text-sm">
+                  {idx + 1}
+                </span>
               </div>
             </div>
             <div className="flex-1">

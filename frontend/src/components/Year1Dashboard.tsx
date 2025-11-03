@@ -3,14 +3,14 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Calendar, 
-  BookOpen, 
-  Target, 
+import {
+  Calendar,
+  BookOpen,
+  Target,
   Download,
   GraduationCap,
   DollarSign,
-  Home
+  Home,
 } from 'lucide-react';
 import SemesterCard from './SemesterCard';
 import StatCard from './StatCard';
@@ -58,14 +58,16 @@ interface Year1DashboardProps {
   onViewFullRoadmap?: () => void;
 }
 
-export default function Year1Dashboard({ 
-  data, 
-  studentName, 
+export default function Year1Dashboard({
+  data,
+  studentName,
   careerTitle,
   onBack,
-  onViewFullRoadmap 
+  onViewFullRoadmap,
 }: Year1DashboardProps) {
-  const [expandedSemester, setExpandedSemester] = useState<'fall' | 'spring' | ''>('fall');
+  const [expandedSemester, setExpandedSemester] = useState<
+    'fall' | 'spring' | ''
+  >('fall');
 
   const handleExport = () => {
     const dataStr = JSON.stringify(data, null, 2);
@@ -96,14 +98,16 @@ export default function Year1Dashboard({
                 ← Back to Roadmap
               </button>
             )}
-            
+
             <div className="flex items-center gap-4 mb-4">
               <div className="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
                 <GraduationCap className="w-10 h-10" />
               </div>
               <div>
                 <h1 className="text-5xl font-bold mb-2">Year 1 Dashboard</h1>
-                <p className="text-white/90 text-xl">Your First Year at {data.university}</p>
+                <p className="text-white/90 text-xl">
+                  Your First Year at {data.university}
+                </p>
               </div>
             </div>
 
@@ -171,8 +175,12 @@ export default function Year1Dashboard({
             <div className="flex items-center gap-3">
               <Target className="w-6 h-6 text-[#6d6bd3]" />
               <div>
-                <h3 className="text-lg font-bold text-gray-900">Your Year 1 Journey</h3>
-                <p className="text-gray-600 text-sm">Track your progress and stay on course</p>
+                <h3 className="text-lg font-bold text-gray-900">
+                  Your Year 1 Journey
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  Track your progress and stay on course
+                </p>
               </div>
             </div>
             <div className="flex gap-3">
@@ -199,14 +207,18 @@ export default function Year1Dashboard({
             semester="fall"
             data={data.fall}
             isExpanded={expandedSemester === 'fall'}
-            onToggle={() => setExpandedSemester(expandedSemester === 'fall' ? '' : 'fall')}
+            onToggle={() =>
+              setExpandedSemester(expandedSemester === 'fall' ? '' : 'fall')
+            }
           />
-          
+
           <SemesterCard
             semester="spring"
             data={data.spring}
             isExpanded={expandedSemester === 'spring'}
-            onToggle={() => setExpandedSemester(expandedSemester === 'spring' ? '' : 'spring')}
+            onToggle={() =>
+              setExpandedSemester(expandedSemester === 'spring' ? '' : 'spring')
+            }
           />
         </div>
 
@@ -228,7 +240,8 @@ export default function Year1Dashboard({
               🎓 <strong>Ready to start your journey, {studentName}?</strong>
             </p>
             <p className="text-gray-600 mb-6">
-              This personalized plan is designed to help you succeed at {data.university}
+              This personalized plan is designed to help you succeed at{' '}
+              {data.university}
             </p>
             <div className="flex gap-4 justify-center flex-wrap">
               {onViewFullRoadmap && (
@@ -241,7 +254,7 @@ export default function Year1Dashboard({
                 </button>
               )}
               <button
-                onClick={() => window.location.href = '/'}
+                onClick={() => (window.location.href = '/')}
                 className="flex items-center gap-2 px-6 py-3 bg-white text-gray-700 rounded-xl hover:bg-gray-50 transition-all shadow-md hover:shadow-lg border border-gray-200"
               >
                 Start Over

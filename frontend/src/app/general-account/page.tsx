@@ -37,21 +37,39 @@ export default function GeneralAccountPage() {
           {!isLogin && (
             <div>
               <Label htmlFor="name">Full Name</Label>
-              <Input id="name" type="text" placeholder="Enter your name" required />
+              <Input
+                id="name"
+                type="text"
+                placeholder="Enter your name"
+                required
+              />
             </div>
           )}
 
           <div>
             <Label htmlFor="email">Email Address</Label>
-            <Input id="email" type="email" placeholder="Enter your email" required />
+            <Input
+              id="email"
+              type="email"
+              placeholder="Enter your email"
+              required
+            />
           </div>
 
           <div>
             <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" placeholder="Enter your password" required />
+            <Input
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              required
+            />
           </div>
 
-          <Button type="submit" className="w-full bg-[#6d6bd3] text-white py-3 rounded-xl">
+          <Button
+            type="submit"
+            className="w-full bg-[#6d6bd3] text-white py-3 rounded-xl"
+          >
             {isLogin ? 'Log In' : 'Sign Up'}
           </Button>
         </form>

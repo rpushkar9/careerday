@@ -7,39 +7,45 @@ export default function SuccessTips() {
     {
       icon: Clock,
       title: 'Time Management',
-      description: 'Use a planner to track assignments and create a study schedule that works for you.',
-      color: '#f59e0b'
+      description:
+        'Use a planner to track assignments and create a study schedule that works for you.',
+      color: '#f59e0b',
     },
     {
       icon: Users,
       title: 'Build Connections',
-      description: 'Join study groups, attend office hours, and connect with peers in your major.',
-      color: '#10b981'
+      description:
+        'Join study groups, attend office hours, and connect with peers in your major.',
+      color: '#10b981',
     },
     {
       icon: Target,
       title: 'Set Goals',
-      description: 'Break down big objectives into smaller, achievable milestones each semester.',
-      color: '#6d6bd3'
+      description:
+        'Break down big objectives into smaller, achievable milestones each semester.',
+      color: '#6d6bd3',
     },
     {
       icon: BookOpen,
       title: 'Stay Organized',
-      description: 'Keep track of syllabi, notes, and resources using digital or physical organization systems.',
-      color: '#06b6d4'
+      description:
+        'Keep track of syllabi, notes, and resources using digital or physical organization systems.',
+      color: '#06b6d4',
     },
     {
       icon: Star,
       title: 'Seek Help Early',
-      description: "Don't wait until you're struggling - utilize tutoring, academic support, and professor office hours.",
-      color: '#ec4899'
+      description:
+        "Don't wait until you're struggling - utilize tutoring, academic support, and professor office hours.",
+      color: '#ec4899',
     },
     {
       icon: Lightbulb,
       title: 'Balance is Key',
-      description: 'Make time for self-care, hobbies, and social activities alongside your studies.',
-      color: '#8b5cf6'
-    }
+      description:
+        'Make time for self-care, hobbies, and social activities alongside your studies.',
+      color: '#8b5cf6',
+    },
   ];
 
   return (

@@ -42,7 +42,7 @@ export default function CareerDatabasePage() {
     educationLevel: '',
     minSalary: null,
     industry: '',
-    major: ''
+    major: '',
   });
 
   const ITEMS_PER_PAGE = 20;
@@ -56,20 +56,20 @@ export default function CareerDatabasePage() {
       setCareers([]);
       setOffset(0);
     }
-    
+
     setError(null);
-    
+
     try {
       const currentOffset = append ? offset : 0;
       const params = new URLSearchParams({
         limit: ITEMS_PER_PAGE.toString(),
-        offset: currentOffset.toString()
+        offset: currentOffset.toString(),
       });
-      
+
       if (filters.educationLevel) {
         params.append('education_level', filters.educationLevel);
       }
-      
+
       if (filters.minSalary) {
         params.append('min_salary', filters.minSalary.toString());
       }
@@ -81,17 +81,18 @@ export default function CareerDatabasePage() {
       }
 
       const data = await response.json();
-      
-      const transformedCareers: Career[] = data.careers?.map((career: any) => ({
-        title: career.title || 'Unknown Title',
-        description: career.description || 'No description available',
-        majors: career.related_majors || ['General'],
-        income: career.median_wage || 'N/A',
-        education: career.education_level || "Bachelor's degree",
-        soc_code: career.soc_code || '',
-        growth: career.employment_growth || 'N/A',
-        employment: career.employment_2023 || 'N/A',
-      })) || [];
+
+      const transformedCareers: Career[] =
+        data.careers?.map((career: any) => ({
+          title: career.title || 'Unknown Title',
+          description: career.description || 'No description available',
+          majors: career.related_majors || ['General'],
+          income: career.median_wage || 'N/A',
+          education: career.education_level || "Bachelor's degree",
+          soc_code: career.soc_code || '',
+          growth: career.employment_growth || 'N/A',
+          employment: career.employment_2023 || 'N/A',
+        })) || [];
 
       if (append) {
         setCareers(prev => [...prev, ...transformedCareers]);
@@ -100,13 +101,16 @@ export default function CareerDatabasePage() {
         setCareers(transformedCareers);
         setOffset(ITEMS_PER_PAGE);
       }
-      
+
       setHasMore(data.has_more || false);
       setTotalCount(data.filtered_count || 0);
-      
-      console.log(`✓ Loaded ${transformedCareers.length} careers (total: ${data.filtered_count})`);
+
+      console.log(
+        `✓ Loaded ${transformedCareers.length} careers (total: ${data.filtered_count})`
+      );
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Unknown error occurred';
       setError(errorMessage);
       console.error('❌ Error fetching careers:', err);
     } finally {
@@ -131,31 +135,106 @@ export default function CareerDatabasePage() {
 
   // Industry keyword mappings for better matching
   const industryKeywords: { [key: string]: string[] } = {
-    finance: ['financial', 'accountant', 'banking', 'investment', 'economist', 'actuary', 'budget', 'credit', 'loan', 'insurance', 'auditor'],
-    healthcare: ['health', 'medical', 'nurse', 'doctor', 'physician', 'therapist', 'clinical', 'hospital', 'patient', 'pharmaceutical', 'dental', 'surgeon'],
-    technology: ['software', 'computer', 'developer', 'programmer', 'data', 'IT', 'tech', 'engineer', 'analyst', 'web', 'cyber', 'network', 'database'],
-    education: ['teacher', 'professor', 'instructor', 'education', 'school', 'academic', 'tutor', 'educator', 'curriculum', 'principal'],
-    engineering: ['engineer', 'mechanical', 'civil', 'electrical', 'chemical', 'architect', 'construction', 'design', 'manufacturing'],
-    business: ['business', 'manager', 'management', 'marketing', 'sales', 'executive', 'consultant', 'entrepreneur', 'operations', 'human resources', 'hr']
+    finance: [
+      'financial',
+      'accountant',
+      'banking',
+      'investment',
+      'economist',
+      'actuary',
+      'budget',
+      'credit',
+      'loan',
+      'insurance',
+      'auditor',
+    ],
+    healthcare: [
+      'health',
+      'medical',
+      'nurse',
+      'doctor',
+      'physician',
+      'therapist',
+      'clinical',
+      'hospital',
+      'patient',
+      'pharmaceutical',
+      'dental',
+      'surgeon',
+    ],
+    technology: [
+      'software',
+      'computer',
+      'developer',
+      'programmer',
+      'data',
+      'IT',
+      'tech',
+      'engineer',
+      'analyst',
+      'web',
+      'cyber',
+      'network',
+      'database',
+    ],
+    education: [
+      'teacher',
+      'professor',
+      'instructor',
+      'education',
+      'school',
+      'academic',
+      'tutor',
+      'educator',
+      'curriculum',
+      'principal',
+    ],
+    engineering: [
+      'engineer',
+      'mechanical',
+      'civil',
+      'electrical',
+      'chemical',
+      'architect',
+      'construction',
+      'design',
+      'manufacturing',
+    ],
+    business: [
+      'business',
+      'manager',
+      'management',
+      'marketing',
+      'sales',
+      'executive',
+      'consultant',
+      'entrepreneur',
+      'operations',
+      'human resources',
+      'hr',
+    ],
   };
 
   // Client-side filtering for search, industry, and major
   const filteredCareers = careers.filter(c => {
-    const matchesSearch = 
+    const matchesSearch =
       c.title.toLowerCase().includes(search.toLowerCase()) ||
       c.description.toLowerCase().includes(search.toLowerCase()) ||
       c.majors.some(m => m.toLowerCase().includes(search.toLowerCase()));
-    
+
     // Improved industry matching
-    const matchesIndustry = !filters.industry || (() => {
-      const careerText = `${c.title} ${c.description}`.toLowerCase();
-      const keywords = industryKeywords[filters.industry] || [];
-      return keywords.some(keyword => careerText.includes(keyword));
-    })();
-    
-    const matchesMajor = !filters.major ||
+    const matchesIndustry =
+      !filters.industry ||
+      (() => {
+        const careerText = `${c.title} ${c.description}`.toLowerCase();
+        const keywords = industryKeywords[filters.industry] || [];
+        return keywords.some(keyword => careerText.includes(keyword));
+      })();
+
+    const matchesMajor =
+      !filters.major ||
       c.majors.some(m => m.toLowerCase().includes(filters.major.toLowerCase()));
-    
+
     return matchesSearch && matchesIndustry && matchesMajor;
   });
 
@@ -221,16 +300,23 @@ export default function CareerDatabasePage() {
             </div>
           ) : filteredCareers.length === 0 ? (
             <div className="bg-slate-50 rounded-2xl p-12 text-center">
-              <p className="text-slate-600 text-lg">No careers match your filters</p>
-              <p className="text-slate-500 text-sm mt-2">Try adjusting your search or filters</p>
+              <p className="text-slate-600 text-lg">
+                No careers match your filters
+              </p>
+              <p className="text-slate-500 text-sm mt-2">
+                Try adjusting your search or filters
+              </p>
             </div>
           ) : (
             <>
               {/* Career Count */}
               <div className="flex justify-between items-center text-sm text-slate-600 mb-2">
                 <span>
-                  Showing <span className="font-semibold">{filteredCareers.length}</span> of{' '}
-                  <span className="font-semibold">{totalCount}</span> careers
+                  Showing{' '}
+                  <span className="font-semibold">
+                    {filteredCareers.length}
+                  </span>{' '}
+                  of <span className="font-semibold">{totalCount}</span> careers
                 </span>
               </div>
 

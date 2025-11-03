@@ -39,10 +39,10 @@ export default function ProfileSetupPage() {
   const handleMajorChange = (value: string) => {
     // Value format: "Major Name|CIP_CODE"
     const [majorName, cipCode] = value.split('|');
-    setForm(prev => ({ 
-      ...prev, 
+    setForm(prev => ({
+      ...prev,
       major: majorName,
-      cipCode: cipCode 
+      cipCode: cipCode,
     }));
     console.log('Major selected:', majorName, 'CIP:', cipCode);
   };
@@ -76,7 +76,12 @@ export default function ProfileSetupPage() {
         cip_code: form.cipCode,
         year: form.year,
         gender: form.gender || null,
-        first_generation_student: form.firstGen === 'yes' ? true : form.firstGen === 'no' ? false : null,
+        first_generation_student:
+          form.firstGen === 'yes'
+            ? true
+            : form.firstGen === 'no'
+              ? false
+              : null,
         passions: form.interests,
         skills: skillsArray,
         career_goals: form.careerGoals,
@@ -100,8 +105,11 @@ export default function ProfileSetupPage() {
       console.log('Career recommendations:', data);
 
       // Store recommendations in localStorage
-      localStorage.setItem('careerRecommendations', JSON.stringify(data.top_3_careers));
-      
+      localStorage.setItem(
+        'careerRecommendations',
+        JSON.stringify(data.top_3_careers)
+      );
+
       // Update user profile in localStorage
       const updatedUser = {
         ...user,
@@ -111,7 +119,6 @@ export default function ProfileSetupPage() {
 
       // Redirect to career matches
       router.push('/career-matches');
-      
     } catch (err: any) {
       console.error('Error:', err);
       alert(err.message || 'Failed to get career recommendations');
@@ -132,7 +139,8 @@ export default function ProfileSetupPage() {
             Complete Your Profile
           </CardTitle>
           <p className="text-center text-slate-600 mt-2">
-            Tell us about yourself so we can match you with the best career opportunities.
+            Tell us about yourself so we can match you with the best career
+            opportunities.
           </p>
         </CardHeader>
 
@@ -147,26 +155,58 @@ export default function ProfileSetupPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Baruch College">Baruch College</SelectItem>
-                  <SelectItem value="Brooklyn College">Brooklyn College</SelectItem>
-                  <SelectItem value="City College of New York">City College of New York</SelectItem>
-                  <SelectItem value="College of Staten Island">College of Staten Island</SelectItem>
+                  <SelectItem value="Brooklyn College">
+                    Brooklyn College
+                  </SelectItem>
+                  <SelectItem value="City College of New York">
+                    City College of New York
+                  </SelectItem>
+                  <SelectItem value="College of Staten Island">
+                    College of Staten Island
+                  </SelectItem>
                   <SelectItem value="Hunter College">Hunter College</SelectItem>
-                  <SelectItem value="John Jay College">John Jay College of Criminal Justice</SelectItem>
+                  <SelectItem value="John Jay College">
+                    John Jay College of Criminal Justice
+                  </SelectItem>
                   <SelectItem value="Lehman College">Lehman College</SelectItem>
-                  <SelectItem value="Medgar Evers College">Medgar Evers College</SelectItem>
+                  <SelectItem value="Medgar Evers College">
+                    Medgar Evers College
+                  </SelectItem>
                   <SelectItem value="Queens College">Queens College</SelectItem>
                   <SelectItem value="York College">York College</SelectItem>
-                  <SelectItem value="New York City College of Technology">New York City College of Technology</SelectItem>
-                  <SelectItem value="CUNY School of Professional Studies">CUNY School of Professional Studies</SelectItem>
-                  <SelectItem value="CUNY Graduate Center">CUNY Graduate Center</SelectItem>
-                  <SelectItem value="CUNY School of Law">CUNY School of Law</SelectItem>
-                  <SelectItem value="Guttman Community College">Guttman Community College</SelectItem>
-                  <SelectItem value="LaGuardia Community College">LaGuardia Community College</SelectItem>
-                  <SelectItem value="Queensborough Community College">Queensborough Community College</SelectItem>
-                  <SelectItem value="Bronx Community College">Bronx Community College</SelectItem>
-                  <SelectItem value="Hostos Community College">Hostos Community College</SelectItem>
-                  <SelectItem value="Kingsborough Community College">Kingsborough Community College</SelectItem>
-                  <SelectItem value="Borough of Manhattan Community College">Borough of Manhattan Community College</SelectItem>
+                  <SelectItem value="New York City College of Technology">
+                    New York City College of Technology
+                  </SelectItem>
+                  <SelectItem value="CUNY School of Professional Studies">
+                    CUNY School of Professional Studies
+                  </SelectItem>
+                  <SelectItem value="CUNY Graduate Center">
+                    CUNY Graduate Center
+                  </SelectItem>
+                  <SelectItem value="CUNY School of Law">
+                    CUNY School of Law
+                  </SelectItem>
+                  <SelectItem value="Guttman Community College">
+                    Guttman Community College
+                  </SelectItem>
+                  <SelectItem value="LaGuardia Community College">
+                    LaGuardia Community College
+                  </SelectItem>
+                  <SelectItem value="Queensborough Community College">
+                    Queensborough Community College
+                  </SelectItem>
+                  <SelectItem value="Bronx Community College">
+                    Bronx Community College
+                  </SelectItem>
+                  <SelectItem value="Hostos Community College">
+                    Hostos Community College
+                  </SelectItem>
+                  <SelectItem value="Kingsborough Community College">
+                    Kingsborough Community College
+                  </SelectItem>
+                  <SelectItem value="Borough of Manhattan Community College">
+                    Borough of Manhattan Community College
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -179,28 +219,46 @@ export default function ProfileSetupPage() {
                   <SelectValue placeholder="Select your major" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Computer Science|11.0701">Computer Science</SelectItem>
-                  <SelectItem value="Business Administration|52.0201">Business Administration</SelectItem>
+                  <SelectItem value="Computer Science|11.0701">
+                    Computer Science
+                  </SelectItem>
+                  <SelectItem value="Business Administration|52.0201">
+                    Business Administration
+                  </SelectItem>
                   <SelectItem value="Nursing|51.3801">Nursing</SelectItem>
                   <SelectItem value="Psychology|42.0101">Psychology</SelectItem>
                   <SelectItem value="Accounting|52.0301">Accounting</SelectItem>
                   <SelectItem value="Biology|26.0101">Biology</SelectItem>
-                  <SelectItem value="Criminal Justice|43.0104">Criminal Justice</SelectItem>
+                  <SelectItem value="Criminal Justice|43.0104">
+                    Criminal Justice
+                  </SelectItem>
                   <SelectItem value="Education|13.0101">Education</SelectItem>
                   <SelectItem value="English|23.0101">English</SelectItem>
                   <SelectItem value="Finance|52.0801">Finance</SelectItem>
                   <SelectItem value="Marketing|52.1401">Marketing</SelectItem>
-                  <SelectItem value="Mathematics|27.0101">Mathematics</SelectItem>
-                  <SelectItem value="Engineering|14.0101">Engineering</SelectItem>
-                  <SelectItem value="Social Work|44.0701">Social Work</SelectItem>
-                  <SelectItem value="Communication|09.0101">Communication</SelectItem>
+                  <SelectItem value="Mathematics|27.0101">
+                    Mathematics
+                  </SelectItem>
+                  <SelectItem value="Engineering|14.0101">
+                    Engineering
+                  </SelectItem>
+                  <SelectItem value="Social Work|44.0701">
+                    Social Work
+                  </SelectItem>
+                  <SelectItem value="Communication|09.0101">
+                    Communication
+                  </SelectItem>
                   <SelectItem value="Art/Design|50.0401">Art/Design</SelectItem>
-                  <SelectItem value="Political Science|45.1001">Political Science</SelectItem>
+                  <SelectItem value="Political Science|45.1001">
+                    Political Science
+                  </SelectItem>
                   <SelectItem value="Economics|45.0601">Economics</SelectItem>
                 </SelectContent>
               </Select>
               {form.cipCode && (
-                <p className="text-xs text-gray-500 mt-1">CIP Code: {form.cipCode}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  CIP Code: {form.cipCode}
+                </p>
               )}
             </div>
 
@@ -216,8 +274,12 @@ export default function ProfileSetupPage() {
                   <SelectItem value="Sophomore">Sophomore</SelectItem>
                   <SelectItem value="Junior">Junior</SelectItem>
                   <SelectItem value="Senior">Senior</SelectItem>
-                  <SelectItem value="Graduate Student">Graduate Student</SelectItem>
-                  <SelectItem value="Recent Graduate">Recent Graduate</SelectItem>
+                  <SelectItem value="Graduate Student">
+                    Graduate Student
+                  </SelectItem>
+                  <SelectItem value="Recent Graduate">
+                    Recent Graduate
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -233,7 +295,9 @@ export default function ProfileSetupPage() {
                   <SelectItem value="Female">Female</SelectItem>
                   <SelectItem value="Male">Male</SelectItem>
                   <SelectItem value="Non-binary">Non-binary</SelectItem>
-                  <SelectItem value="Prefer not to say">Prefer not to say</SelectItem>
+                  <SelectItem value="Prefer not to say">
+                    Prefer not to say
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -268,7 +332,9 @@ export default function ProfileSetupPage() {
 
             {/* Skills */}
             <div>
-              <Label htmlFor="skills">What are your top skills? (comma separated)</Label>
+              <Label htmlFor="skills">
+                What are your top skills? (comma separated)
+              </Label>
               <Textarea
                 id="skills"
                 placeholder="e.g., Python, Communication, Leadership, Data Analysis, Problem Solving"
@@ -277,7 +343,9 @@ export default function ProfileSetupPage() {
                 required
                 rows={3}
               />
-              <p className="text-xs text-gray-500 mt-1">Separate each skill with a comma</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Separate each skill with a comma
+              </p>
             </div>
 
             {/* Career Goals */}
@@ -298,7 +366,9 @@ export default function ProfileSetupPage() {
               disabled={loading}
               className="w-full mt-6 bg-[#6d6bd3] hover:bg-[#5a58b8] text-white rounded-xl py-6 text-lg font-semibold shadow-md disabled:opacity-50"
             >
-              {loading ? 'Getting Your Career Matches...' : 'Find My Career Matches 🎯'}
+              {loading
+                ? 'Getting Your Career Matches...'
+                : 'Find My Career Matches 🎯'}
             </Button>
           </form>
         </CardContent>

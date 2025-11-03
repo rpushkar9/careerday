@@ -44,7 +44,8 @@ export default function SavedPathsPage() {
     const newPath: SavedPath = {
       id: Date.now().toString(),
       careerTitle: careerData.career_title || careerData.careerTitle,
-      careerDescription: careerData.career_description || careerData.careerDescription,
+      careerDescription:
+        careerData.career_description || careerData.careerDescription,
       salary: careerData.salary,
       growth: careerData.growth,
       socCode: careerData.soc_code || careerData.socCode,
@@ -63,7 +64,7 @@ export default function SavedPathsPage() {
       const updatedPaths = savedPaths.filter(path => path.id !== id);
       setSavedPaths(updatedPaths);
       localStorage.setItem('savedCareerPaths', JSON.stringify(updatedPaths));
-      
+
       if (selectedPath?.id === id) {
         setSelectedPath(null);
       }
@@ -128,14 +129,15 @@ ${path.roadmapContent || 'Roadmap not yet generated. Visit the roadmap page to c
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 pt-24 pb-12 px-4">
       <div className="max-w-7xl mx-auto">
-        
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-4xl font-bold text-[#6d6bd3] mb-2">Saved Career Paths</h1>
+          <h1 className="text-4xl font-bold text-[#6d6bd3] mb-2">
+            Saved Career Paths
+          </h1>
           <p className="text-xl text-gray-600">
             Your bookmarked careers and roadmaps in one place
           </p>
@@ -155,18 +157,19 @@ ${path.roadmapContent || 'Roadmap not yet generated. Visit the roadmap page to c
                   No Saved Paths Yet
                 </h2>
                 <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                  Start exploring careers and save the ones you're interested in. 
-                  You can bookmark careers from your matches or the explore page!
+                  Start exploring careers and save the ones you're interested
+                  in. You can bookmark careers from your matches or the explore
+                  page!
                 </p>
                 <div className="flex gap-4 justify-center">
                   <Button
-                    onClick={() => window.location.href = '/dashboard'}
+                    onClick={() => (window.location.href = '/dashboard')}
                     className="bg-[#6d6bd3] hover:bg-[#5a58b8] text-white"
                   >
                     Go to Dashboard
                   </Button>
                   <Button
-                    onClick={() => window.location.href = '/explore-careers'}
+                    onClick={() => (window.location.href = '/explore-careers')}
                     variant="outline"
                     className="border-[#6d6bd3] text-[#6d6bd3]"
                   >
@@ -178,10 +181,8 @@ ${path.roadmapContent || 'Roadmap not yet generated. Visit the roadmap page to c
           </motion.div>
         ) : (
           <div className="grid lg:grid-cols-3 gap-6">
-            
             {/* Left Sidebar - Saved Paths List */}
             <div className="lg:col-span-1 space-y-4">
-              
               {/* Favorites Section */}
               {favoritePaths.length > 0 && (
                 <div>
@@ -189,15 +190,17 @@ ${path.roadmapContent || 'Roadmap not yet generated. Visit the roadmap page to c
                     ⭐ Favorites
                   </h3>
                   <div className="space-y-3">
-                    {favoritePaths.map((path) => (
+                    {favoritePaths.map(path => (
                       <motion.div
                         key={path.id}
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                       >
-                        <Card 
+                        <Card
                           className={`cursor-pointer transition-all hover:shadow-lg ${
-                            selectedPath?.id === path.id ? 'ring-2 ring-[#6d6bd3] shadow-lg' : ''
+                            selectedPath?.id === path.id
+                              ? 'ring-2 ring-[#6d6bd3] shadow-lg'
+                              : ''
                           }`}
                           onClick={() => setSelectedPath(path)}
                         >
@@ -208,11 +211,12 @@ ${path.roadmapContent || 'Roadmap not yet generated. Visit the roadmap page to c
                                   {path.careerTitle}
                                 </h4>
                                 <p className="text-xs text-gray-500">
-                                  Saved {new Date(path.savedAt).toLocaleDateString()}
+                                  Saved{' '}
+                                  {new Date(path.savedAt).toLocaleDateString()}
                                 </p>
                               </div>
                               <button
-                                onClick={(e) => {
+                                onClick={e => {
                                   e.stopPropagation();
                                   toggleFavorite(path.id);
                                 }}
@@ -235,15 +239,17 @@ ${path.roadmapContent || 'Roadmap not yet generated. Visit the roadmap page to c
                   All Saved Paths ({regularPaths.length})
                 </h3>
                 <div className="space-y-3">
-                  {regularPaths.map((path) => (
+                  {regularPaths.map(path => (
                     <motion.div
                       key={path.id}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                     >
-                      <Card 
+                      <Card
                         className={`cursor-pointer transition-all hover:shadow-lg ${
-                          selectedPath?.id === path.id ? 'ring-2 ring-[#6d6bd3] shadow-lg' : ''
+                          selectedPath?.id === path.id
+                            ? 'ring-2 ring-[#6d6bd3] shadow-lg'
+                            : ''
                         }`}
                         onClick={() => setSelectedPath(path)}
                       >
@@ -254,11 +260,12 @@ ${path.roadmapContent || 'Roadmap not yet generated. Visit the roadmap page to c
                                 {path.careerTitle}
                               </h4>
                               <p className="text-xs text-gray-500">
-                                Saved {new Date(path.savedAt).toLocaleDateString()}
+                                Saved{' '}
+                                {new Date(path.savedAt).toLocaleDateString()}
                               </p>
                             </div>
                             <button
-                              onClick={(e) => {
+                              onClick={e => {
                                 e.stopPropagation();
                                 toggleFavorite(path.id);
                               }}
@@ -291,7 +298,10 @@ ${path.roadmapContent || 'Roadmap not yet generated. Visit the roadmap page to c
                             {selectedPath.careerTitle}
                           </CardTitle>
                           <p className="text-sm text-gray-500">
-                            Saved on {new Date(selectedPath.savedAt).toLocaleDateString()}
+                            Saved on{' '}
+                            {new Date(
+                              selectedPath.savedAt
+                            ).toLocaleDateString()}
                           </p>
                         </div>
                         {selectedPath.isFavorite && (
@@ -300,7 +310,6 @@ ${path.roadmapContent || 'Roadmap not yet generated. Visit the roadmap page to c
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                      
                       {/* Career Details */}
                       <div className="grid md:grid-cols-2 gap-4">
                         {selectedPath.salary && (
@@ -313,7 +322,7 @@ ${path.roadmapContent || 'Roadmap not yet generated. Visit the roadmap page to c
                             </div>
                           </div>
                         )}
-                        
+
                         {selectedPath.growth && (
                           <div className="bg-blue-50 rounded-lg p-4">
                             <div className="text-sm text-blue-700 font-medium mb-1">
@@ -329,7 +338,9 @@ ${path.roadmapContent || 'Roadmap not yet generated. Visit the roadmap page to c
                       {/* Description */}
                       {selectedPath.careerDescription && (
                         <div>
-                          <h3 className="font-bold text-gray-800 mb-2">About This Career</h3>
+                          <h3 className="font-bold text-gray-800 mb-2">
+                            About This Career
+                          </h3>
                           <p className="text-gray-600 leading-relaxed">
                             {selectedPath.careerDescription}
                           </p>
@@ -345,7 +356,7 @@ ${path.roadmapContent || 'Roadmap not yet generated. Visit the roadmap page to c
                           <Eye className="w-4 h-4" />
                           View Roadmap
                         </Button>
-                        
+
                         <Button
                           onClick={() => downloadPath(selectedPath)}
                           variant="outline"
@@ -386,7 +397,9 @@ ${path.roadmapContent || 'Roadmap not yet generated. Visit the roadmap page to c
                       {/* Roadmap Preview */}
                       {selectedPath.roadmapContent && (
                         <div className="mt-6">
-                          <h3 className="font-bold text-gray-800 mb-3">Roadmap Preview</h3>
+                          <h3 className="font-bold text-gray-800 mb-3">
+                            Roadmap Preview
+                          </h3>
                           <div className="bg-gray-50 rounded-lg p-4 max-h-64 overflow-y-auto text-sm text-gray-700">
                             <pre className="whitespace-pre-wrap font-sans">
                               {selectedPath.roadmapContent.substring(0, 500)}...
@@ -418,7 +431,7 @@ ${path.roadmapContent || 'Roadmap not yet generated. Visit the roadmap page to c
         {/* Back Button */}
         <div className="mt-8 text-center">
           <Button
-            onClick={() => window.location.href = '/dashboard'}
+            onClick={() => (window.location.href = '/dashboard')}
             variant="outline"
             className="border-gray-300 text-gray-700"
           >

@@ -41,7 +41,7 @@ export default function CareerMatchesPage() {
 
       const user = JSON.parse(userStr);
       setUserName(user.name || user.email || 'there');
-      
+
       // Get major from user profile if available
       if (user.profile?.major) {
         setUserMajor(user.profile.major);
@@ -49,9 +49,11 @@ export default function CareerMatchesPage() {
 
       // Get career recommendations from localStorage
       const recommendationsStr = localStorage.getItem('careerRecommendations');
-      
+
       if (!recommendationsStr) {
-        setError('No career recommendations found. Please complete your profile first.');
+        setError(
+          'No career recommendations found. Please complete your profile first.'
+        );
         setLoading(false);
         return;
       }
@@ -60,14 +62,17 @@ export default function CareerMatchesPage() {
       console.log('Loaded recommendations:', recommendations);
 
       if (!Array.isArray(recommendations) || recommendations.length === 0) {
-        setError('No career matches found. Try updating your profile with different skills or interests.');
+        setError(
+          'No career matches found. Try updating your profile with different skills or interests.'
+        );
       } else {
         setMatches(recommendations);
       }
-
     } catch (err: any) {
       console.error('Error loading career matches:', err);
-      setError('Failed to load career matches. Please try completing your profile again.');
+      setError(
+        'Failed to load career matches. Please try completing your profile again.'
+      );
     } finally {
       setLoading(false);
     }
@@ -77,7 +82,7 @@ export default function CareerMatchesPage() {
     const userStr = localStorage.getItem('user');
     const user = userStr ? JSON.parse(userStr) : {};
     const profile = user.profile || {};
-    
+
     const params = new URLSearchParams({
       name: user.name || 'Student',
       email: user.email || '',
@@ -114,7 +119,9 @@ export default function CareerMatchesPage() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white to-slate-50 p-6">
         <Card className="max-w-md w-full">
           <CardHeader>
-            <CardTitle className="text-red-600">No Career Matches Found</CardTitle>
+            <CardTitle className="text-red-600">
+              No Career Matches Found
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-slate-600">{error}</p>
@@ -146,7 +153,8 @@ export default function CareerMatchesPage() {
             <Sparkles className="w-8 h-8 text-[#6d6bd3]" />
           </div>
           <p className="text-lg text-slate-600">
-            Hey {userName}! {userMajor && `Based on your ${userMajor} major, here are`} 
+            Hey {userName}!{' '}
+            {userMajor && `Based on your ${userMajor} major, here are`}
             {!userMajor && 'Here are'} the careers that match your profile:
           </p>
         </motion.div>
@@ -172,17 +180,20 @@ export default function CareerMatchesPage() {
                           <span className="text-2xl font-bold text-[#6d6bd3]">
                             {career.matchScore}%
                           </span>
-                          <span className="text-sm text-slate-500">Match Score</span>
+                          <span className="text-sm text-slate-500">
+                            Match Score
+                          </span>
                         </div>
                       </div>
                       <CardTitle className="text-2xl text-slate-900">
                         {career.title}
                       </CardTitle>
-                      {career.soc_title && career.soc_title !== career.title && (
-                        <p className="text-sm text-slate-500 mt-1">
-                          Also known as: {career.soc_title}
-                        </p>
-                      )}
+                      {career.soc_title &&
+                        career.soc_title !== career.title && (
+                          <p className="text-sm text-slate-500 mt-1">
+                            Also known as: {career.soc_title}
+                          </p>
+                        )}
                     </div>
                   </div>
                 </CardHeader>
@@ -190,7 +201,7 @@ export default function CareerMatchesPage() {
                   <p className="text-slate-600 leading-relaxed">
                     {career.description}
                   </p>
-                  
+
                   <div className="grid grid-cols-2 gap-4 p-4 bg-slate-50 rounded-lg">
                     <div className="flex items-center gap-3">
                       <div className="p-2 bg-green-100 rounded-lg">
@@ -225,7 +236,7 @@ export default function CareerMatchesPage() {
                       <span>SOC Code: {career.soc_code}</span>
                       <span>CIP Code: {career.cip_code}</span>
                     </div>
-                    
+
                     {/* NEW: Generate Roadmap Button */}
                     <Button
                       onClick={() => handleGenerateRoadmap(career)}
@@ -249,11 +260,12 @@ export default function CareerMatchesPage() {
           <Card className="bg-[#6d6bd3]/5 border-[#6d6bd3]/20">
             <CardContent className="p-6">
               <p className="text-slate-600">
-                💡 Want different recommendations? Update your profile with new skills or interests!
+                💡 Want different recommendations? Update your profile with new
+                skills or interests!
               </p>
             </CardContent>
           </Card>
-          
+
           <div className="flex gap-4 justify-center">
             <Button
               onClick={() => router.push('/general-account/profile-setup')}

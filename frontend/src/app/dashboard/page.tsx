@@ -24,7 +24,7 @@ export default function DashboardPage() {
     // Check if profile is complete
     if (userData.profile) {
       setHasProfile(true);
-      
+
       // Get career recommendations
       const storedCareers = localStorage.getItem('careerRecommendations');
       if (storedCareers) {
@@ -50,10 +50,11 @@ export default function DashboardPage() {
               Welcome back, {user.name}!
             </h1>
             <p className="text-xl text-gray-600 mb-8">
-              Let's finish setting up your profile so we can generate your personalized career roadmap.
+              Let's finish setting up your profile so we can generate your
+              personalized career roadmap.
             </p>
             <Button
-              onClick={() => window.location.href = '/profile-setup'}
+              onClick={() => (window.location.href = '/profile-setup')}
               className="bg-[#6d6bd3] hover:bg-[#5a58b8] text-white px-8 py-6 text-lg rounded-xl"
             >
               Continue Setup →
@@ -68,7 +69,6 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-slate-50 pt-24 pb-12 px-4">
       <div className="max-w-7xl mx-auto">
-        
         {/* Welcome Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -86,14 +86,14 @@ export default function DashboardPage() {
             </div>
             <div className="flex gap-3">
               <Button
-                onClick={() => window.location.href = '/account-settings'}
+                onClick={() => (window.location.href = '/account-settings')}
                 variant="outline"
                 className="border-[#6d6bd3] text-[#6d6bd3] hover:bg-[#f0f0ff]"
               >
                 ⚙️ Edit Profile
               </Button>
               <Button
-                onClick={() => window.location.href = '/profile-setup'}
+                onClick={() => (window.location.href = '/profile-setup')}
                 className="bg-[#6d6bd3] hover:bg-[#5a58b8] text-white"
               >
                 🎯 Update Interests
@@ -109,11 +109,16 @@ export default function DashboardPage() {
           transition={{ delay: 0.1 }}
           className="mb-8"
         >
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">🎯 Your Top Career Matches</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            🎯 Your Top Career Matches
+          </h2>
           <div className="grid md:grid-cols-3 gap-6">
             {careers.length > 0 ? (
               careers.slice(0, 3).map((career, idx) => (
-                <Card key={idx} className="hover:shadow-xl transition-shadow cursor-pointer">
+                <Card
+                  key={idx}
+                  className="hover:shadow-xl transition-shadow cursor-pointer"
+                >
                   <CardHeader>
                     <CardTitle className="text-lg text-[#6d6bd3]">
                       {career.career_title || `Career ${idx + 1}`}
@@ -123,17 +128,23 @@ export default function DashboardPage() {
                     <div className="space-y-4">
                       <div>
                         <div className="flex justify-between text-sm mb-2">
-                          <span className="text-gray-600">Roadmap Progress</span>
+                          <span className="text-gray-600">
+                            Roadmap Progress
+                          </span>
                           <span className="font-semibold text-[#6d6bd3]">
                             {Math.floor(Math.random() * 60) + 20}%
                           </span>
                         </div>
-                        <Progress value={Math.floor(Math.random() * 60) + 20} className="h-2" />
+                        <Progress
+                          value={Math.floor(Math.random() * 60) + 20}
+                          className="h-2"
+                        />
                       </div>
-                      
+
                       <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                         <p className="text-sm text-blue-800">
-                          💼 {Math.floor(Math.random() * 5) + 1} new opportunities available
+                          💼 {Math.floor(Math.random() * 5) + 1} new
+                          opportunities available
                         </p>
                       </div>
 
@@ -141,7 +152,8 @@ export default function DashboardPage() {
                         onClick={() => {
                           const params = new URLSearchParams({
                             name: user.name,
-                            career_title: career.career_title || `Career ${idx + 1}`,
+                            career_title:
+                              career.career_title || `Career ${idx + 1}`,
                             career_description: career.career_description || '',
                             salary: career.salary || 'N/A',
                             growth: career.growth || 'N/A',
@@ -162,7 +174,10 @@ export default function DashboardPage() {
             ) : (
               <Card className="col-span-3">
                 <CardContent className="py-8 text-center">
-                  <p className="text-gray-600">No career matches yet. Complete your profile to get personalized recommendations!</p>
+                  <p className="text-gray-600">
+                    No career matches yet. Complete your profile to get
+                    personalized recommendations!
+                  </p>
                 </CardContent>
               </Card>
             )}
@@ -201,15 +216,21 @@ export default function DashboardPage() {
                   </h3>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="bg-purple-50 rounded-lg p-4">
-                      <h4 className="font-semibold text-purple-900 mb-2">📚 Courses to Take</h4>
+                      <h4 className="font-semibold text-purple-900 mb-2">
+                        📚 Courses to Take
+                      </h4>
                       <ul className="text-sm text-purple-800 space-y-1">
-                        <li>• Intro to {user.profile?.major || 'Your Major'}</li>
+                        <li>
+                          • Intro to {user.profile?.major || 'Your Major'}
+                        </li>
                         <li>• Professional Communication</li>
                         <li>• Career Planning Seminar</li>
                       </ul>
                     </div>
                     <div className="bg-purple-50 rounded-lg p-4">
-                      <h4 className="font-semibold text-purple-900 mb-2">🎯 Clubs & Activities</h4>
+                      <h4 className="font-semibold text-purple-900 mb-2">
+                        🎯 Clubs & Activities
+                      </h4>
                       <ul className="text-sm text-purple-800 space-y-1">
                         <li>• Join relevant student organizations</li>
                         <li>• Attend career fairs</li>
@@ -226,7 +247,9 @@ export default function DashboardPage() {
                   </h3>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="bg-indigo-50 rounded-lg p-4">
-                      <h4 className="font-semibold text-indigo-900 mb-2">💼 Internships</h4>
+                      <h4 className="font-semibold text-indigo-900 mb-2">
+                        💼 Internships
+                      </h4>
                       <ul className="text-sm text-indigo-800 space-y-1">
                         <li>• Summer internship in your field</li>
                         <li>• Part-time positions</li>
@@ -234,7 +257,9 @@ export default function DashboardPage() {
                       </ul>
                     </div>
                     <div className="bg-indigo-50 rounded-lg p-4">
-                      <h4 className="font-semibold text-indigo-900 mb-2">🛠️ Skills Development</h4>
+                      <h4 className="font-semibold text-indigo-900 mb-2">
+                        🛠️ Skills Development
+                      </h4>
                       <ul className="text-sm text-indigo-800 space-y-1">
                         <li>• Technical certifications</li>
                         <li>• Leadership workshops</li>
@@ -251,7 +276,9 @@ export default function DashboardPage() {
                   </h3>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="bg-blue-50 rounded-lg p-4">
-                      <h4 className="font-semibold text-blue-900 mb-2">📂 Portfolio Building</h4>
+                      <h4 className="font-semibold text-blue-900 mb-2">
+                        📂 Portfolio Building
+                      </h4>
                       <ul className="text-sm text-blue-800 space-y-1">
                         <li>• Create professional portfolio</li>
                         <li>• Showcase 3-5 key projects</li>
@@ -259,7 +286,9 @@ export default function DashboardPage() {
                       </ul>
                     </div>
                     <div className="bg-blue-50 rounded-lg p-4">
-                      <h4 className="font-semibold text-blue-900 mb-2">🎓 Advanced Learning</h4>
+                      <h4 className="font-semibold text-blue-900 mb-2">
+                        🎓 Advanced Learning
+                      </h4>
                       <ul className="text-sm text-blue-800 space-y-1">
                         <li>• Specialized coursework</li>
                         <li>• Research opportunities</li>
@@ -276,7 +305,9 @@ export default function DashboardPage() {
                   </h3>
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="bg-slate-50 rounded-lg p-4">
-                      <h4 className="font-semibold text-slate-900 mb-2">🚀 Job Preparation</h4>
+                      <h4 className="font-semibold text-slate-900 mb-2">
+                        🚀 Job Preparation
+                      </h4>
                       <ul className="text-sm text-slate-800 space-y-1">
                         <li>• Polish resume & cover letters</li>
                         <li>• Interview preparation</li>
@@ -284,7 +315,9 @@ export default function DashboardPage() {
                       </ul>
                     </div>
                     <div className="bg-slate-50 rounded-lg p-4">
-                      <h4 className="font-semibold text-slate-900 mb-2">🌐 Networking</h4>
+                      <h4 className="font-semibold text-slate-900 mb-2">
+                        🌐 Networking
+                      </h4>
                       <ul className="text-sm text-slate-800 space-y-1">
                         <li>• LinkedIn optimization</li>
                         <li>• Alumni connections</li>
@@ -296,7 +329,7 @@ export default function DashboardPage() {
 
                 <Button
                   className="w-full bg-[#6d6bd3] hover:bg-[#5a58b8] text-white py-6 text-lg"
-                  onClick={() => window.location.href = '/roadmap'}
+                  onClick={() => (window.location.href = '/roadmap')}
                 >
                   Continue My Plan →
                 </Button>
@@ -312,15 +345,24 @@ export default function DashboardPage() {
           transition={{ delay: 0.3 }}
           className="mb-8"
         >
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">✨ Recommended for You</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            ✨ Recommended for You
+          </h2>
           <div className="grid md:grid-cols-3 gap-6">
             <Card className="hover:shadow-xl transition-shadow">
               <CardHeader>
-                <CardTitle className="text-lg">💼 Software Engineering Internship</CardTitle>
+                <CardTitle className="text-lg">
+                  💼 Software Engineering Internship
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-gray-600 mb-4">Summer 2026 • Tech Startup</p>
-                <Button size="sm" className="w-full bg-[#6d6bd3] hover:bg-[#5a58b8]">
+                <p className="text-sm text-gray-600 mb-4">
+                  Summer 2026 • Tech Startup
+                </p>
+                <Button
+                  size="sm"
+                  className="w-full bg-[#6d6bd3] hover:bg-[#5a58b8]"
+                >
                   Learn More
                 </Button>
               </CardContent>
@@ -328,11 +370,18 @@ export default function DashboardPage() {
 
             <Card className="hover:shadow-xl transition-shadow">
               <CardHeader>
-                <CardTitle className="text-lg">🎓 CUNY Career Workshop</CardTitle>
+                <CardTitle className="text-lg">
+                  🎓 CUNY Career Workshop
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-gray-600 mb-4">Nov 15, 2025 • Virtual</p>
-                <Button size="sm" className="w-full bg-[#6d6bd3] hover:bg-[#5a58b8]">
+                <p className="text-sm text-gray-600 mb-4">
+                  Nov 15, 2025 • Virtual
+                </p>
+                <Button
+                  size="sm"
+                  className="w-full bg-[#6d6bd3] hover:bg-[#5a58b8]"
+                >
                   Register
                 </Button>
               </CardContent>
@@ -340,11 +389,18 @@ export default function DashboardPage() {
 
             <Card className="hover:shadow-xl transition-shadow">
               <CardHeader>
-                <CardTitle className="text-lg">📚 Data Analytics Course</CardTitle>
+                <CardTitle className="text-lg">
+                  📚 Data Analytics Course
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-gray-600 mb-4">Free • Coursera Certificate</p>
-                <Button size="sm" className="w-full bg-[#6d6bd3] hover:bg-[#5a58b8]">
+                <p className="text-sm text-gray-600 mb-4">
+                  Free • Coursera Certificate
+                </p>
+                <Button
+                  size="sm"
+                  className="w-full bg-[#6d6bd3] hover:bg-[#5a58b8]"
+                >
                   Enroll Now
                 </Button>
               </CardContent>
@@ -360,12 +416,15 @@ export default function DashboardPage() {
         >
           <Card className="bg-gradient-to-r from-[#6d6bd3] to-[#8b89e6] text-white">
             <CardContent className="py-8 text-center">
-              <h3 className="text-2xl font-bold mb-4">🔍 Want to Explore More?</h3>
+              <h3 className="text-2xl font-bold mb-4">
+                🔍 Want to Explore More?
+              </h3>
               <p className="text-lg mb-6 opacity-90">
-                Discover other career paths and opportunities beyond your current matches.
+                Discover other career paths and opportunities beyond your
+                current matches.
               </p>
               <Button
-                onClick={() => window.location.href = '/explore-careers'}
+                onClick={() => (window.location.href = '/explore-careers')}
                 className="bg-white text-[#6d6bd3] hover:bg-gray-100 px-8 py-6 text-lg"
               >
                 Explore Other Careers
@@ -373,7 +432,6 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </motion.div>
-
       </div>
     </div>
   );

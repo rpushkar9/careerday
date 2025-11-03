@@ -147,8 +147,11 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const emailInput = (document.getElementById('email') as HTMLInputElement)?.value;
-    const passwordInput = (document.getElementById('password') as HTMLInputElement)?.value;
+    const emailInput = (document.getElementById('email') as HTMLInputElement)
+      ?.value;
+    const passwordInput = (
+      document.getElementById('password') as HTMLInputElement
+    )?.value;
 
     const url = 'http://localhost:5001/api/auth/login';
 
@@ -175,20 +178,35 @@ export default function LoginPage() {
   return (
     <main className="min-h-screen flex items-center justify-center px-6 py-16 bg-gradient-to-b from-white to-slate-50">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
-        <h1 className="text-3xl font-extrabold text-center mb-6">Welcome Back</h1>
+        <h1 className="text-3xl font-extrabold text-center mb-6">
+          Welcome Back
+        </h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <Label htmlFor="email">Email Address</Label>
-            <Input id="email" type="email" placeholder="Enter your email" required />
+            <Input
+              id="email"
+              type="email"
+              placeholder="Enter your email"
+              required
+            />
           </div>
 
           <div>
             <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" placeholder="Enter your password" required />
+            <Input
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              required
+            />
           </div>
 
-          <Button type="submit" className="w-full bg-[#6d6bd3] text-white py-3 rounded-xl">
+          <Button
+            type="submit"
+            className="w-full bg-[#6d6bd3] text-white py-3 rounded-xl"
+          >
             Log In
           </Button>
         </form>

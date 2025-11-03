@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -67,9 +66,16 @@ export default function AccountSettingsPage() {
         cipCode: userData.profile.cip_code || '',
         year: userData.profile.year || '',
         gender: userData.profile.gender || '',
-        firstGen: userData.profile.first_generation_student === true ? 'yes' : userData.profile.first_generation_student === false ? 'no' : '',
+        firstGen:
+          userData.profile.first_generation_student === true
+            ? 'yes'
+            : userData.profile.first_generation_student === false
+              ? 'no'
+              : '',
         interests: userData.profile.passions || '',
-        skills: Array.isArray(userData.profile.skills) ? userData.profile.skills.join(', ') : '',
+        skills: Array.isArray(userData.profile.skills)
+          ? userData.profile.skills.join(', ')
+          : '',
         careerGoals: userData.profile.career_goals || '',
       });
     }
@@ -98,19 +104,18 @@ export default function AccountSettingsPage() {
         name: accountForm.name,
         email: accountForm.email,
       };
-      
+
       localStorage.setItem('user', JSON.stringify(updatedUser));
       setUser(updatedUser);
-      
+
       setSuccessMessage('Account information updated successfully!');
-      
+
       setAccountForm(prev => ({
         ...prev,
         currentPassword: '',
         newPassword: '',
         confirmPassword: '',
       }));
-
     } catch (error) {
       console.error('Error updating account:', error);
       alert('Failed to update account information');
@@ -135,7 +140,12 @@ export default function AccountSettingsPage() {
         cip_code: profileForm.cipCode,
         year: profileForm.year,
         gender: profileForm.gender || null,
-        first_generation_student: profileForm.firstGen === 'yes' ? true : profileForm.firstGen === 'no' ? false : null,
+        first_generation_student:
+          profileForm.firstGen === 'yes'
+            ? true
+            : profileForm.firstGen === 'no'
+              ? false
+              : null,
         passions: profileForm.interests,
         skills: skillsArray,
         career_goals: profileForm.careerGoals,
@@ -148,7 +158,7 @@ export default function AccountSettingsPage() {
 
       localStorage.setItem('user', JSON.stringify(updatedUser));
       setUser(updatedUser);
-      
+
       setSuccessMessage('Profile updated successfully!');
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -160,15 +170,19 @@ export default function AccountSettingsPage() {
 
   const handleMajorChange = (value: string) => {
     const [majorName, cipCode] = value.split('|');
-    setProfileForm(prev => ({ 
-      ...prev, 
+    setProfileForm(prev => ({
+      ...prev,
       major: majorName,
-      cipCode: cipCode 
+      cipCode: cipCode,
     }));
   };
 
   const handleDeleteAccount = () => {
-    if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+    if (
+      confirm(
+        'Are you sure you want to delete your account? This action cannot be undone.'
+      )
+    ) {
       localStorage.removeItem('user');
       localStorage.removeItem('careerRecommendations');
       window.location.href = '/';
@@ -184,7 +198,9 @@ export default function AccountSettingsPage() {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-4xl mx-auto"
       >
-        <h1 className="text-4xl font-bold text-[#6d6bd3] mb-8">Account Settings</h1>
+        <h1 className="text-4xl font-bold text-[#6d6bd3] mb-8">
+          Account Settings
+        </h1>
 
         {successMessage && (
           <motion.div
@@ -230,16 +246,31 @@ export default function AccountSettingsPage() {
               <div className="space-y-6">
                 <div>
                   <Label>School (CUNY)</Label>
-                  <Select value={profileForm.school} onValueChange={v => setProfileForm(prev => ({ ...prev, school: v }))}>
+                  <Select
+                    value={profileForm.school}
+                    onValueChange={v =>
+                      setProfileForm(prev => ({ ...prev, school: v }))
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select your CUNY school" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Baruch College">Baruch College</SelectItem>
-                      <SelectItem value="Brooklyn College">Brooklyn College</SelectItem>
-                      <SelectItem value="City College of New York">City College of New York</SelectItem>
-                      <SelectItem value="Hunter College">Hunter College</SelectItem>
-                      <SelectItem value="Queens College">Queens College</SelectItem>
+                      <SelectItem value="Baruch College">
+                        Baruch College
+                      </SelectItem>
+                      <SelectItem value="Brooklyn College">
+                        Brooklyn College
+                      </SelectItem>
+                      <SelectItem value="City College of New York">
+                        City College of New York
+                      </SelectItem>
+                      <SelectItem value="Hunter College">
+                        Hunter College
+                      </SelectItem>
+                      <SelectItem value="Queens College">
+                        Queens College
+                      </SelectItem>
                       <SelectItem value="York College">York College</SelectItem>
                     </SelectContent>
                   </Select>
@@ -247,23 +278,39 @@ export default function AccountSettingsPage() {
 
                 <div>
                   <Label>Major/Field of Study</Label>
-                  <Select value={`${profileForm.major}|${profileForm.cipCode}`} onValueChange={handleMajorChange}>
+                  <Select
+                    value={`${profileForm.major}|${profileForm.cipCode}`}
+                    onValueChange={handleMajorChange}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select your major" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Computer Science|11.0701">Computer Science</SelectItem>
-                      <SelectItem value="Business Administration|52.0201">Business Administration</SelectItem>
+                      <SelectItem value="Computer Science|11.0701">
+                        Computer Science
+                      </SelectItem>
+                      <SelectItem value="Business Administration|52.0201">
+                        Business Administration
+                      </SelectItem>
                       <SelectItem value="Nursing|51.3801">Nursing</SelectItem>
-                      <SelectItem value="Psychology|42.0101">Psychology</SelectItem>
-                      <SelectItem value="Accounting|52.0301">Accounting</SelectItem>
+                      <SelectItem value="Psychology|42.0101">
+                        Psychology
+                      </SelectItem>
+                      <SelectItem value="Accounting|52.0301">
+                        Accounting
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div>
                   <Label>Year</Label>
-                  <Select value={profileForm.year} onValueChange={v => setProfileForm(prev => ({ ...prev, year: v }))}>
+                  <Select
+                    value={profileForm.year}
+                    onValueChange={v =>
+                      setProfileForm(prev => ({ ...prev, year: v }))
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select your year" />
                     </SelectTrigger>
@@ -278,7 +325,12 @@ export default function AccountSettingsPage() {
 
                 <div>
                   <Label>Gender (Optional)</Label>
-                  <Select value={profileForm.gender} onValueChange={v => setProfileForm(prev => ({ ...prev, gender: v }))}>
+                  <Select
+                    value={profileForm.gender}
+                    onValueChange={v =>
+                      setProfileForm(prev => ({ ...prev, gender: v }))
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select gender" />
                     </SelectTrigger>
@@ -286,14 +338,21 @@ export default function AccountSettingsPage() {
                       <SelectItem value="Female">Female</SelectItem>
                       <SelectItem value="Male">Male</SelectItem>
                       <SelectItem value="Non-binary">Non-binary</SelectItem>
-                      <SelectItem value="Prefer not to say">Prefer not to say</SelectItem>
+                      <SelectItem value="Prefer not to say">
+                        Prefer not to say
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div>
                   <Label>First-generation college student?</Label>
-                  <Select value={profileForm.firstGen} onValueChange={v => setProfileForm(prev => ({ ...prev, firstGen: v }))}>
+                  <Select
+                    value={profileForm.firstGen}
+                    onValueChange={v =>
+                      setProfileForm(prev => ({ ...prev, firstGen: v }))
+                    }
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select option" />
                     </SelectTrigger>
@@ -309,7 +368,12 @@ export default function AccountSettingsPage() {
                   <Label>Passions & Interests</Label>
                   <Textarea
                     value={profileForm.interests}
-                    onChange={e => setProfileForm(prev => ({ ...prev, interests: e.target.value }))}
+                    onChange={e =>
+                      setProfileForm(prev => ({
+                        ...prev,
+                        interests: e.target.value,
+                      }))
+                    }
                     rows={3}
                     placeholder="What are you passionate about?"
                   />
@@ -319,7 +383,12 @@ export default function AccountSettingsPage() {
                   <Label>Skills (comma separated)</Label>
                   <Textarea
                     value={profileForm.skills}
-                    onChange={e => setProfileForm(prev => ({ ...prev, skills: e.target.value }))}
+                    onChange={e =>
+                      setProfileForm(prev => ({
+                        ...prev,
+                        skills: e.target.value,
+                      }))
+                    }
                     rows={3}
                     placeholder="e.g., Python, Leadership, Communication"
                   />
@@ -329,7 +398,12 @@ export default function AccountSettingsPage() {
                   <Label>Career Goals</Label>
                   <Textarea
                     value={profileForm.careerGoals}
-                    onChange={e => setProfileForm(prev => ({ ...prev, careerGoals: e.target.value }))}
+                    onChange={e =>
+                      setProfileForm(prev => ({
+                        ...prev,
+                        careerGoals: e.target.value,
+                      }))
+                    }
                     rows={4}
                     placeholder="What are your career aspirations?"
                   />
@@ -361,7 +435,12 @@ export default function AccountSettingsPage() {
                     <Label>Full Name</Label>
                     <Input
                       value={accountForm.name}
-                      onChange={e => setAccountForm(prev => ({ ...prev, name: e.target.value }))}
+                      onChange={e =>
+                        setAccountForm(prev => ({
+                          ...prev,
+                          name: e.target.value,
+                        }))
+                      }
                       placeholder="Enter your full name"
                     />
                   </div>
@@ -371,21 +450,33 @@ export default function AccountSettingsPage() {
                     <Input
                       type="email"
                       value={accountForm.email}
-                      onChange={e => setAccountForm(prev => ({ ...prev, email: e.target.value }))}
+                      onChange={e =>
+                        setAccountForm(prev => ({
+                          ...prev,
+                          email: e.target.value,
+                        }))
+                      }
                       placeholder="your.email@cuny.edu"
                     />
                   </div>
 
                   <div className="border-t pt-6 mt-6">
-                    <h3 className="text-lg font-semibold mb-4 text-gray-700">Change Password</h3>
-                    
+                    <h3 className="text-lg font-semibold mb-4 text-gray-700">
+                      Change Password
+                    </h3>
+
                     <div className="space-y-4">
                       <div>
                         <Label>Current Password</Label>
                         <Input
                           type="password"
                           value={accountForm.currentPassword}
-                          onChange={e => setAccountForm(prev => ({ ...prev, currentPassword: e.target.value }))}
+                          onChange={e =>
+                            setAccountForm(prev => ({
+                              ...prev,
+                              currentPassword: e.target.value,
+                            }))
+                          }
                           placeholder="Enter current password"
                         />
                       </div>
@@ -395,7 +486,12 @@ export default function AccountSettingsPage() {
                         <Input
                           type="password"
                           value={accountForm.newPassword}
-                          onChange={e => setAccountForm(prev => ({ ...prev, newPassword: e.target.value }))}
+                          onChange={e =>
+                            setAccountForm(prev => ({
+                              ...prev,
+                              newPassword: e.target.value,
+                            }))
+                          }
                           placeholder="Enter new password (min 6 characters)"
                         />
                       </div>
@@ -405,7 +501,12 @@ export default function AccountSettingsPage() {
                         <Input
                           type="password"
                           value={accountForm.confirmPassword}
-                          onChange={e => setAccountForm(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                          onChange={e =>
+                            setAccountForm(prev => ({
+                              ...prev,
+                              confirmPassword: e.target.value,
+                            }))
+                          }
                           placeholder="Confirm new password"
                         />
                       </div>
@@ -431,7 +532,9 @@ export default function AccountSettingsPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 mb-4">
-                  Once you delete your account, there is no going back. All your data, including saved career paths and progress, will be permanently deleted.
+                  Once you delete your account, there is no going back. All your
+                  data, including saved career paths and progress, will be
+                  permanently deleted.
                 </p>
                 <Button
                   onClick={handleDeleteAccount}

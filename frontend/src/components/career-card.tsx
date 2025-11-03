@@ -79,4 +79,4 @@
   className="mt-4 w-full px-4 py-2 bg-[#6d6bd3] text-white rounded hover:bg-[#5a59b8]"
 >
   🗺️ Generate Career Roadmap
-</button>
+</button>;
