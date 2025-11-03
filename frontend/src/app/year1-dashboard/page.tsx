@@ -12,14 +12,14 @@ export default function Year1DashboardPage() {
   // ✅ FAKE DATA FOR TESTING
   const fakeYear1Data: Year1Data = {
     student: {
-      name: "Bob",
+      name: "Sheyla",
       career_goal: "Social Science Research Assistant",
     },
     major: "Psychology",
     university: "University of Example",
     year: 1,
     totalYearCredits: 30,
-    totalYearCost: 15700,
+    totalYearCost: 8900,
     fall: {
       courses: [
         { code: "PSY 101", name: "Introduction to Psychology", credits: 3 },

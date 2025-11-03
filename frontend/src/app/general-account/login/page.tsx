@@ -134,7 +134,6 @@
 //     </main>
 //   );
 // }
-
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -167,7 +166,7 @@ export default function LoginPage() {
       localStorage.setItem('user', JSON.stringify(data.user));
       localStorage.setItem('token', data.token);
 
-      router.push('/general-account/dashboard');
+      router.push('/dashboard');
     } catch (err: any) {
       alert(err.message);
     }

@@ -73,7 +73,7 @@ export default function Navbar() {
                       <i className="fas fa-user-cog w-5 text-gray-400"></i>
                       <span className="ml-3">Account Settings</span>
                     </Link>
-                    <Link href="/my-progress" className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50">
+                    <Link href="/dashboard" className="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-50">
                       <i className="fas fa-chart-line w-5 text-gray-400"></i>
                       <span className="ml-3">My Progress</span>
                     </Link>
