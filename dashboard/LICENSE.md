@@ -4,6 +4,7 @@
 **Course/Quarter:** Info 490:Capstone 1 / Winter 26
 
 **Team Members:** Pushkar Rimmalapudi, Bouba Katompa, Simran Gupta, Spandana Kannam, Jackie Beng
+
 **Project Sponsor:** CareerDayy
 
 1. **Ownership:** The student project team maintains this repository as part of their coursework. The work contributes to an exploratory project sponsored by CareerDayy.
