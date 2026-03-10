@@ -1,7 +1,7 @@
 # Repository Access & Governance
 
 **Repository Name:** careerday
-**Course/Quarter:** Info 490:Capstone 1 / Winter 26
+**Course/Quarter:** Info 490: Capstone 1 / Winter 26
 
 **Team Members:** Pushkar Rimmalapudi, Bouba Katompa, Simran Gupta, Spandana Kannam, Jackie Beng
 
