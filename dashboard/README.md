@@ -10,7 +10,7 @@ A tool for career counselors and advisors to view and manage individual student 
 
 > **This is a design prototype only** — it demonstrates the intended UI and interactions but is not connected to live data.
 
-<a href="https://doll-dazzle-04316546.figma.site" target="_blank" rel="noopener noreferrer">Open Figma Demo (opens in new tab)</a>
+<a href="https://doll-dazzle-04316546.figma.site" target="_blank" rel="noopener noreferrer">View Figma Demo</a>
 
 ---
 
