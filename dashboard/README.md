@@ -6,15 +6,19 @@ A tool for career counselors and advisors to view and manage individual student 
 
 ---
 
-## Live Prototype
+## Figma Prototype
 
-[View the interactive Figma prototype](https://doll-dazzle-04316546.figma.site)
+> **This is a design prototype only** — it demonstrates the intended UI and interactions but is not connected to live data.
+
+<a href="https://doll-dazzle-04316546.figma.site" target="_blank" rel="noopener noreferrer">Open Figma Demo (opens in new tab)</a>
 
 ---
 
 ## Overview
 
 Counselors need a consolidated view of each student's career readiness — without digging through separate tools or asking students to self-report in meetings. The Counselor Dashboard brings together a student's career narrative, milestone progress, advisor notes, and recent activity into a single, scannable interface.
+
+> The sections below describe features as shown in the Figma prototype. Functionality and layout may evolve before production.
 
 ---
 
