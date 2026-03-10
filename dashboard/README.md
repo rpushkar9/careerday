@@ -1,20 +1,43 @@
 # CareerDay — Counselor Dashboard
 
-## Repository Access & Governance
+A tool for career counselors and advisors to view and manage individual student career progress at a glance.
 
-**Repository Name:** careerday
-**Course/Quarter:** Info 490:Capstone 1 / Winter 26
-**Team Members:** Pushkar Rimmalapudi, Bouba Katompa, Simran Gupta, Spandana Kannam, Jackie Beng
-**Project Sponsor:** CareerDayy
+**Sponsor:** CareerDayy
 
-1. **Ownership:** The student project team maintains this repository as part of their coursework. The work contributes to an exploratory project sponsored by CareerDayy.
+---
 
-2. **Visibility:** The repository is private and is not publicly accessible.
+## Live Prototype
 
-3. **Access Control:** Collaborator access is limited to the student team members and course staff (e.g., instructors or TAs) as needed for the course.
+[View the interactive Figma prototype](https://doll-dazzle-04316546.figma.site)
 
-4. **Post-Quarter Plan:** At the conclusion of the course, relevant components or learnings from this repository may be incorporated into CareerDayy's internal development repositories. Access permissions may be updated accordingly.
+---
 
-5. **Sponsorship:** CareerDayy is serving as the external project sponsor. The sponsor does not currently have access to the repository during the academic quarter but may be granted access afterward if needed for integration or continued development.
+## Overview
 
-6. **Transferability:** This repository will remain associated with the student project team and will preserve the original commit history and contributor records.
+Counselors need a consolidated view of each student's career readiness — without digging through separate tools or asking students to self-report in meetings. The Counselor Dashboard brings together a student's career narrative, milestone progress, advisor notes, and recent activity into a single, scannable interface.
+
+---
+
+## Dashboard Sections
+
+### Career Narrative
+Displays the student's stated career goal alongside a self-reported confidence level (e.g., 4/5). Gives counselors immediate context before a meeting or check-in.
+
+### Advisor Notes
+Timestamped notes added by the advisor. Supports adding new notes and viewing the full note history — creating a lightweight, persistent record of advising interactions.
+
+### Career Milestones
+A checklist of key career readiness milestones (e.g., Resume Reviewed, Mock Interview Scheduled) with status badges:
+- **Completed**
+- **In Progress**
+- **Pending**
+
+### Recent Activity
+A chronological feed of recent student actions — such as completing a survey, viewing job postings, or attending a networking event — so counselors can see engagement without asking.
+
+---
+
+## Key Actions
+
+- **Schedule Meeting** — Book a session directly from the student's dashboard view
+- **View Full Profile** — Drill into the student's complete career profile
