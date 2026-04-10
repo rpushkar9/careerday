@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { InsightsPanel } from "@/components/shared/InsightsPanel";
 import { KPIGrid } from "@/components/kpi/KPIGrid";
 import { FilterChips } from "@/components/students/FilterChips";
 import { StudentTable } from "@/components/students/StudentTable";
@@ -27,8 +28,8 @@ function App() {
     filteredStudents,
     searchQuery,
     setSearchQuery,
-    activeChip,
-    setActiveChip,
+    activeChips,
+    setActiveChips,
   } = useStudentTable(studentData);
 
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
@@ -60,13 +61,31 @@ function App() {
 
   return (
     <DashboardLayout>
-      <section aria-label="Key performance indicators">
+      <InsightsPanel students={studentData} />
+
+      <section aria-label="Key performance indicators" className="mt-6">
+        <div className="mb-6">
+          <h2 className="text-2xl font-semibold">Dashboard Overview</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Track student engagement and career milestone progress
+          </p>
+        </div>
         <KPIGrid snapshot={kpiSnapshot} />
       </section>
 
       <section aria-label="Student overview" className="mt-8 space-y-4">
+        <div>
+          <h2 className="text-lg font-semibold">Student Overview</h2>
+          <p className="text-sm text-muted-foreground">
+            Monitor individual student progress
+          </p>
+        </div>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <FilterChips active={activeChip} onChange={setActiveChip} />
+          <FilterChips
+              active={activeChips}
+              onChange={setActiveChips}
+              students={studentData}
+            />
           <Input
             placeholder="Search students..."
             value={searchQuery}
@@ -85,8 +104,7 @@ function App() {
         className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2"
       >
         <div>
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Engagement Trend</h2>
+          <div className="mb-3 flex items-center justify-end">
             <div className="flex gap-1">
               {TIME_RANGES.map((r) => (
                 <Button
@@ -105,12 +123,7 @@ function App() {
             rangeLabel={rangeLabel}
           />
         </div>
-        <div>
-          <h2 className="mb-3 text-lg font-semibold">
-            Milestone Completion by Category
-          </h2>
-          <MilestoneChart data={milestoneCategoryData} />
-        </div>
+        <MilestoneChart data={milestoneCategoryData} />
       </section>
 
       <StudentDetail

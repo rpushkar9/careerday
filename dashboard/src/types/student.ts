@@ -1,5 +1,7 @@
 export type MilestoneStatus = "Completed" | "In Progress" | "Pending";
 
+export type EngagementTrend = "up" | "down" | "stable";
+
 export type EngagementTier = "High" | "Medium" | "Low";
 
 export type StudentStatus = "On Track" | "At Risk" | "Needs Attention";
@@ -45,9 +47,13 @@ export interface ActivityEvent {
 export interface Student {
   id: string;
   name: string;
+  email: string;
+  major: string;
+  graduationYear: number;
   careerDirection: CareerDirection;
   confidenceScore: number;
   engagementScore: number;
+  engagementTrend: EngagementTrend;
   engagementTier: EngagementTier;
   lastActiveDate: string;
   lastContactedDate: string;

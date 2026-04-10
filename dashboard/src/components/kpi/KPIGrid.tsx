@@ -1,3 +1,4 @@
+import { Users, TrendingUp, Target, AlertCircle } from "lucide-react";
 import type { KPISnapshot } from "@/types";
 import { deriveTrend } from "@/data";
 import { KPICard } from "./KPICard";
@@ -15,14 +16,17 @@ export function KPIGrid({ snapshot }: KPIGridProps) {
         label="Total Students"
         value={current.totalStudents}
         trend={deriveTrend(current.totalStudents, prior.totalStudents)}
+        delta={pctDelta(current.totalStudents, prior.totalStudents)}
+        icon={Users}
       />
       <KPICard
         label="Average Engagement"
-        value={current.averageEngagementTier}
-        trend={deriveTrend(
-          tierToNumber(current.averageEngagementTier),
-          tierToNumber(prior.averageEngagementTier),
-        )}
+        value={Math.round(current.averageEngagementScore)}
+        unit="%"
+        trend={deriveTrend(current.averageEngagementScore, prior.averageEngagementScore)}
+        delta={pctDelta(current.averageEngagementScore, prior.averageEngagementScore)}
+        icon={TrendingUp}
+        tooltip="Metric calculated from student platform activity. For advising support only. Not used for ranking."
       />
       <KPICard
         label="Milestone Completion"
@@ -32,6 +36,8 @@ export function KPIGrid({ snapshot }: KPIGridProps) {
           current.milestoneCompletionRate,
           prior.milestoneCompletionRate,
         )}
+        delta={pctDelta(current.milestoneCompletionRate, prior.milestoneCompletionRate)}
+        icon={Target}
       />
       <KPICard
         label="Students Needing Attention"
@@ -41,21 +47,17 @@ export function KPIGrid({ snapshot }: KPIGridProps) {
           -current.studentsNeedingAttentionCount,
           -prior.studentsNeedingAttentionCount,
         )}
+        delta={pctDelta(current.studentsNeedingAttentionCount, prior.studentsNeedingAttentionCount)}
+        icon={AlertCircle}
       />
     </div>
   );
 }
 
-/** Map engagement tier to a number for trend comparison. */
-function tierToNumber(tier: string): number {
-  switch (tier) {
-    case "High":
-      return 3;
-    case "Medium":
-      return 2;
-    case "Low":
-      return 1;
-    default:
-      return 0;
-  }
+/** Format a percentage delta between two numbers, e.g. "+8%" or "-3%". */
+function pctDelta(current: number, prior: number): string | undefined {
+  if (prior === 0) return undefined;
+  const pct = Math.round(((current - prior) / prior) * 100);
+  if (pct === 0) return undefined;
+  return pct > 0 ? `+${pct}%` : `${pct}%`;
 }

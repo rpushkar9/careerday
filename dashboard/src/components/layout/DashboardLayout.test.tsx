@@ -8,9 +8,8 @@ describe("DashboardLayout", () => {
         <div>child</div>
       </DashboardLayout>,
     );
-    expect(
-      screen.getByText("CareerDayy Counselor Dashboard"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("CareerDayy")).toBeInTheDocument();
+    expect(screen.getByText("Counselor Dashboard")).toBeInTheDocument();
   });
 
   it("renders children in the main content area", () => {
@@ -20,5 +19,25 @@ describe("DashboardLayout", () => {
       </DashboardLayout>,
     );
     expect(screen.getByText("test content")).toBeInTheDocument();
+  });
+
+  it("renders the Bell notification button in the header", () => {
+    render(
+      <DashboardLayout>
+        <div />
+      </DashboardLayout>,
+    );
+    expect(
+      screen.getByRole("button", { name: /notifications/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("renders the AC avatar in the header", () => {
+    render(
+      <DashboardLayout>
+        <div />
+      </DashboardLayout>,
+    );
+    expect(screen.getByText("AC")).toBeInTheDocument();
   });
 });

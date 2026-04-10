@@ -46,7 +46,12 @@ export function AdvisorNotes({ notes, onAddNote }: AdvisorNotesProps) {
               <p>{note.text}</p>
               <p className="mt-1 text-xs text-muted-foreground">
                 {note.authorName} &mdash;{" "}
-                {new Date(note.timestamp).toLocaleDateString()}
+                {new Date(note.timestamp).toLocaleString(undefined, {
+                  month: "short",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                })}
               </p>
             </li>
           ))}

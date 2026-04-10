@@ -2,6 +2,8 @@
  * 30 mock student records. Raw data — no derived fields (engagementTier,
  * flaggedForAttention). Those are computed in the data-access layer.
  *
+ * New fields: email, major, graduationYear, engagementTrend.
+ *
  * Constraints enforced by Zod at import time:
  *  - careerDirection: 'clear' | 'exploring' | 'uncertain' | 'undeclared'
  *  - confidenceScore: integer 1–5
@@ -15,6 +17,10 @@ export const rawStudents = [
   {
     id: "s-001",
     name: "Aisha Johnson",
+    email: "aisha.johnson@university.edu",
+    major: "Biomedical Engineering",
+    graduationYear: 2026,
+    engagementTrend: "up" as const,
     careerDirection: "clear" as const,
     confidenceScore: 5,
     engagementScore: 92,
@@ -94,6 +100,10 @@ export const rawStudents = [
   {
     id: "s-002",
     name: "Marcus Chen",
+    email: "marcus.chen@university.edu",
+    major: "Computer Science",
+    graduationYear: 2027,
+    engagementTrend: "stable" as const,
     careerDirection: "exploring" as const,
     confidenceScore: 3,
     engagementScore: 65,
@@ -147,6 +157,10 @@ export const rawStudents = [
   {
     id: "s-003",
     name: "Priya Patel",
+    email: "priya.patel@university.edu",
+    major: "Biology (Pre-Med)",
+    graduationYear: 2026,
+    engagementTrend: "up" as const,
     careerDirection: "clear" as const,
     confidenceScore: 4,
     engagementScore: 78,
@@ -208,6 +222,10 @@ export const rawStudents = [
   {
     id: "s-004",
     name: "Deshawn Williams",
+    email: "deshawn.williams@university.edu",
+    major: "Undeclared",
+    graduationYear: 2027,
+    engagementTrend: "down" as const,
     careerDirection: "uncertain" as const,
     confidenceScore: 2,
     engagementScore: 35,
@@ -248,6 +266,10 @@ export const rawStudents = [
   {
     id: "s-005",
     name: "Sofia Rodriguez",
+    email: "sofia.rodriguez@university.edu",
+    major: "Nursing",
+    graduationYear: 2027,
+    engagementTrend: "down" as const,
     careerDirection: "exploring" as const,
     confidenceScore: 3,
     engagementScore: 55,
@@ -295,6 +317,10 @@ export const rawStudents = [
   {
     id: "s-006",
     name: "Tyler Kim",
+    email: "tyler.kim@university.edu",
+    major: "Computer Science",
+    graduationYear: 2025,
+    engagementTrend: "up" as const,
     careerDirection: "clear" as const,
     confidenceScore: 5,
     engagementScore: 88,
@@ -363,6 +389,10 @@ export const rawStudents = [
   {
     id: "s-007",
     name: "Emma Thompson",
+    email: "emma.thompson@university.edu",
+    major: "Undeclared",
+    graduationYear: 2028,
+    engagementTrend: "down" as const,
     careerDirection: "undeclared" as const,
     confidenceScore: 1,
     engagementScore: 22,
@@ -390,6 +420,10 @@ export const rawStudents = [
   {
     id: "s-008",
     name: "Jordan Davis",
+    email: "jordan.davis@university.edu",
+    major: "Construction Technology",
+    graduationYear: 2026,
+    engagementTrend: "stable" as const,
     careerDirection: "exploring" as const,
     confidenceScore: 3,
     engagementScore: 60,
@@ -443,6 +477,10 @@ export const rawStudents = [
   {
     id: "s-009",
     name: "Olivia Martinez",
+    email: "olivia.martinez@university.edu",
+    major: "Environmental Science",
+    graduationYear: 2025,
+    engagementTrend: "up" as const,
     careerDirection: "clear" as const,
     confidenceScore: 4,
     engagementScore: 82,
@@ -498,6 +536,10 @@ export const rawStudents = [
   {
     id: "s-010",
     name: "Liam O'Brien",
+    email: "liam.obrien@university.edu",
+    major: "Psychology",
+    graduationYear: 2027,
+    engagementTrend: "down" as const,
     careerDirection: "uncertain" as const,
     confidenceScore: 2,
     engagementScore: 42,
@@ -539,6 +581,10 @@ export const rawStudents = [
   {
     id: "s-011",
     name: "Zara Ahmed",
+    email: "zara.ahmed@university.edu",
+    major: "Communications & Journalism",
+    graduationYear: 2025,
+    engagementTrend: "stable" as const,
     careerDirection: "clear" as const,
     confidenceScore: 4,
     engagementScore: 75,
@@ -587,6 +633,10 @@ export const rawStudents = [
   {
     id: "s-012",
     name: "Noah Jackson",
+    email: "noah.jackson@university.edu",
+    major: "Business Administration",
+    graduationYear: 2026,
+    engagementTrend: "stable" as const,
     careerDirection: "exploring" as const,
     confidenceScore: 3,
     engagementScore: 58,
@@ -628,6 +678,10 @@ export const rawStudents = [
   {
     id: "s-013",
     name: "Mia Chang",
+    email: "mia.chang@university.edu",
+    major: "Data Science",
+    graduationYear: 2025,
+    engagementTrend: "up" as const,
     careerDirection: "clear" as const,
     confidenceScore: 5,
     engagementScore: 95,
@@ -697,6 +751,10 @@ export const rawStudents = [
   {
     id: "s-014",
     name: "Ethan Brown",
+    email: "ethan.brown@university.edu",
+    major: "Undeclared",
+    graduationYear: 2028,
+    engagementTrend: "down" as const,
     careerDirection: "undeclared" as const,
     confidenceScore: 1,
     engagementScore: 18,
@@ -724,6 +782,10 @@ export const rawStudents = [
   {
     id: "s-015",
     name: "Isabella Nguyen",
+    email: "isabella.nguyen@university.edu",
+    major: "Political Science",
+    graduationYear: 2026,
+    engagementTrend: "stable" as const,
     careerDirection: "exploring" as const,
     confidenceScore: 3,
     engagementScore: 52,
@@ -771,6 +833,10 @@ export const rawStudents = [
   {
     id: "s-016",
     name: "James Wilson",
+    email: "james.wilson@university.edu",
+    major: "Mechanical Engineering",
+    graduationYear: 2026,
+    engagementTrend: "up" as const,
     careerDirection: "clear" as const,
     confidenceScore: 4,
     engagementScore: 71,
@@ -819,6 +885,10 @@ export const rawStudents = [
   {
     id: "s-017",
     name: "Ava Lee",
+    email: "ava.lee@university.edu",
+    major: "Fine Arts",
+    graduationYear: 2027,
+    engagementTrend: "down" as const,
     careerDirection: "uncertain" as const,
     confidenceScore: 2,
     engagementScore: 38,
@@ -860,6 +930,10 @@ export const rawStudents = [
   {
     id: "s-018",
     name: "Daniel Garcia",
+    email: "daniel.garcia@university.edu",
+    major: "Finance",
+    graduationYear: 2025,
+    engagementTrend: "up" as const,
     careerDirection: "clear" as const,
     confidenceScore: 4,
     engagementScore: 80,
@@ -915,6 +989,10 @@ export const rawStudents = [
   {
     id: "s-019",
     name: "Chloe Taylor",
+    email: "chloe.taylor@university.edu",
+    major: "Education",
+    graduationYear: 2026,
+    engagementTrend: "stable" as const,
     careerDirection: "exploring" as const,
     confidenceScore: 3,
     engagementScore: 63,
@@ -962,6 +1040,10 @@ export const rawStudents = [
   {
     id: "s-020",
     name: "Ryan Mitchell",
+    email: "ryan.mitchell@university.edu",
+    major: "Undeclared",
+    graduationYear: 2028,
+    engagementTrend: "down" as const,
     careerDirection: "undeclared" as const,
     confidenceScore: 2,
     engagementScore: 28,
@@ -996,6 +1078,10 @@ export const rawStudents = [
   {
     id: "s-021",
     name: "Hannah Lewis",
+    email: "hannah.lewis@university.edu",
+    major: "Biochemistry",
+    graduationYear: 2025,
+    engagementTrend: "up" as const,
     careerDirection: "clear" as const,
     confidenceScore: 5,
     engagementScore: 90,
@@ -1051,6 +1137,10 @@ export const rawStudents = [
   {
     id: "s-022",
     name: "Brandon Scott",
+    email: "brandon.scott@university.edu",
+    major: "Criminal Justice",
+    graduationYear: 2027,
+    engagementTrend: "down" as const,
     careerDirection: "exploring" as const,
     confidenceScore: 3,
     engagementScore: 48,
@@ -1092,6 +1182,10 @@ export const rawStudents = [
   {
     id: "s-023",
     name: "Grace White",
+    email: "grace.white@university.edu",
+    major: "Nursing",
+    graduationYear: 2025,
+    engagementTrend: "up" as const,
     careerDirection: "clear" as const,
     confidenceScore: 4,
     engagementScore: 77,
@@ -1146,6 +1240,10 @@ export const rawStudents = [
   {
     id: "s-024",
     name: "Alex Rivera",
+    email: "alex.rivera@university.edu",
+    major: "Theater Arts",
+    graduationYear: 2026,
+    engagementTrend: "down" as const,
     careerDirection: "uncertain" as const,
     confidenceScore: 2,
     engagementScore: 40,
@@ -1193,6 +1291,10 @@ export const rawStudents = [
   {
     id: "s-025",
     name: "Natalie Foster",
+    email: "natalie.foster@university.edu",
+    major: "Marketing",
+    graduationYear: 2025,
+    engagementTrend: "up" as const,
     careerDirection: "clear" as const,
     confidenceScore: 4,
     engagementScore: 85,
@@ -1248,6 +1350,10 @@ export const rawStudents = [
   {
     id: "s-026",
     name: "Kevin Park",
+    email: "kevin.park@university.edu",
+    major: "Philosophy",
+    graduationYear: 2027,
+    engagementTrend: "stable" as const,
     careerDirection: "exploring" as const,
     confidenceScore: 3,
     engagementScore: 56,
@@ -1289,6 +1395,10 @@ export const rawStudents = [
   {
     id: "s-027",
     name: "Sarah Cooper",
+    email: "sarah.cooper@university.edu",
+    major: "Civil Engineering",
+    graduationYear: 2025,
+    engagementTrend: "up" as const,
     careerDirection: "clear" as const,
     confidenceScore: 5,
     engagementScore: 88,
@@ -1344,6 +1454,10 @@ export const rawStudents = [
   {
     id: "s-028",
     name: "Michael Adams",
+    email: "michael.adams@university.edu",
+    major: "History",
+    graduationYear: 2027,
+    engagementTrend: "down" as const,
     careerDirection: "uncertain" as const,
     confidenceScore: 2,
     engagementScore: 33,
@@ -1384,6 +1498,10 @@ export const rawStudents = [
   {
     id: "s-029",
     name: "Emily Clark",
+    email: "emily.clark@university.edu",
+    major: "Graphic Design",
+    graduationYear: 2026,
+    engagementTrend: "stable" as const,
     careerDirection: "exploring" as const,
     confidenceScore: 3,
     engagementScore: 62,
@@ -1432,6 +1550,10 @@ export const rawStudents = [
   {
     id: "s-030",
     name: "David Hernandez",
+    email: "david.hernandez@university.edu",
+    major: "Architecture",
+    graduationYear: 2025,
+    engagementTrend: "up" as const,
     careerDirection: "clear" as const,
     confidenceScore: 4,
     engagementScore: 73,

@@ -18,18 +18,21 @@ const sampleData: MilestoneCategoryCompletion[] = [
     completedCount: 20,
     totalCount: 30,
     completionRate: 66.7,
+    inProgressCount: 5,
   },
   {
     category: "Documents",
     completedCount: 15,
     totalCount: 30,
     completionRate: 50.0,
+    inProgressCount: 8,
   },
   {
     category: "Experience",
     completedCount: 10,
     totalCount: 30,
     completionRate: 33.3,
+    inProgressCount: 3,
   },
 ];
 
@@ -37,6 +40,18 @@ describe("MilestoneChart", () => {
   it("renders a chart container", () => {
     render(<MilestoneChart data={sampleData} />);
     expect(screen.getByTestId("milestone-chart")).toBeInTheDocument();
+  });
+
+  it("renders card wrapper with rounded-2xl class", () => {
+    const { container } = render(<MilestoneChart data={sampleData} />);
+    expect(container.querySelector(".rounded-2xl")).toBeInTheDocument();
+  });
+
+  it("renders the chart title", () => {
+    render(<MilestoneChart data={sampleData} />);
+    expect(
+      screen.getByText("Milestone Completion Status"),
+    ).toBeInTheDocument();
   });
 
   it("renders bar elements equal to data.length", () => {

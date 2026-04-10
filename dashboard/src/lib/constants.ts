@@ -9,11 +9,11 @@ export type FilterChip =
   | "All"
   | "High Priority"
   | "Milestone Behind"
-  | "Recently Active";
+  | "Low Engagement";
 
 export const FILTER_CHIPS: FilterChip[] = [
   "All",
   "High Priority",
   "Milestone Behind",
-  "Recently Active",
+  "Low Engagement",
 ];

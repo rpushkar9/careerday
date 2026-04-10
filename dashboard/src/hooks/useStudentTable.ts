@@ -5,10 +5,27 @@ import { filterByChip } from "@/data";
 
 export function useStudentTable(students: Student[]) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeChip, setActiveChip] = useState<FilterChip>("All");
+  const [activeChips, setActiveChips] = useState<string[]>([]);
 
   const filteredStudents = useMemo(() => {
-    const chipFiltered = filterByChip(students, activeChip);
+    let chipFiltered: Student[];
+
+    if (activeChips.length === 0 || activeChips.includes("All")) {
+      chipFiltered = students;
+    } else {
+      // OR-filter: union of all active chip results, deduplicated by id
+      const seen = new Set<string>();
+      chipFiltered = [];
+      for (const chip of activeChips) {
+        const results = filterByChip(students, chip as FilterChip);
+        for (const student of results) {
+          if (!seen.has(student.id)) {
+            seen.add(student.id);
+            chipFiltered.push(student);
+          }
+        }
+      }
+    }
 
     if (!searchQuery.trim()) return chipFiltered;
 
@@ -18,13 +35,13 @@ export function useStudentTable(students: Student[]) {
         s.name.toLowerCase().includes(query) ||
         s.careerDirection.toLowerCase().includes(query),
     );
-  }, [students, activeChip, searchQuery]);
+  }, [students, activeChips, searchQuery]);
 
   return {
     filteredStudents,
     searchQuery,
     setSearchQuery,
-    activeChip,
-    setActiveChip,
+    activeChips,
+    setActiveChips,
   };
 }

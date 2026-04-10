@@ -11,6 +11,8 @@ export const StudentStatusSchema = z.enum([
   "At Risk",
   "Needs Attention",
 ]);
+export const EngagementTrendSchema = z.enum(["up", "down", "stable"]);
+
 export const CareerDirectionSchema = z.enum([
   "clear",
   "exploring",
@@ -51,9 +53,13 @@ export const ActivityEventSchema = z.object({
 export const RawStudentSchema = z.object({
   id: z.string(),
   name: z.string().min(1),
+  email: z.string().email(),
+  major: z.string().min(1),
+  graduationYear: z.number().int().min(2025).max(2030),
   careerDirection: CareerDirectionSchema,
   confidenceScore: z.number().int().min(1).max(5),
   engagementScore: z.number().min(0).max(100),
+  engagementTrend: EngagementTrendSchema,
   lastActiveDate: z.string(),
   lastContactedDate: z.string(),
   status: StudentStatusSchema,

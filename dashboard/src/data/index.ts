@@ -97,11 +97,8 @@ export function filterByChip(list: Student[], chip: FilterChip): Student[] {
           (m) => m.status === "In Progress" || m.status === "Pending",
         ),
       );
-    case "Recently Active": {
-      const sevenDaysAgo = new Date();
-      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-      return list.filter((s) => new Date(s.lastActiveDate) >= sevenDaysAgo);
-    }
+    case "Low Engagement":
+      return list.filter((s) => s.engagementTier === "Low");
   }
 }
 

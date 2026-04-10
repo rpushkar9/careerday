@@ -1,6 +1,7 @@
 export type {
   MilestoneStatus,
   EngagementTier,
+  EngagementTrend,
   StudentStatus,
   CareerDirection,
   ActivityEventType,

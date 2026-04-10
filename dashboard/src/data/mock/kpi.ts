@@ -7,13 +7,13 @@ import type {
 export const rawKpiSnapshot: KPISnapshot = {
   current: {
     totalStudents: 30,
-    averageEngagementTier: "Medium",
+    averageEngagementScore: 64,
     milestoneCompletionRate: 58.4,
     studentsNeedingAttentionCount: 7,
   },
   prior: {
-    totalStudents: 30,
-    averageEngagementTier: "Medium",
+    totalStudents: 28,
+    averageEngagementScore: 59,
     milestoneCompletionRate: 52.1,
     studentsNeedingAttentionCount: 9,
   },
@@ -35,9 +35,12 @@ function generateEngagementTimeSeries(): EngagementDataPoint[] {
     const noise = Math.sin(i * 0.7) * 5 + Math.cos(i * 1.3) * 3;
     score = Math.max(30, Math.min(85, 50 + trend + noise));
 
+    // Target ramps from 60 to 75 over 90 days
+    const target = Math.round(60 + (89 - i) * (15 / 89));
     points.push({
       date: date.toISOString().split("T")[0],
       engagementScore: Math.round(score * 10) / 10,
+      target,
     });
   }
 
@@ -51,30 +54,35 @@ export const rawMilestoneCategoryData: MilestoneCategoryCompletion[] = [
   {
     category: "Assessment",
     completedCount: 25,
+    inProgressCount: 3,
     totalCount: 30,
     completionRate: 83.3,
   },
   {
     category: "Documents",
     completedCount: 16,
+    inProgressCount: 8,
     totalCount: 30,
     completionRate: 53.3,
   },
   {
     category: "Experience",
     completedCount: 8,
+    inProgressCount: 5,
     totalCount: 20,
     completionRate: 40.0,
   },
   {
     category: "Applications",
     completedCount: 10,
+    inProgressCount: 6,
     totalCount: 22,
     completionRate: 45.5,
   },
   {
     category: "Financial",
     completedCount: 5,
+    inProgressCount: 4,
     totalCount: 12,
     completionRate: 41.7,
   },
