@@ -45,3 +45,30 @@ A chronological feed of recent student actions — such as completing a survey, 
 
 - **Schedule Meeting** — Book a session directly from the student's dashboard view
 - **View Full Profile** — Drill into the student's complete career profile
+
+---
+
+## Running the App
+
+This is a standalone Vite + React SPA. No backend or environment variables are required — all data is typed mock data bundled with the app.
+
+**Prerequisites:** Node.js 18+ and [pnpm](https://pnpm.io/installation)
+
+```bash
+# from the dashboard/ directory
+pnpm install       # install dependencies (first time only)
+pnpm dev           # start local dev server at http://localhost:5173
+```
+
+**Other commands:**
+
+```bash
+pnpm build         # production build → dist/
+pnpm preview       # serve the production build locally
+pnpm test          # run unit tests (Vitest)
+pnpm lint          # ESLint
+pnpm format        # Prettier (write)
+pnpm format:check  # Prettier (check only — used in CI)
+```
+
+> All commands must be run from the `dashboard/` directory, not the repo root.
