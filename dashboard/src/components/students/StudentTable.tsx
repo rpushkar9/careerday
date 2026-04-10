@@ -69,6 +69,7 @@ const columns = [
 export function StudentTable({ students, onSelectStudent }: StudentTableProps) {
   const [sorting, setSorting] = useState<SortingState>([]);
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table is not yet compatible with React Compiler; safe to use here as no memoized consumers depend on these values
   const table = useReactTable({
     data: students,
     columns,

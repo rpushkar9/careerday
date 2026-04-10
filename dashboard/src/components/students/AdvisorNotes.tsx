@@ -38,7 +38,7 @@ export function AdvisorNotes({ notes, onAddNote }: AdvisorNotesProps) {
       </div>
 
       {notes.length === 0 ? (
-        <EmptyState message="No advisor notes" />
+        <EmptyState message="No notes yet — add the first one" />
       ) : (
         <ul className="space-y-2">
           {notes.map((note) => (

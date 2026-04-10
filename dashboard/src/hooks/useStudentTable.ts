@@ -13,7 +13,11 @@ export function useStudentTable(students: Student[]) {
     if (!searchQuery.trim()) return chipFiltered;
 
     const query = searchQuery.toLowerCase();
-    return chipFiltered.filter((s) => s.name.toLowerCase().includes(query));
+    return chipFiltered.filter(
+      (s) =>
+        s.name.toLowerCase().includes(query) ||
+        s.careerDirection.toLowerCase().includes(query),
+    );
   }, [students, activeChip, searchQuery]);
 
   return {

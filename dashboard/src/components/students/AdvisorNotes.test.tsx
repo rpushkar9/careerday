@@ -51,6 +51,6 @@ describe("AdvisorNotes", () => {
 
   it("shows empty state when notes is empty", () => {
     render(<AdvisorNotes notes={[]} onAddNote={vi.fn()} />);
-    expect(screen.getByText(/no advisor notes/i)).toBeInTheDocument();
+    expect(screen.getByText(/no notes yet/i)).toBeInTheDocument();
   });
 });
