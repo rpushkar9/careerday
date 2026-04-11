@@ -115,7 +115,11 @@ function StudentDetailContent({
               </div>
               <div>
                 <h3 className="text-sm font-medium text-amber-900">
-                  {student.status === "At Risk" ? "At Risk" : "Needs Attention"}
+                  {student.status === "At Risk"
+                    ? "At Risk"
+                    : student.status === "Needs Attention"
+                      ? "Needs Attention"
+                      : "Flagged for Review"}
                 </h3>
                 <p className="text-sm text-amber-700">
                   {getReasonText(student)}

@@ -73,32 +73,6 @@ function App() {
         <KPIGrid snapshot={kpiSnapshot} />
       </section>
 
-      <section aria-label="Student overview" className="mt-8 space-y-4">
-        <div>
-          <h2 className="text-lg font-semibold">Student Overview</h2>
-          <p className="text-sm text-muted-foreground">
-            Monitor individual student progress
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <FilterChips
-              active={activeChips}
-              onChange={setActiveChips}
-              students={studentData}
-            />
-          <Input
-            placeholder="Search students..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="max-w-xs"
-          />
-        </div>
-        <StudentTable
-          students={filteredStudents}
-          onSelectStudent={setSelectedStudent}
-        />
-      </section>
-
       <section
         aria-label="Charts"
         className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2"
@@ -124,6 +98,32 @@ function App() {
           />
         </div>
         <MilestoneChart data={milestoneCategoryData} />
+      </section>
+
+      <section aria-label="Student overview" className="mt-8 space-y-4">
+        <div>
+          <h2 className="text-lg font-semibold">Student Overview</h2>
+          <p className="text-sm text-muted-foreground">
+            Monitor individual student progress
+          </p>
+        </div>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <FilterChips
+              active={activeChips}
+              onChange={setActiveChips}
+              students={studentData}
+            />
+          <Input
+            placeholder="Search students..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="max-w-xs"
+          />
+        </div>
+        <StudentTable
+          students={filteredStudents}
+          onSelectStudent={setSelectedStudent}
+        />
       </section>
 
       <StudentDetail

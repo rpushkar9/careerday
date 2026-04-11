@@ -2,12 +2,13 @@ import {
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
+  getPaginationRowModel,
   flexRender,
   createColumnHelper,
   type SortingState,
 } from "@tanstack/react-table";
-import { useState } from "react";
-import { ArrowUp, ArrowDown, Minus } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowUp, ArrowDown, Minus, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Student } from "@/types";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -153,7 +154,14 @@ export function StudentTable({ students, onSelectStudent }: StudentTableProps) {
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: { pagination: { pageSize: 10 } },
   });
+
+  // Reset to page 0 whenever the filtered student list changes
+  useEffect(() => {
+    table.setPageIndex(0);
+  }, [students, table]);
 
   if (students.length === 0) {
     return <EmptyState message="No students found" />;
@@ -230,6 +238,32 @@ export function StudentTable({ students, onSelectStudent }: StudentTableProps) {
           ))}
         </tbody>
       </table>
+      {table.getPageCount() > 1 && (
+        <div className="flex items-center justify-between border-t px-4 py-3 text-sm text-muted-foreground">
+          <span>
+            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+            {" "}· {students.length} students
+          </span>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+              className="rounded p-1 hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed"
+              aria-label="Previous page"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+              className="rounded p-1 hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed"
+              aria-label="Next page"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

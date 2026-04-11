@@ -50,12 +50,12 @@ function makeStudents(count: number): Student[] {
 }
 
 describe("StudentTable", () => {
-  it("renders 30 rows when given 30 students", () => {
+  it("renders at most 10 rows when given 30 students (pagination)", () => {
     const students = makeStudents(30);
     render(<StudentTable students={students} onSelectStudent={vi.fn()} />);
     const rows = screen.getAllByRole("row");
-    // 30 data rows + 1 header row
-    expect(rows).toHaveLength(31);
+    // 10 data rows (page 1 of 3) + 1 header row
+    expect(rows).toHaveLength(11);
   });
 
   it("renders 9 column headers", () => {
