@@ -194,16 +194,16 @@ function StudentDetailContent({
         </section>
 
         <section>
+          <h3 className="mb-2 text-sm font-semibold">Milestones</h3>
+          <MilestoneList milestones={student.milestones} />
+        </section>
+
+        <section>
           <h3 className="mb-2 text-sm font-semibold">Advisor Notes</h3>
           <AdvisorNotes
             notes={student.advisorNotes}
             onAddNote={(text) => onAddNote(student.id, text)}
           />
-        </section>
-
-        <section>
-          <h3 className="mb-2 text-sm font-semibold">Milestones</h3>
-          <MilestoneList milestones={student.milestones} />
         </section>
 
         <section>
