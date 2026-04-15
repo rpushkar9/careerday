@@ -83,12 +83,12 @@ describe("StudentDetail", () => {
     expect(onClose).toHaveBeenCalled();
   });
 
-  it("renders Career Narrative section with career goal and confidence score", () => {
+  it("renders Career Narrative section with career direction and confidence score", () => {
     render(
       <StudentDetail student={student} onClose={vi.fn()} onAddNote={vi.fn()} />,
     );
     expect(screen.getByText("Career Narrative")).toBeInTheDocument();
-    expect(screen.getByText("Career Goal")).toBeInTheDocument();
+    expect(screen.getByText("Career Direction")).toBeInTheDocument();
     expect(screen.getByText("Confidence Score")).toBeInTheDocument();
   });
 

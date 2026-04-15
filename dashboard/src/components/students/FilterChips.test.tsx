@@ -29,14 +29,13 @@ function makeStudent(overrides: Partial<Student> = {}): Student {
 }
 
 const mockStudents: Student[] = [
-  makeStudent({ id: "s-1", flaggedForAttention: true, engagementTier: "Low" }),
+  makeStudent({ id: "s-1", status: "Needs Attention", engagementTier: "Low" }),
   makeStudent({
     id: "s-2",
-    flaggedForAttention: false,
     engagementTier: "High",
-    milestones: [{ id: "m-1", label: "A", status: "In Progress", category: "X" }],
+    milestones: [{ id: "m-1", label: "A", status: "Pending", category: "X" }],
   }),
-  makeStudent({ id: "s-3", flaggedForAttention: false, engagementTier: "Medium" }),
+  makeStudent({ id: "s-3", engagementTier: "Medium" }),
 ];
 
 describe("FilterChips", () => {
@@ -63,9 +62,9 @@ describe("FilterChips", () => {
       <FilterChips active={[]} onChange={onChange} students={mockStudents} />,
     );
     await userEvent.click(
-      screen.getByRole("button", { name: /High Priority/ }),
+      screen.getByRole("button", { name: /Needs Attention/ }),
     );
-    expect(onChange).toHaveBeenCalledWith(["High Priority"]);
+    expect(onChange).toHaveBeenCalledWith(["Needs Attention"]);
   });
 
   it("active chip is visually distinguished", () => {
@@ -91,7 +90,7 @@ describe("FilterChips", () => {
     );
     // "All" count = 3
     expect(screen.getByText("3")).toBeInTheDocument();
-    // "High Priority" count = 1
+    // "Needs Attention" count = 1
     // "Low Engagement" count = 1
     // These may collide so just verify totals exist
     const countBadges = screen.getAllByText(/^\d+$/);
@@ -113,10 +112,10 @@ describe("FilterChips", () => {
       />,
     );
 
-    // Click "High Priority"
-    await user.click(screen.getByRole("button", { name: /High Priority/ }));
-    expect(onChange).toHaveBeenLastCalledWith(["High Priority"]);
-    activeState = ["High Priority"];
+    // Click "Needs Attention"
+    await user.click(screen.getByRole("button", { name: /Needs Attention/ }));
+    expect(onChange).toHaveBeenLastCalledWith(["Needs Attention"]);
+    activeState = ["Needs Attention"];
 
     rerender(
       <FilterChips
@@ -129,10 +128,10 @@ describe("FilterChips", () => {
     // Click "Low Engagement" — both should now be active
     await user.click(screen.getByRole("button", { name: /Low Engagement/ }));
     expect(onChange).toHaveBeenLastCalledWith([
-      "High Priority",
+      "Needs Attention",
       "Low Engagement",
     ]);
-    activeState = ["High Priority", "Low Engagement"];
+    activeState = ["Needs Attention", "Low Engagement"];
 
     rerender(
       <FilterChips
@@ -143,7 +142,7 @@ describe("FilterChips", () => {
     );
 
     expect(
-      screen.getByRole("button", { name: /High Priority/ }),
+      screen.getByRole("button", { name: /Needs Attention/ }),
     ).toHaveAttribute("data-active", "true");
     expect(
       screen.getByRole("button", { name: /Low Engagement/ }),
@@ -154,7 +153,7 @@ describe("FilterChips", () => {
     const onChange = vi.fn();
     render(
       <FilterChips
-        active={["High Priority"]}
+        active={["Needs Attention"]}
         onChange={onChange}
         students={mockStudents}
       />,

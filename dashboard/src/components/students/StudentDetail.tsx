@@ -166,14 +166,19 @@ function StudentDetailContent({
           <h3 className="mb-2 text-sm font-semibold">Career Narrative</h3>
           <div className="space-y-2 rounded-md border px-3 py-2 text-sm">
             <div>
-              <p className="text-xs text-muted-foreground">Career Goal</p>
+              <p className="text-xs text-muted-foreground">Career Direction</p>
               <p className="mt-0.5">
                 {student.careerDirection.charAt(0).toUpperCase() +
                   student.careerDirection.slice(1)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Confidence Score</p>
+              <p
+                className="text-xs text-muted-foreground"
+                title="Student's self-reported confidence in their career direction (1 = uncertain, 5 = very confident)"
+              >
+                Confidence Score
+              </p>
               <div className="mt-1 flex items-center gap-1.5">
                 {[1, 2, 3, 4, 5].map((level) => (
                   <div

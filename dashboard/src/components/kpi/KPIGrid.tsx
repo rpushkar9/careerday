@@ -26,7 +26,7 @@ export function KPIGrid({ snapshot }: KPIGridProps) {
         trend={deriveTrend(current.averageEngagementScore, prior.averageEngagementScore)}
         delta={pctDelta(current.averageEngagementScore, prior.averageEngagementScore)}
         icon={TrendingUp}
-        tooltip="Metric calculated from student platform activity. For advising support only. Not used for ranking."
+        tooltip="Reflects logged platform activity. For advising support only — not used for ranking."
       />
       <KPICard
         label="Milestone Completion"

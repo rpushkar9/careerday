@@ -11,7 +11,7 @@ interface FilterChipsProps {
 
 const CHIP_ICONS: Record<FilterChip, React.ElementType> = {
   All: Users,
-  "High Priority": AlertCircle,
+  "Needs Attention": AlertCircle,
   "Milestone Behind": Target,
   "Low Engagement": TrendingDown,
 };
@@ -20,13 +20,11 @@ function computeCount(chip: FilterChip, students: Student[]): number {
   switch (chip) {
     case "All":
       return students.length;
-    case "High Priority":
-      return students.filter((s) => s.flaggedForAttention).length;
+    case "Needs Attention":
+      return students.filter((s) => s.status === "Needs Attention").length;
     case "Milestone Behind":
       return students.filter((s) =>
-        s.milestones.some(
-          (m) => m.status === "In Progress" || m.status === "Pending",
-        ),
+        s.milestones.some((m) => m.status === "Pending"),
       ).length;
     case "Low Engagement":
       return students.filter((s) => s.engagementTier === "Low").length;

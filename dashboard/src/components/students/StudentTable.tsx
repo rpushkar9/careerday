@@ -45,8 +45,8 @@ const CAREER_DIRECTION_STYLES: Record<
 };
 
 const STATUS_TOOLTIP: Partial<Record<Student["status"], string>> = {
-  "At Risk": "Engagement declining this period",
-  "Needs Attention": "Low engagement or milestone gaps",
+  "At Risk": "Engagement declining or milestones behind schedule",
+  "Needs Attention": "Marked for counselor follow-up",
 };
 
 const columnHelper = createColumnHelper<Student>();
@@ -96,7 +96,12 @@ const columns = [
 
       const TrendIcon =
         trend === "up" ? ArrowUp : trend === "down" ? ArrowDown : Minus;
-      const trendColor = trend === "stable" ? "text-gray-400" : scoreColor;
+      const trendColor =
+        trend === "up"
+          ? "text-green-600"
+          : trend === "down"
+            ? "text-red-500"
+            : "text-gray-400";
 
       return (
         <span className="flex items-center gap-0.5">
