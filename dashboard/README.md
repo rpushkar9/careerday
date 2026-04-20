@@ -6,11 +6,32 @@ A tool for career counselors and advisors to view and manage individual student 
 
 ---
 
-## Figma Prototype
+## Live Demo
 
-> **This is a design prototype only** — it demonstrates the intended UI and interactions but is not connected to live data.
+> **Uses typed mock data — not connected to a live backend.**
 
-<a href="https://doll-dazzle-04316546.figma.site" target="_blank" rel="noopener noreferrer">View Figma Demo</a>
+**Deployed:** [careerday.vercel.app](https://careerday.vercel.app)
+
+| Resource | Link |
+|---|---|
+| Live app | https://careerday.vercel.app |
+| Figma prototype | https://doll-dazzle-04316546.figma.site |
+| GitHub repo | https://github.com/rpushkar9/careerday |
+
+---
+
+## Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Vite + React 19 |
+| Language | TypeScript 6 |
+| Styling | Tailwind CSS + shadcn/ui |
+| Table | TanStack Table v8 |
+| Charts | Recharts |
+| Validation | Zod |
+| Tests | Vitest + React Testing Library |
+| Package manager | pnpm |
 
 ---
 
@@ -18,7 +39,7 @@ A tool for career counselors and advisors to view and manage individual student 
 
 Counselors need a consolidated view of each student's career readiness — without digging through separate tools or asking students to self-report in meetings. The Counselor Dashboard brings together a student's career narrative, milestone progress, advisor notes, and recent activity into a single, scannable interface.
 
-> The sections below describe features as shown in the Figma prototype. Functionality and layout may evolve before production.
+> All data is anonymized mock data bundled with the app. No backend or authentication is required.
 
 ---
 
