@@ -20,7 +20,7 @@ export function InsightsPanel({ students }: InsightsPanelProps) {
 
   return (
     <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
-      <h2 className="text-base font-semibold mb-4">Insights This Quarter</h2>
+      <h2 className="text-base font-semibold mb-4">Insights</h2>
       <ul className="space-y-3">
         <li className="flex items-center gap-3 text-sm">
           <TrendingDown className="w-4 h-4 text-amber-600 flex-shrink-0" />

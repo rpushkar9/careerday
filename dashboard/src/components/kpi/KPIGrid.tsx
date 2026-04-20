@@ -43,11 +43,11 @@ export function KPIGrid({ snapshot }: KPIGridProps) {
         label="Students Needing Attention"
         value={current.studentsNeedingAttentionCount}
         trend={deriveTrend(
-          // Fewer students needing attention is better — invert so "down" = "up" (good)
+          // Fewer students needing attention is better — invert so "up" = good (count fell)
           -current.studentsNeedingAttentionCount,
           -prior.studentsNeedingAttentionCount,
         )}
-        delta={pctDelta(current.studentsNeedingAttentionCount, prior.studentsNeedingAttentionCount)}
+        delta={pctDelta(-current.studentsNeedingAttentionCount, -prior.studentsNeedingAttentionCount)}
         icon={AlertCircle}
       />
     </div>

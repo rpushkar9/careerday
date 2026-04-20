@@ -16,16 +16,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               <p className="text-sm text-muted-foreground">Counselor Dashboard</p>
             </div>
             <div className="flex items-center gap-3">
-              <div className="relative">
-                <button
-                  type="button"
-                  aria-label="Notifications"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <Bell className="w-6 h-6 text-primary" />
-                </button>
-                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-primary rounded-full" />
-              </div>
+              <Bell className="w-6 h-6 text-primary" aria-hidden="true" />
               <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
                 <span className="text-primary-foreground text-sm font-medium">AC</span>
               </div>

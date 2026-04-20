@@ -52,7 +52,7 @@ const students: Student[] = [
 describe("InsightsPanel", () => {
   it("renders the section heading", () => {
     render(<InsightsPanel students={students} />);
-    expect(screen.getByText("Insights This Quarter")).toBeInTheDocument();
+    expect(screen.getByText("Insights")).toBeInTheDocument();
   });
 
   it("shows correct count of students with declining engagement", () => {

@@ -79,30 +79,30 @@ function StudentDetailContent({
 
       {/* Quick Action Buttons */}
       <div className="grid grid-cols-3 gap-3">
-        <button
+        <a
+          href={`mailto:${student.email}`}
           className="flex flex-col items-center gap-2 p-4 border border-border rounded-2xl hover:bg-secondary transition-colors"
-          onClick={() => {}}
-          aria-label="Email"
+          aria-label={`Email ${student.name}`}
         >
           <Mail className="w-5 h-5 text-primary" />
           <span className="text-xs text-foreground">Email</span>
-        </button>
-        <button
+        </a>
+        <a
+          href={`mailto:${student.email}?subject=Meeting+request`}
           className="flex flex-col items-center gap-2 p-4 border border-border rounded-2xl hover:bg-secondary transition-colors"
-          onClick={() => {}}
-          aria-label="Call"
+          aria-label={`Schedule meeting with ${student.name}`}
         >
           <Phone className="w-5 h-5 text-primary" />
-          <span className="text-xs text-foreground">Call</span>
-        </button>
-        <button
+          <span className="text-xs text-foreground">Schedule</span>
+        </a>
+        <a
+          href={`mailto:${student.email}`}
           className="flex flex-col items-center gap-2 p-4 border border-border rounded-2xl hover:bg-secondary transition-colors"
-          onClick={() => {}}
-          aria-label="Message"
+          aria-label={`Message ${student.name}`}
         >
           <MessageSquare className="w-5 h-5 text-primary" />
           <span className="text-xs text-foreground">Message</span>
-        </button>
+        </a>
       </div>
 
       <div className="mt-6 space-y-6">
