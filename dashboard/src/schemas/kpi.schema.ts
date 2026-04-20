@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const KPIPeriodSnapshotSchema = z.object({
+export const KPIPeriodSnapshotSchema = z.object({
   totalStudents: z.number().int().min(0),
   averageEngagementScore: z.number().min(0).max(100),
   milestoneCompletionRate: z.number().min(0).max(100),

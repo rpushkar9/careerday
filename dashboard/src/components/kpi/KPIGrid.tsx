@@ -26,7 +26,7 @@ export function KPIGrid({ snapshot }: KPIGridProps) {
         trend={deriveTrend(current.averageEngagementScore, prior.averageEngagementScore)}
         delta={pctDelta(current.averageEngagementScore, prior.averageEngagementScore)}
         icon={TrendingUp}
-        tooltip="Metric calculated from student platform activity. For advising support only. Not used for ranking."
+        tooltip="Reflects logged platform activity. For advising support only — not used for ranking."
       />
       <KPICard
         label="Milestone Completion"
@@ -43,11 +43,11 @@ export function KPIGrid({ snapshot }: KPIGridProps) {
         label="Students Needing Attention"
         value={current.studentsNeedingAttentionCount}
         trend={deriveTrend(
-          // Fewer students needing attention is better — invert so "down" = "up" (good)
+          // Fewer students needing attention is better — invert so "up" = good (count fell)
           -current.studentsNeedingAttentionCount,
           -prior.studentsNeedingAttentionCount,
         )}
-        delta={pctDelta(current.studentsNeedingAttentionCount, prior.studentsNeedingAttentionCount)}
+        delta={pctDelta(-current.studentsNeedingAttentionCount, -prior.studentsNeedingAttentionCount)}
         icon={AlertCircle}
       />
     </div>

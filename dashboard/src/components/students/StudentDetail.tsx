@@ -79,30 +79,30 @@ function StudentDetailContent({
 
       {/* Quick Action Buttons */}
       <div className="grid grid-cols-3 gap-3">
-        <button
+        <a
+          href={`mailto:${student.email}`}
           className="flex flex-col items-center gap-2 p-4 border border-border rounded-2xl hover:bg-secondary transition-colors"
-          onClick={() => {}}
-          aria-label="Email"
+          aria-label={`Email ${student.name}`}
         >
           <Mail className="w-5 h-5 text-primary" />
           <span className="text-xs text-foreground">Email</span>
-        </button>
-        <button
+        </a>
+        <a
+          href={`mailto:${student.email}?subject=Meeting+request`}
           className="flex flex-col items-center gap-2 p-4 border border-border rounded-2xl hover:bg-secondary transition-colors"
-          onClick={() => {}}
-          aria-label="Call"
+          aria-label={`Schedule meeting with ${student.name}`}
         >
           <Phone className="w-5 h-5 text-primary" />
-          <span className="text-xs text-foreground">Call</span>
-        </button>
-        <button
+          <span className="text-xs text-foreground">Schedule</span>
+        </a>
+        <a
+          href={`mailto:${student.email}`}
           className="flex flex-col items-center gap-2 p-4 border border-border rounded-2xl hover:bg-secondary transition-colors"
-          onClick={() => {}}
-          aria-label="Message"
+          aria-label={`Message ${student.name}`}
         >
           <MessageSquare className="w-5 h-5 text-primary" />
           <span className="text-xs text-foreground">Message</span>
-        </button>
+        </a>
       </div>
 
       <div className="mt-6 space-y-6">
@@ -166,14 +166,19 @@ function StudentDetailContent({
           <h3 className="mb-2 text-sm font-semibold">Career Narrative</h3>
           <div className="space-y-2 rounded-md border px-3 py-2 text-sm">
             <div>
-              <p className="text-xs text-muted-foreground">Career Goal</p>
+              <p className="text-xs text-muted-foreground">Career Direction</p>
               <p className="mt-0.5">
                 {student.careerDirection.charAt(0).toUpperCase() +
                   student.careerDirection.slice(1)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-muted-foreground">Confidence Score</p>
+              <p
+                className="text-xs text-muted-foreground"
+                title="Student's self-reported confidence in their career direction (1 = uncertain, 5 = very confident)"
+              >
+                Confidence Score
+              </p>
               <div className="mt-1 flex items-center gap-1.5">
                 {[1, 2, 3, 4, 5].map((level) => (
                   <div
@@ -194,16 +199,16 @@ function StudentDetailContent({
         </section>
 
         <section>
+          <h3 className="mb-2 text-sm font-semibold">Milestones</h3>
+          <MilestoneList milestones={student.milestones} />
+        </section>
+
+        <section>
           <h3 className="mb-2 text-sm font-semibold">Advisor Notes</h3>
           <AdvisorNotes
             notes={student.advisorNotes}
             onAddNote={(text) => onAddNote(student.id, text)}
           />
-        </section>
-
-        <section>
-          <h3 className="mb-2 text-sm font-semibold">Milestones</h3>
-          <MilestoneList milestones={student.milestones} />
         </section>
 
         <section>

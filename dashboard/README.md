@@ -41,13 +41,6 @@ A chronological feed of recent student actions — such as completing a survey, 
 
 ---
 
-## Key Actions
-
-- **Schedule Meeting** — Book a session directly from the student's dashboard view
-- **View Full Profile** — Drill into the student's complete career profile
-
----
-
 ## Running the App
 
 This is a standalone Vite + React SPA. No backend or environment variables are required — all data is typed mock data bundled with the app.

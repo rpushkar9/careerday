@@ -7,13 +7,13 @@ export const TIME_RANGES = [7, 30, 90] as const;
 
 export type FilterChip =
   | "All"
-  | "High Priority"
+  | "Needs Attention"
   | "Milestone Behind"
   | "Low Engagement";
 
 export const FILTER_CHIPS: FilterChip[] = [
   "All",
-  "High Priority",
+  "Needs Attention",
   "Milestone Behind",
   "Low Engagement",
 ];

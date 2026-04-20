@@ -13,6 +13,7 @@ import type {
   EngagementTier,
   TrendDirection,
   KPISnapshot,
+  KPIPeriodSnapshot,
   EngagementDataPoint,
   MilestoneCategoryCompletion,
 } from "@/types";
@@ -20,14 +21,14 @@ import type { FilterChip } from "@/lib/constants";
 import { ENGAGEMENT_THRESHOLDS } from "@/lib/constants";
 import { RawStudentSchema } from "@/schemas/student.schema";
 import {
-  KPISnapshotSchema,
+  KPIPeriodSnapshotSchema,
   EngagementDataPointSchema,
   MilestoneCategoryCompletionSchema,
 } from "@/schemas/kpi.schema";
 
 import { rawStudents } from "./mock/students";
 import {
-  rawKpiSnapshot,
+  rawKpiPrior,
   rawEngagementTimeSeries,
   rawMilestoneCategoryData,
 } from "./mock/kpi";
@@ -35,7 +36,7 @@ import {
 // ── Validation ──────────────────────────────────────────────────────────────
 
 const validatedStudents = z.array(RawStudentSchema).parse(rawStudents);
-const validatedKpiSnapshot = KPISnapshotSchema.parse(rawKpiSnapshot);
+const validatedKpiPrior = KPIPeriodSnapshotSchema.parse(rawKpiPrior);
 const validatedEngagementTimeSeries = z
   .array(EngagementDataPointSchema)
   .parse(rawEngagementTimeSeries);
@@ -67,11 +68,59 @@ export function deriveTrend(current: number, prior: number): TrendDirection {
   return "neutral";
 }
 
+/**
+ * Derive the current-period KPI snapshot from the live student array.
+ * All four fields are computed from the same dataset, so they are always
+ * consistent with each other and with filter chip counts.
+ *
+ * - averageEngagementScore: arithmetic mean of engagementScore, rounded to integer
+ * - milestoneCompletionRate: completed milestones / total milestones × 100,
+ *   rounded to one decimal place
+ * - studentsNeedingAttentionCount: students with status === "Needs Attention"
+ * - totalStudents: students.length
+ */
+export function computeCurrentKPIPeriod(
+  studentList: Student[],
+): KPIPeriodSnapshot {
+  const totalStudents = studentList.length;
+
+  const averageEngagementScore =
+    totalStudents === 0
+      ? 0
+      : Math.round(
+          studentList.reduce((sum, s) => sum + s.engagementScore, 0) /
+            totalStudents,
+        );
+
+  const allMilestones = studentList.flatMap((s) => s.milestones);
+  const completedCount = allMilestones.filter(
+    (m) => m.status === "Completed",
+  ).length;
+  const milestoneCompletionRate =
+    allMilestones.length === 0
+      ? 0
+      : Math.round((completedCount / allMilestones.length) * 1000) / 10;
+
+  const studentsNeedingAttentionCount = studentList.filter(
+    (s) => s.status === "Needs Attention",
+  ).length;
+
+  return {
+    totalStudents,
+    averageEngagementScore,
+    milestoneCompletionRate,
+    studentsNeedingAttentionCount,
+  };
+}
+
 // ── Public exports ──────────────────────────────────────────────────────────
 
 export const students: Student[] = validatedStudents.map(deriveStudent);
 
-export const kpiSnapshot: KPISnapshot = validatedKpiSnapshot;
+export const kpiSnapshot: KPISnapshot = {
+  current: computeCurrentKPIPeriod(students),
+  prior: validatedKpiPrior,
+};
 
 export const engagementTimeSeries: EngagementDataPoint[] =
   validatedEngagementTimeSeries;
@@ -89,13 +138,11 @@ export function filterByChip(list: Student[], chip: FilterChip): Student[] {
   switch (chip) {
     case "All":
       return list;
-    case "High Priority":
-      return list.filter((s) => s.flaggedForAttention);
+    case "Needs Attention":
+      return list.filter((s) => s.status === "Needs Attention");
     case "Milestone Behind":
       return list.filter((s) =>
-        s.milestones.some(
-          (m) => m.status === "In Progress" || m.status === "Pending",
-        ),
+        s.milestones.some((m) => m.status === "Pending"),
       );
     case "Low Engagement":
       return list.filter((s) => s.engagementTier === "Low");

@@ -83,12 +83,12 @@ describe("StudentDetail", () => {
     expect(onClose).toHaveBeenCalled();
   });
 
-  it("renders Career Narrative section with career goal and confidence score", () => {
+  it("renders Career Narrative section with career direction and confidence score", () => {
     render(
       <StudentDetail student={student} onClose={vi.fn()} onAddNote={vi.fn()} />,
     );
     expect(screen.getByText("Career Narrative")).toBeInTheDocument();
-    expect(screen.getByText("Career Goal")).toBeInTheDocument();
+    expect(screen.getByText("Career Direction")).toBeInTheDocument();
     expect(screen.getByText("Confidence Score")).toBeInTheDocument();
   });
 
@@ -115,14 +115,14 @@ describe("StudentDetail", () => {
     expect(screen.getByText("AJ")).toBeInTheDocument();
   });
 
-  it("renders Email, Call, and Message quick action buttons", () => {
+  it("renders Email, Schedule, and Message quick action links", () => {
     render(
       <StudentDetail student={student} onClose={vi.fn()} onAddNote={vi.fn()} />,
     );
-    expect(screen.getByRole("button", { name: /email/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /call/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /email/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /schedule/i })).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /message/i }),
+      screen.getByRole("link", { name: /message/i }),
     ).toBeInTheDocument();
   });
 

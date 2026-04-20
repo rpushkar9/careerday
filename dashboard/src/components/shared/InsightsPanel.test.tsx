@@ -1,7 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import { InsightsPanel } from "./InsightsPanel";
-import type { Student } from "@/types";
+import type { Student, Milestone } from "@/types";
+
+function makeMilestone(status: Milestone["status"], id = "m-1"): Milestone {
+  return { id, label: "Test", status, category: "Test" };
+}
 
 function makeStudent(overrides: Partial<Student> = {}): Student {
   return {
@@ -27,32 +31,55 @@ function makeStudent(overrides: Partial<Student> = {}): Student {
 }
 
 const students: Student[] = [
-  makeStudent({ id: "s-1", engagementTrend: "up" }),
-  makeStudent({ id: "s-2", engagementTrend: "up" }),
-  makeStudent({ id: "s-3", engagementTrend: "down", engagementTier: "Low" }),
-  makeStudent({ id: "s-4", engagementTier: "Low" }),
-  makeStudent({ id: "s-5", flaggedForAttention: true }),
-  makeStudent({ id: "s-6" }),
+  // declining engagement (2)
+  makeStudent({ id: "s-1", engagementTrend: "down" }),
+  makeStudent({ id: "s-2", engagementTrend: "down" }),
+  // unstarted milestone (1 — s-3 has a Pending milestone)
+  makeStudent({
+    id: "s-3",
+    engagementTrend: "stable",
+    milestones: [
+      makeMilestone("Completed", "m-1"),
+      makeMilestone("Pending", "m-2"),
+    ],
+  }),
+  // needs attention (1)
+  makeStudent({ id: "s-4", status: "Needs Attention" }),
+  // baseline — none of the above
+  makeStudent({ id: "s-5" }),
 ];
 
 describe("InsightsPanel", () => {
   it("renders the section heading", () => {
     render(<InsightsPanel students={students} />);
-    expect(screen.getByText("Insights This Quarter")).toBeInTheDocument();
+    expect(screen.getByText("Insights")).toBeInTheDocument();
   });
 
-  it("shows correct count of students with engagementTrend up", () => {
+  it("shows correct count of students with declining engagement", () => {
     render(<InsightsPanel students={students} />);
-    expect(screen.getByText(/2 students trending upward/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/2 students with declining engagement/i),
+    ).toBeInTheDocument();
   });
 
-  it("shows correct count of students with low engagement", () => {
+  it("shows correct count of students with unstarted milestones", () => {
     render(<InsightsPanel students={students} />);
-    expect(screen.getByText(/2 students with low engagement/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/1 student with unstarted milestones/i),
+    ).toBeInTheDocument();
   });
 
-  it("shows correct count of flagged students", () => {
+  it("shows correct count of students marked for counselor follow-up", () => {
     render(<InsightsPanel students={students} />);
-    expect(screen.getByText(/1 student flagged for attention/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/1 student marked for counselor follow-up/i),
+    ).toBeInTheDocument();
+  });
+
+  it("shows 0 for each category when list is empty", () => {
+    render(<InsightsPanel students={[]} />);
+    // All three bullets should show 0
+    const zeros = screen.getAllByText(/^0 students/i);
+    expect(zeros).toHaveLength(3);
   });
 });

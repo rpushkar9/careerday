@@ -1,22 +1,20 @@
 import type {
-  KPISnapshot,
+  KPIPeriodSnapshot,
   EngagementDataPoint,
   MilestoneCategoryCompletion,
 } from "@/types";
 
-export const rawKpiSnapshot: KPISnapshot = {
-  current: {
-    totalStudents: 30,
-    averageEngagementScore: 64,
-    milestoneCompletionRate: 58.4,
-    studentsNeedingAttentionCount: 7,
-  },
-  prior: {
-    totalStudents: 28,
-    averageEngagementScore: 59,
-    milestoneCompletionRate: 52.1,
-    studentsNeedingAttentionCount: 9,
-  },
+/**
+ * Prior-period KPI snapshot (previous reporting period).
+ * These values are hardcoded because we have no historical student records —
+ * only the current student dataset is available. The current-period values are
+ * derived in the data-access layer from the live student array.
+ */
+export const rawKpiPrior: KPIPeriodSnapshot = {
+  totalStudents: 28,
+  averageEngagementScore: 59,
+  milestoneCompletionRate: 52.1,
+  studentsNeedingAttentionCount: 7,
 };
 
 /** 90 daily cohort-average engagement data points, ending 2026-04-09. */

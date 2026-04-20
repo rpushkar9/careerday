@@ -35,14 +35,8 @@ function trendAriaLabel(trend: TrendDirection): string {
   }
 }
 
-function badgeClasses(trend: TrendDirection, label: string): string {
-  const isAttention = label.includes("Attention");
-  if (trend === "up" && !isAttention) {
-    return "text-primary bg-secondary/70";
-  }
-  if (trend === "down" && isAttention) {
-    return "text-green-700 bg-green-50";
-  }
+function badgeClasses(trend: TrendDirection): string {
+  if (trend === "up") return "text-primary bg-secondary/70";
   return "text-muted-foreground bg-secondary/50";
 }
 
@@ -59,7 +53,7 @@ export function KPICard({ label, value, trend, icon: Icon, unit, delta, tooltip 
           </div>
           <span
             aria-label={trendAriaLabel(trend)}
-            className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${badgeClasses(trend, label)}`}
+            className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${badgeClasses(trend)}`}
           >
             {delta ?? trendSymbol(trend)}
           </span>
