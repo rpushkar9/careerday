@@ -15,6 +15,18 @@ interface MilestoneChartProps {
   data: MilestoneCategoryCompletion[];
 }
 
+const CATEGORY_LABELS: Record<string, string> = {
+  Assessment: "Career Assessment",
+  Profile: "Resume & Profile",
+  Networking: "Networking",
+  Experience: "Internship & Industry Experience",
+  Applications: "Job Applications",
+};
+
+function labelFor(category: string): string {
+  return CATEGORY_LABELS[category] ?? category;
+}
+
 function MilestoneTooltip({ active, payload }: TooltipProps<number, string>) {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload as MilestoneCategoryCompletion;
@@ -28,7 +40,7 @@ function MilestoneTooltip({ active, payload }: TooltipProps<number, string>) {
         padding: "12px",
       }}
     >
-      <p className="font-medium">{d.category}</p>
+      <p className="font-medium">{labelFor(d.category)}</p>
       <p>Completed: {d.completedCount}</p>
       <p>In Progress: {d.inProgressCount}</p>
       <p>Total students: {d.totalCount}</p>
@@ -51,7 +63,10 @@ export function MilestoneChart({ data }: MilestoneChartProps) {
         </p>
       </div>
       <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={data} layout="vertical">
+        <BarChart
+          data={data.map((d) => ({ ...d, category: labelFor(d.category) }))}
+          layout="vertical"
+        >
           <CartesianGrid strokeDasharray="3 3" stroke="#e3daff" />
           <XAxis type="number" stroke="#6b7280" tick={{ fontSize: 12 }} />
           <YAxis
@@ -59,7 +74,7 @@ export function MilestoneChart({ data }: MilestoneChartProps) {
             dataKey="category"
             stroke="#6b7280"
             tick={{ fontSize: 12 }}
-            width={120}
+            width={170}
           />
           <Tooltip content={<MilestoneTooltip />} />
           <Legend wrapperStyle={{ paddingTop: "16px" }} />
@@ -71,7 +86,7 @@ export function MilestoneChart({ data }: MilestoneChartProps) {
           />
           <Bar
             dataKey="inProgressCount"
-            fill="#e3daff"
+            fill="#b8b2f0"
             radius={[0, 8, 8, 0]}
             name="In Progress"
           />

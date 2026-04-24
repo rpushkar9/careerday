@@ -106,11 +106,13 @@ describe("StudentDetail", () => {
     expect(onClose).toHaveBeenCalled();
   });
 
-  it("renders Career Narrative section with career direction and confidence score", () => {
+  it("renders Career Narrative section with career direction and confidence", () => {
     renderDetail();
     expect(screen.getByText("Career Narrative")).toBeInTheDocument();
     expect(screen.getByText("Career Direction")).toBeInTheDocument();
-    expect(screen.getByText("Confidence Score")).toBeInTheDocument();
+    expect(screen.getByText("Self-reported confidence in career direction")).toBeInTheDocument();
+    expect(screen.getByText("Actively exploring")).toBeInTheDocument();
+    expect(screen.getByText("Fairly confident")).toBeInTheDocument();
   });
 
   it("onAddNote callback is wired to AdvisorNotes", async () => {

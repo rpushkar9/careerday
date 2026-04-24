@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS milestones (
   student_id     TEXT        NOT NULL REFERENCES students(id) ON DELETE CASCADE,
   label          TEXT        NOT NULL,
   status         TEXT        NOT NULL CHECK (status IN ('Completed', 'In Progress', 'Pending')),
-  category       TEXT        NOT NULL CHECK (category IN ('Assessment', 'Documents', 'Experience', 'Applications', 'Financial')),
+  category       TEXT        NOT NULL CHECK (category IN ('Assessment', 'Profile', 'Networking', 'Experience', 'Applications')),
   completed_date DATE
 );
 

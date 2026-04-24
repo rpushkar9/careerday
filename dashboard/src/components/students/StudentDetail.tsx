@@ -28,6 +28,22 @@ import {
   Calendar,
 } from "lucide-react";
 import { STUDENT_STATUSES } from "@/lib/constants";
+import type { CareerDirection } from "@/types";
+
+const DIRECTION_LABELS: Record<CareerDirection, { label: string; description: string }> = {
+  clear:      { label: "Clear direction",    description: "Student has identified a specific career path and is actively working toward it." },
+  exploring:  { label: "Actively exploring", description: "Considering multiple options and gathering information before committing to a path." },
+  uncertain:  { label: "Feeling uncertain",  description: "Not yet sure what direction to take — may benefit from additional career exploration support." },
+  undeclared: { label: "Undeclared",         description: "No career direction identified yet. Common for first-year students or those in transition." },
+};
+
+const CONFIDENCE_LABELS: Record<number, string> = {
+  1: "Very uncertain",
+  2: "Somewhat uncertain",
+  3: "Neutral",
+  4: "Fairly confident",
+  5: "Very confident",
+};
 
 interface StudentDetailProps {
   student: Student | null;
@@ -256,34 +272,34 @@ function StudentDetailContent({
         {/* Career Narrative */}
         <section>
           <h3 className="mb-2 text-sm font-semibold">Career Narrative</h3>
-          <div className="space-y-2 rounded-md border px-3 py-2 text-sm">
+          <div className="space-y-3 rounded-md border px-3 py-3 text-sm">
             <div>
-              <p className="text-xs text-muted-foreground">Career Direction</p>
-              <p className="mt-0.5">
-                {student.careerDirection.charAt(0).toUpperCase() +
-                  student.careerDirection.slice(1)}
+              <p className="text-xs text-muted-foreground mb-1">Career Direction</p>
+              <p className="font-medium">{DIRECTION_LABELS[student.careerDirection].label}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {DIRECTION_LABELS[student.careerDirection].description}
               </p>
             </div>
-            <div>
-              <p
-                className="text-xs text-muted-foreground"
-                title="Student's self-reported confidence in their career direction (1 = uncertain, 5 = very confident)"
-              >
-                Confidence Score
+            <div className="border-t pt-3">
+              <p className="text-xs text-muted-foreground mb-1">
+                Self-reported confidence in career direction
               </p>
-              <div className="mt-1 flex items-center gap-1.5">
-                {[1, 2, 3, 4, 5].map((level) => (
-                  <div
-                    key={level}
-                    className={`h-2.5 w-2.5 rounded-full ${
-                      level <= student.confidenceScore
-                        ? "bg-primary"
-                        : "bg-muted"
-                    }`}
-                  />
-                ))}
-                <span className="ml-1 text-xs text-muted-foreground">
-                  {student.confidenceScore}/5
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
+                  {[1, 2, 3, 4, 5].map((level) => (
+                    <div
+                      key={level}
+                      className={`h-2.5 w-2.5 rounded-full ${
+                        level <= student.confidenceScore ? "bg-primary" : "bg-muted"
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span className="text-sm font-medium">
+                  {CONFIDENCE_LABELS[student.confidenceScore]}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  ({student.confidenceScore}/5)
                 </span>
               </div>
             </div>
