@@ -130,14 +130,18 @@ function App() {
   }
 
   async function handleCheckIn(studentId: string): Promise<string> {
-    const today = await markStudentCheckedIn(studentId);
-    setStudentData((prev) =>
-      prev.map((s) => (s.id === studentId ? { ...s, lastContactedDate: today } : s))
-    );
-    setSelectedStudent((prev) =>
-      prev?.id === studentId ? { ...prev, lastContactedDate: today } : prev
-    );
-    return today;
+    try {
+      const today = await markStudentCheckedIn(studentId);
+      setStudentData((prev) =>
+        prev.map((s) => (s.id === studentId ? { ...s, lastContactedDate: today } : s))
+      );
+      setSelectedStudent((prev) =>
+        prev?.id === studentId ? { ...prev, lastContactedDate: today } : prev
+      );
+      return today;
+    } catch {
+      return "";
+    }
   }
 
   async function handleUndoCheckIn(studentId: string, previousDate: string) {

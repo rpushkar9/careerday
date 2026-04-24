@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import type { Student, StudentStatus } from "@/types";
 import {
   Sheet,
@@ -57,8 +57,7 @@ interface StudentDetailProps {
 function getReasonText(student: Student): string {
   if (student.status === "Needs Attention")
     return "Low engagement or milestone gaps";
-  if (student.status === "At Risk") return "Engagement declining this period";
-  return "Flagged for counselor attention";
+  return "Engagement declining this period";
 }
 
 function StudentDetailContent({
@@ -76,6 +75,11 @@ function StudentDetailContent({
 }) {
   const [checkingIn, setCheckingIn] = useState(false);
   const [undoDate, setUndoDate] = useState<string | null>(null);
+  const undoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => () => {
+    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+  }, []);
 
   const initials = student.name
     .split(" ")
@@ -153,11 +157,7 @@ function StudentDetailContent({
               </div>
               <div>
                 <h3 className="text-sm font-medium text-amber-900">
-                  {student.status === "At Risk"
-                    ? "At Risk"
-                    : student.status === "Needs Attention"
-                      ? "Needs Attention"
-                      : "Flagged for Review"}
+                  {student.status}
                 </h3>
                 <p className="text-sm text-amber-700">
                   {getReasonText(student)}
@@ -207,9 +207,10 @@ function StudentDetailContent({
               <span className="text-xs text-muted-foreground whitespace-nowrap">Status</span>
               <Select
                 value={student.status}
-                onValueChange={(val) =>
-                  onUpdateStatus(student.id, val as StudentStatus)
-                }
+                onValueChange={(val) => {
+                  if ((STUDENT_STATUSES as readonly string[]).includes(val))
+                    onUpdateStatus(student.id, val as StudentStatus);
+                }}
               >
                 <SelectTrigger className="h-8 w-44 text-xs">
                   <SelectValue />
@@ -254,9 +255,12 @@ function StudentDetailContent({
                     const prev = student.lastContactedDate;
                     setCheckingIn(true);
                     try {
-                      await onCheckIn(student.id);
-                      setUndoDate(prev);
-                      setTimeout(() => setUndoDate(null), 8000);
+                      const newDate = await onCheckIn(student.id);
+                      if (newDate) {
+                        setUndoDate(prev);
+                        if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+                        undoTimerRef.current = setTimeout(() => setUndoDate(null), 8000);
+                      }
                     } finally {
                       setCheckingIn(false);
                     }
@@ -296,7 +300,7 @@ function StudentDetailContent({
                   ))}
                 </div>
                 <span className="text-sm font-medium">
-                  {CONFIDENCE_LABELS[student.confidenceScore]}
+                  {CONFIDENCE_LABELS[student.confidenceScore] ?? "—"}
                 </span>
                 <span className="text-xs text-muted-foreground">
                   ({student.confidenceScore}/5)

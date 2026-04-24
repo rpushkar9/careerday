@@ -38,6 +38,7 @@ const students = [
     status: "On Track",
     milestones: [
       { id: "m-001-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-02-10" },
+      { id: "m-001-2", label: "Resume Draft", status: "Completed", category: "Profile", completedDate: "2026-03-01" },
       { id: "m-001-3", label: "Job Shadow", status: "Completed", category: "Experience", completedDate: "2026-03-20" },
       { id: "m-001-4", label: "Job Applications", status: "In Progress", category: "Applications" },
     ],
@@ -57,6 +58,7 @@ const students = [
     status: "On Track",
     milestones: [
       { id: "m-002-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-02-15" },
+      { id: "m-002-2", label: "Resume Draft", status: "In Progress", category: "Profile" },
       { id: "m-002-3", label: "Informational Interview", status: "Pending", category: "Networking" },
     ],
   },
@@ -75,6 +77,7 @@ const students = [
     status: "On Track",
     milestones: [
       { id: "m-003-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-02-01" },
+      { id: "m-003-2", label: "LinkedIn Profile", status: "Completed", category: "Profile", completedDate: "2026-02-28" },
       { id: "m-003-3", label: "Internship Applications", status: "In Progress", category: "Applications" },
     ],
   },
@@ -110,6 +113,7 @@ const students = [
     status: "At Risk",
     milestones: [
       { id: "m-005-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-02-20" },
+      { id: "m-005-2", label: "Resume Draft", status: "Pending", category: "Profile" },
       { id: "m-005-3", label: "Job Shadow", status: "Pending", category: "Experience" },
     ],
   },
@@ -128,6 +132,7 @@ const students = [
     status: "On Track",
     milestones: [
       { id: "m-006-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-01-20" },
+      { id: "m-006-2", label: "LinkedIn Profile", status: "Completed", category: "Profile", completedDate: "2026-02-10" },
       { id: "m-006-3", label: "Internship Applications", status: "Completed", category: "Applications", completedDate: "2026-03-15" },
       { id: "m-006-4", label: "Job Shadow", status: "Completed", category: "Experience", completedDate: "2026-03-25" },
       { id: "m-006-5", label: "Job Applications", status: "In Progress", category: "Applications" },
@@ -165,6 +170,7 @@ const students = [
     status: "On Track",
     milestones: [
       { id: "m-008-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-02-25" },
+      { id: "m-008-2", label: "Resume Draft", status: "In Progress", category: "Profile" },
       { id: "m-008-3", label: "Informational Interview", status: "Pending", category: "Networking" },
     ],
   },
@@ -183,6 +189,7 @@ const students = [
     status: "On Track",
     milestones: [
       { id: "m-009-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-01-30" },
+      { id: "m-009-2", label: "LinkedIn Profile", status: "Completed", category: "Profile", completedDate: "2026-02-20" },
       { id: "m-009-3", label: "Job Shadow", status: "Completed", category: "Experience", completedDate: "2026-03-05" },
       { id: "m-009-4", label: "Job Applications", status: "In Progress", category: "Applications" },
     ],
@@ -219,6 +226,7 @@ const students = [
     status: "On Track",
     milestones: [
       { id: "m-011-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-02-05" },
+      { id: "m-011-2", label: "Resume Draft", status: "Completed", category: "Profile", completedDate: "2026-03-01" },
       { id: "m-011-3", label: "Internship Applications", status: "In Progress", category: "Applications" },
     ],
   },
@@ -254,6 +262,7 @@ const students = [
     status: "On Track",
     milestones: [
       { id: "m-013-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-01-15" },
+      { id: "m-013-2", label: "LinkedIn Profile", status: "Completed", category: "Profile", completedDate: "2026-02-01" },
       { id: "m-013-3", label: "Job Shadow", status: "Completed", category: "Experience", completedDate: "2026-02-28" },
       { id: "m-013-4", label: "Internship Applications", status: "Completed", category: "Applications", completedDate: "2026-03-15" },
       { id: "m-013-5", label: "Job Applications", status: "Completed", category: "Applications", completedDate: "2026-04-01" },
@@ -291,6 +300,7 @@ const students = [
     status: "On Track",
     milestones: [
       { id: "m-015-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-02-22" },
+      { id: "m-015-2", label: "Resume Draft", status: "In Progress", category: "Profile" },
       { id: "m-015-3", label: "Informational Interview", status: "Pending", category: "Networking" },
     ],
   },

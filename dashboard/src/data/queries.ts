@@ -4,7 +4,7 @@
  */
 
 import { supabase } from "@/lib/supabase";
-import { deriveStudent } from "@/lib/derive";
+import { deriveStudent, type RawStudent } from "@/lib/derive";
 import type {
   Student,
   Milestone,
@@ -14,8 +14,6 @@ import type {
   KPIPeriodSnapshot,
   MilestoneCategoryCompletion,
 } from "@/types/kpi";
-
-type RawStudent = Omit<Student, "engagementTier" | "flaggedForAttention">;
 
 // ── DB row shapes ────────────────────────────────────────────────────────────
 // These interfaces mirror the Supabase table columns. The casts (data as StudentRow[])
@@ -233,7 +231,7 @@ export async function updateStudentStatus(
 }
 
 /**
- * Set last_contacted_date to today (YYYY-MM-DD in local time).
+ * Set last_contacted_date to today (YYYY-MM-DD in UTC).
  * Returns the date string written so the caller can update local state.
  */
 export async function markStudentCheckedIn(studentId: string): Promise<string> {

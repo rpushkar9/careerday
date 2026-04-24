@@ -40,7 +40,7 @@ function MilestoneTooltip({ active, payload }: TooltipProps<number, string>) {
         padding: "12px",
       }}
     >
-      <p className="font-medium">{labelFor(d.category)}</p>
+      <p className="font-medium">{d.category}</p>
       <p>Completed: {d.completedCount}</p>
       <p>In Progress: {d.inProgressCount}</p>
       <p>Total students: {d.totalCount}</p>

@@ -13,7 +13,7 @@ vi.mock("@/lib/supabase", () => ({
 }));
 
 // Import after mock is set up.
-import { updateStudentStatus, markStudentCheckedIn } from "./queries";
+import { updateStudentStatus, markStudentCheckedIn, revertStudentCheckedIn } from "./queries";
 
 beforeEach(() => {
   mockUpdate.mockReset();
@@ -52,6 +52,21 @@ describe("markStudentCheckedIn", () => {
     mockEq.mockResolvedValue({ error: { message: "network error" } });
     await expect(markStudentCheckedIn("s-2")).rejects.toMatchObject({
       message: "network error",
+    });
+  });
+});
+
+describe("revertStudentCheckedIn", () => {
+  it("calls supabase update with the previous date and correct student id", async () => {
+    await revertStudentCheckedIn("s-3", "2026-03-15");
+    expect(mockUpdate).toHaveBeenCalledWith({ last_contacted_date: "2026-03-15" });
+    expect(mockEq).toHaveBeenCalledWith("id", "s-3");
+  });
+
+  it("throws when supabase returns an error", async () => {
+    mockEq.mockResolvedValue({ error: { message: "revert error" } });
+    await expect(revertStudentCheckedIn("s-3", "2026-03-15")).rejects.toMatchObject({
+      message: "revert error",
     });
   });
 });

@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS students (
   major              TEXT        NOT NULL,
   graduation_year    INTEGER     NOT NULL,
   career_direction   TEXT        NOT NULL CHECK (career_direction IN ('clear', 'exploring', 'uncertain', 'undeclared')),
-  confidence_score   INTEGER     NOT NULL,
+  confidence_score   INTEGER     NOT NULL CHECK (confidence_score BETWEEN 1 AND 5),
   engagement_score   NUMERIC     NOT NULL,
   engagement_trend   TEXT        NOT NULL CHECK (engagement_trend IN ('up', 'down', 'stable')),
   last_active_date   DATE        NOT NULL,
