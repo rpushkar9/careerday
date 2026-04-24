@@ -73,12 +73,30 @@ function StudentDetailContent({
   onCheckIn: (studentId: string) => Promise<string>;
   onUndoCheckIn: (studentId: string, previousDate: string) => void;
 }) {
+  const UNDO_SECONDS = 8;
   const [checkingIn, setCheckingIn] = useState(false);
   const [undoDate, setUndoDate] = useState<string | null>(null);
+  const [undoSecondsLeft, setUndoSecondsLeft] = useState<number>(UNDO_SECONDS);
   const undoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const undoIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (undoDate) {
+      setUndoSecondsLeft(UNDO_SECONDS);
+      undoIntervalRef.current = setInterval(() => {
+        setUndoSecondsLeft((s) => Math.max(0, s - 1));
+      }, 1000);
+    } else {
+      if (undoIntervalRef.current) clearInterval(undoIntervalRef.current);
+    }
+    return () => {
+      if (undoIntervalRef.current) clearInterval(undoIntervalRef.current);
+    };
+  }, [undoDate]);
 
   useEffect(() => () => {
     if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+    if (undoIntervalRef.current) clearInterval(undoIntervalRef.current);
   }, []);
 
   const initials = student.name
@@ -235,17 +253,25 @@ function StudentDetailContent({
                 </p>
               </div>
               {undoDate ? (
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="text-muted-foreground"
-                  onClick={() => {
-                    onUndoCheckIn(student.id, undoDate);
-                    setUndoDate(null);
-                  }}
-                >
-                  Undo
-                </Button>
+                <div className="flex flex-col items-end gap-1">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="text-muted-foreground h-7 px-2"
+                    onClick={() => {
+                      onUndoCheckIn(student.id, undoDate);
+                      setUndoDate(null);
+                    }}
+                  >
+                    Undo ({undoSecondsLeft}s)
+                  </Button>
+                  <div className="w-20 h-0.5 rounded-full bg-muted overflow-hidden">
+                    <div
+                      className="h-full bg-muted-foreground/50 transition-all duration-1000 ease-linear"
+                      style={{ width: `${(undoSecondsLeft / UNDO_SECONDS) * 100}%` }}
+                    />
+                  </div>
+                </div>
               ) : (
                 <Button
                   size="sm"
