@@ -17,3 +17,9 @@ export const FILTER_CHIPS: FilterChip[] = [
   "Milestone Behind",
   "Low Engagement",
 ];
+
+export const STUDENT_STATUSES = [
+  "On Track",
+  "At Risk",
+  "Needs Attention",
+] as const;

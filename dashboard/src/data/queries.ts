@@ -1,16 +1,12 @@
 /**
  * Supabase query functions — all async, all typed.
  * These are the live-data counterparts to the mock data in data/index.ts.
- *
- * deriveStudent/deriveEngagementTier are intentionally inlined here because
- * data/index.ts does not export them (they are module-private there).
  */
 
 import { supabase } from "@/lib/supabase";
-import { ENGAGEMENT_THRESHOLDS } from "@/lib/constants";
+import { deriveStudent } from "@/lib/derive";
 import type {
   Student,
-  EngagementTier,
   Milestone,
   AdvisorNote,
 } from "@/types/student";
@@ -19,25 +15,7 @@ import type {
   MilestoneCategoryCompletion,
 } from "@/types/kpi";
 
-// ── Derivation helpers (mirrored from data/index.ts, not exported from there) ─
-
 type RawStudent = Omit<Student, "engagementTier" | "flaggedForAttention">;
-
-function deriveEngagementTier(score: number): EngagementTier {
-  if (score >= ENGAGEMENT_THRESHOLDS.HIGH) return "High";
-  if (score >= ENGAGEMENT_THRESHOLDS.MEDIUM) return "Medium";
-  return "Low";
-}
-
-function deriveStudent(raw: RawStudent): Student {
-  const engagementTier = deriveEngagementTier(raw.engagementScore);
-  return {
-    ...raw,
-    engagementTier,
-    flaggedForAttention:
-      raw.status === "Needs Attention" || engagementTier === "Low",
-  };
-}
 
 // ── DB row shapes ────────────────────────────────────────────────────────────
 // These interfaces mirror the Supabase table columns. The casts (data as StudentRow[])
@@ -237,4 +215,47 @@ export async function fetchMilestoneCategorySummary(): Promise<
     totalCount: Number(row.total_count),
     completionRate: Number(row.completion_rate),
   }));
+}
+
+/**
+ * Overwrite a student's status. The student_kpi_summary view reflects this
+ * automatically on next fetch.
+ */
+export async function updateStudentStatus(
+  studentId: string,
+  status: Student["status"],
+): Promise<void> {
+  const { error } = await supabase
+    .from("students")
+    .update({ status })
+    .eq("id", studentId);
+  if (error) throw error;
+}
+
+/**
+ * Set last_contacted_date to today (YYYY-MM-DD in local time).
+ * Returns the date string written so the caller can update local state.
+ */
+export async function markStudentCheckedIn(studentId: string): Promise<string> {
+  const today = new Date().toISOString().slice(0, 10);
+  const { error } = await supabase
+    .from("students")
+    .update({ last_contacted_date: today })
+    .eq("id", studentId);
+  if (error) throw error;
+  return today;
+}
+
+/**
+ * Revert last_contacted_date to a previous date string (undo check-in).
+ */
+export async function revertStudentCheckedIn(
+  studentId: string,
+  previousDate: string,
+): Promise<void> {
+  const { error } = await supabase
+    .from("students")
+    .update({ last_contacted_date: previousDate })
+    .eq("id", studentId);
+  if (error) throw error;
 }

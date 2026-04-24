@@ -51,12 +51,14 @@ export function KPICard({ label, value, trend, icon: Icon, unit, delta, tooltip 
           <div className="p-3 rounded-xl bg-secondary/50 text-primary">
             <Icon className="w-5 h-5" />
           </div>
-          <span
-            aria-label={trendAriaLabel(trend)}
-            className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${badgeClasses(trend)}`}
-          >
-            {delta ?? trendSymbol(trend)}
-          </span>
+          {(delta !== undefined || trend !== "neutral") && (
+            <span
+              aria-label={trendAriaLabel(trend)}
+              className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${badgeClasses(trend)}`}
+            >
+              {delta ?? trendSymbol(trend)}
+            </span>
+          )}
         </div>
 
         {/* Bottom: label + value */}

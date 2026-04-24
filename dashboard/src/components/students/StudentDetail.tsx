@@ -1,4 +1,5 @@
-import type { Student } from "@/types";
+import { useState } from "react";
+import type { Student, StudentStatus } from "@/types";
 import {
   Sheet,
   SheetContent,
@@ -6,6 +7,14 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/components/ui/sheet";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { AdvisorNotes } from "./AdvisorNotes";
 import { MilestoneList } from "./MilestoneList";
 import { ActivityFeed } from "./ActivityFeed";
@@ -18,11 +27,15 @@ import {
   Target,
   Calendar,
 } from "lucide-react";
+import { STUDENT_STATUSES } from "@/lib/constants";
 
 interface StudentDetailProps {
   student: Student | null;
   onClose: () => void;
   onAddNote: (studentId: string, text: string) => void;
+  onUpdateStatus: (studentId: string, status: StudentStatus) => void;
+  onCheckIn: (studentId: string) => Promise<string>;
+  onUndoCheckIn: (studentId: string, previousDate: string) => void;
 }
 
 function getReasonText(student: Student): string {
@@ -35,10 +48,19 @@ function getReasonText(student: Student): string {
 function StudentDetailContent({
   student,
   onAddNote,
+  onUpdateStatus,
+  onCheckIn,
+  onUndoCheckIn,
 }: {
   student: Student;
   onAddNote: (studentId: string, text: string) => void;
+  onUpdateStatus: (studentId: string, status: StudentStatus) => void;
+  onCheckIn: (studentId: string) => Promise<string>;
+  onUndoCheckIn: (studentId: string, previousDate: string) => void;
 }) {
+  const [checkingIn, setCheckingIn] = useState(false);
+  const [undoDate, setUndoDate] = useState<string | null>(null);
+
   const initials = student.name
     .split(" ")
     .map((n) => n[0])
@@ -107,7 +129,7 @@ function StudentDetailContent({
 
       <div className="mt-6 space-y-6">
         {/* Support Reason Alert (conditional) */}
-        {student.flaggedForAttention && (
+        {student.status !== "On Track" && (
           <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
             <div className="flex items-start gap-3">
               <div className="p-2 rounded-lg bg-amber-100">
@@ -160,6 +182,76 @@ function StudentDetailContent({
             <p className="text-sm font-medium text-foreground">{lastActive}</p>
           </div>
         </div>
+
+        {/* Follow-up */}
+        <section>
+          <h3 className="mb-2 text-sm font-semibold">Follow-up</h3>
+          <div className="space-y-3 rounded-md border px-3 py-3">
+            <div className="flex items-center justify-between gap-4">
+              <span className="text-xs text-muted-foreground whitespace-nowrap">Status</span>
+              <Select
+                value={student.status}
+                onValueChange={(val) =>
+                  onUpdateStatus(student.id, val as StudentStatus)
+                }
+              >
+                <SelectTrigger className="h-8 w-44 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {STUDENT_STATUSES.map((s) => (
+                    <SelectItem key={s} value={s} className="text-xs">
+                      {s}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-xs text-muted-foreground">Last checked in</p>
+                <p className="text-sm font-medium">
+                  {new Date(student.lastContactedDate).toLocaleDateString(
+                    undefined,
+                    { month: "short", day: "numeric", year: "numeric" },
+                  )}
+                </p>
+              </div>
+              {undoDate ? (
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-muted-foreground"
+                  onClick={() => {
+                    onUndoCheckIn(student.id, undoDate);
+                    setUndoDate(null);
+                  }}
+                >
+                  Undo
+                </Button>
+              ) : (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={checkingIn}
+                  onClick={async () => {
+                    const prev = student.lastContactedDate;
+                    setCheckingIn(true);
+                    try {
+                      await onCheckIn(student.id);
+                      setUndoDate(prev);
+                      setTimeout(() => setUndoDate(null), 8000);
+                    } finally {
+                      setCheckingIn(false);
+                    }
+                  }}
+                >
+                  Check in
+                </Button>
+              )}
+            </div>
+          </div>
+        </section>
 
         {/* Career Narrative */}
         <section>
@@ -224,6 +316,9 @@ export function StudentDetail({
   student,
   onClose,
   onAddNote,
+  onUpdateStatus,
+  onCheckIn,
+  onUndoCheckIn,
 }: StudentDetailProps) {
   return (
     <Sheet
@@ -234,7 +329,13 @@ export function StudentDetail({
     >
       <SheetContent className="overflow-y-auto sm:max-w-[600px]">
         {student && (
-          <StudentDetailContent student={student} onAddNote={onAddNote} />
+          <StudentDetailContent
+            student={student}
+            onAddNote={onAddNote}
+            onUpdateStatus={onUpdateStatus}
+            onCheckIn={onCheckIn}
+            onUndoCheckIn={onUndoCheckIn}
+          />
         )}
       </SheetContent>
     </Sheet>

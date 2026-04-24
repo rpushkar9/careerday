@@ -19,10 +19,14 @@ import {
   insertAdvisorNote,
   fetchKpiSummary,
   fetchMilestoneCategorySummary,
+  updateStudentStatus,
+  markStudentCheckedIn,
+  revertStudentCheckedIn,
 } from "@/data/queries";
+import { deriveStudent } from "@/lib/derive";
 import { useStudentTable } from "@/hooks/useStudentTable";
 import { useChartRange, type ChartRange } from "@/hooks/useChartRange";
-import type { Student, KPIPeriodSnapshot, MilestoneCategoryCompletion } from "@/types";
+import type { Student, KPIPeriodSnapshot, MilestoneCategoryCompletion, StudentStatus } from "@/types";
 import { TIME_RANGES } from "@/lib/constants";
 
 const zeroKpi: KPIPeriodSnapshot = {
@@ -109,6 +113,49 @@ function App() {
     }
   }
 
+  async function handleUpdateStatus(studentId: string, status: StudentStatus) {
+    try {
+      await updateStudentStatus(studentId, status);
+      setStudentData((prev) =>
+        prev.map((s) => (s.id === studentId ? deriveStudent({ ...s, status }) : s))
+      );
+      setSelectedStudent((prev) =>
+        prev?.id === studentId ? deriveStudent({ ...prev, status }) : prev
+      );
+      // Re-fetch KPI so "Students Needing Attention" count reflects the change
+      fetchKpiSummary().then(setKpiData).catch(() => {});
+    } catch {
+      // Silent — same pattern as handleAddNote
+    }
+  }
+
+  async function handleCheckIn(studentId: string): Promise<string> {
+    const today = await markStudentCheckedIn(studentId);
+    setStudentData((prev) =>
+      prev.map((s) => (s.id === studentId ? { ...s, lastContactedDate: today } : s))
+    );
+    setSelectedStudent((prev) =>
+      prev?.id === studentId ? { ...prev, lastContactedDate: today } : prev
+    );
+    return today;
+  }
+
+  async function handleUndoCheckIn(studentId: string, previousDate: string) {
+    try {
+      await revertStudentCheckedIn(studentId, previousDate);
+      setStudentData((prev) =>
+        prev.map((s) =>
+          s.id === studentId ? { ...s, lastContactedDate: previousDate } : s
+        )
+      );
+      setSelectedStudent((prev) =>
+        prev?.id === studentId ? { ...prev, lastContactedDate: previousDate } : prev
+      );
+    } catch {
+      // Silent
+    }
+  }
+
   if (loadError) throw loadError;
 
   if (isLoading) {
@@ -190,6 +237,9 @@ function App() {
         student={selectedStudent}
         onClose={() => setSelectedStudent(null)}
         onAddNote={handleAddNote}
+        onUpdateStatus={handleUpdateStatus}
+        onCheckIn={handleCheckIn}
+        onUndoCheckIn={handleUndoCheckIn}
       />
     </DashboardLayout>
   );

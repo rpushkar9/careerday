@@ -19,8 +19,13 @@ describe("KPICard", () => {
     expect(screen.getByLabelText("Trending down")).toBeInTheDocument();
   });
 
-  it("renders a neutral indicator when trend is neutral", () => {
+  it("hides the badge when trend is neutral and no delta (no prior period)", () => {
     render(<KPICard label="Engagement" value="Medium" trend="neutral" icon={Users} />);
+    expect(screen.queryByLabelText("No change")).not.toBeInTheDocument();
+  });
+
+  it("shows neutral badge when trend is neutral but a delta is provided", () => {
+    render(<KPICard label="Engagement" value="Medium" trend="neutral" icon={Users} delta="0%" />);
     expect(screen.getByLabelText("No change")).toBeInTheDocument();
   });
 
