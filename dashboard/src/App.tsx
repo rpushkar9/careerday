@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { InsightsPanel } from "@/components/shared/InsightsPanel";
 import { KPIGrid } from "@/components/kpi/KPIGrid";
@@ -10,19 +10,57 @@ import { EngagementChart } from "@/components/charts/EngagementChart";
 import { MilestoneChart } from "@/components/charts/MilestoneChart";
 import { Button } from "@/components/ui/button";
 import {
-  kpiSnapshot,
-  students as initialStudents,
   engagementTimeSeries,
-  milestoneCategoryData,
   sliceEngagementData,
 } from "@/data";
+import {
+  fetchStudents,
+  fetchAdvisorNotes,
+  insertAdvisorNote,
+  fetchKpiSummary,
+  fetchMilestoneCategorySummary,
+} from "@/data/queries";
 import { useStudentTable } from "@/hooks/useStudentTable";
 import { useChartRange, type ChartRange } from "@/hooks/useChartRange";
-import type { Student, AdvisorNote } from "@/types";
+import type { Student, KPIPeriodSnapshot, MilestoneCategoryCompletion } from "@/types";
 import { TIME_RANGES } from "@/lib/constants";
 
+const zeroKpi: KPIPeriodSnapshot = {
+  totalStudents: 0,
+  averageEngagementScore: 0,
+  milestoneCompletionRate: 0,
+  studentsNeedingAttentionCount: 0,
+};
+
 function App() {
-  const [studentData, setStudentData] = useState<Student[]>(initialStudents);
+  const [studentData, setStudentData] = useState<Student[]>([]);
+  const [kpiData, setKpiData] = useState<KPIPeriodSnapshot | null>(null);
+  const [milestoneCatData, setMilestoneCatData] = useState<MilestoneCategoryCompletion[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadData() {
+      try {
+        const [students, kpi, milestoneCats] = await Promise.all([
+          fetchStudents(),
+          fetchKpiSummary(),
+          fetchMilestoneCategorySummary(),
+        ]);
+        if (cancelled) return;
+        setStudentData(students);
+        setKpiData(kpi);
+        setMilestoneCatData(milestoneCats);
+      } catch (e) {
+        if (!cancelled) setLoadError(e instanceof Error ? e : new Error(String(e)));
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    }
+    loadData();
+    return () => { cancelled = true; };
+  }, []);
 
   const {
     filteredStudents,
@@ -33,29 +71,51 @@ function App() {
   } = useStudentTable(studentData);
 
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const selectedStudentId = selectedStudent?.id;
   const { range, setRange, label: rangeLabel } = useChartRange();
 
-  function handleAddNote(studentId: string, text: string) {
-    const newNote: AdvisorNote = {
-      id: `note-${Date.now()}`,
-      text,
-      authorName: "Counselor",
-      timestamp: new Date().toISOString(),
-    };
+  useEffect(() => {
+    if (!selectedStudentId) return;
+    let cancelled = false;
+    fetchAdvisorNotes(selectedStudentId)
+      .then((notes) => {
+        if (cancelled) return;
+        setStudentData((prev) =>
+          prev.map((s) => (s.id === selectedStudentId ? { ...s, advisorNotes: notes } : s))
+        );
+        setSelectedStudent((prev) =>
+          prev?.id === selectedStudentId ? { ...prev, advisorNotes: notes } : prev
+        );
+      })
+      .catch(() => {
+        // Notes fetch failed silently — drawer shows previously loaded notes (or empty state)
+      });
+    return () => { cancelled = true; };
+  }, [selectedStudentId]);
 
-    setStudentData((prev) =>
-      prev.map((s) =>
-        s.id === studentId
-          ? { ...s, advisorNotes: [newNote, ...s.advisorNotes] }
-          : s,
-      ),
-    );
+  async function handleAddNote(studentId: string, text: string) {
+    try {
+      const newNote = await insertAdvisorNote(studentId, text);
+      setStudentData((prev) =>
+        prev.map((s) =>
+          s.id === studentId ? { ...s, advisorNotes: [newNote, ...s.advisorNotes] } : s
+        )
+      );
+      setSelectedStudent((prev) =>
+        prev?.id === studentId ? { ...prev, advisorNotes: [newNote, ...prev.advisorNotes] } : prev
+      );
+    } catch {
+      // Per spec: on insert failure, note is not added and no success signal is shown
+    }
+  }
 
-    // Also update selectedStudent so the drawer reflects the new note
-    setSelectedStudent((prev) =>
-      prev && prev.id === studentId
-        ? { ...prev, advisorNotes: [newNote, ...prev.advisorNotes] }
-        : prev,
+  if (loadError) throw loadError;
+
+  if (isLoading) {
+    return (
+      <DashboardLayout>
+        <p className="p-8 text-sm text-muted-foreground">Loading…</p>
+      </DashboardLayout>
     );
   }
 
@@ -70,7 +130,7 @@ function App() {
             Track student engagement and career milestone progress
           </p>
         </div>
-        <KPIGrid snapshot={kpiSnapshot} />
+        <KPIGrid snapshot={{ current: kpiData ?? zeroKpi }} />
       </section>
 
       <section
@@ -97,7 +157,7 @@ function App() {
             rangeLabel={rangeLabel}
           />
         </div>
-        <MilestoneChart data={milestoneCategoryData} />
+        <MilestoneChart data={milestoneCatData} />
       </section>
 
       <section aria-label="Student overview" className="mt-8 space-y-4">

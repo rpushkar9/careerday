@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Build artifacts
+dist/
+.vite/
+
+# Local environment — never commit
+.env.local
+*.local
+
+# AI / workflow files — kept local only
+.specify/
+.claude/
+Docs/
+
+# Supabase CLI local config
+supabase/
+
+# OS
+.DS_Store
+.vercel

@@ -1,21 +1,4 @@
-import type {
-  KPIPeriodSnapshot,
-  EngagementDataPoint,
-  MilestoneCategoryCompletion,
-} from "@/types";
-
-/**
- * Prior-period KPI snapshot (previous reporting period).
- * These values are hardcoded because we have no historical student records —
- * only the current student dataset is available. The current-period values are
- * derived in the data-access layer from the live student array.
- */
-export const rawKpiPrior: KPIPeriodSnapshot = {
-  totalStudents: 28,
-  averageEngagementScore: 59,
-  milestoneCompletionRate: 52.1,
-  studentsNeedingAttentionCount: 7,
-};
+import type { EngagementDataPoint } from "@/types";
 
 /** 90 daily cohort-average engagement data points, ending 2026-04-09. */
 function generateEngagementTimeSeries(): EngagementDataPoint[] {
@@ -48,40 +31,3 @@ function generateEngagementTimeSeries(): EngagementDataPoint[] {
 export const rawEngagementTimeSeries: EngagementDataPoint[] =
   generateEngagementTimeSeries();
 
-export const rawMilestoneCategoryData: MilestoneCategoryCompletion[] = [
-  {
-    category: "Assessment",
-    completedCount: 25,
-    inProgressCount: 3,
-    totalCount: 30,
-    completionRate: 83.3,
-  },
-  {
-    category: "Documents",
-    completedCount: 16,
-    inProgressCount: 8,
-    totalCount: 30,
-    completionRate: 53.3,
-  },
-  {
-    category: "Experience",
-    completedCount: 8,
-    inProgressCount: 5,
-    totalCount: 20,
-    completionRate: 40.0,
-  },
-  {
-    category: "Applications",
-    completedCount: 10,
-    inProgressCount: 6,
-    totalCount: 22,
-    completionRate: 45.5,
-  },
-  {
-    category: "Financial",
-    completedCount: 5,
-    inProgressCount: 4,
-    totalCount: 12,
-    completionRate: 41.7,
-  },
-];

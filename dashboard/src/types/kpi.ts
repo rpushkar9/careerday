@@ -7,7 +7,7 @@ export interface KPIPeriodSnapshot {
 
 export interface KPISnapshot {
   current: KPIPeriodSnapshot;
-  prior: KPIPeriodSnapshot;
+  prior?: KPIPeriodSnapshot;
 }
 
 export interface EngagementDataPoint {

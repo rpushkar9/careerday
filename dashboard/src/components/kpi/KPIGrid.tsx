@@ -15,16 +15,16 @@ export function KPIGrid({ snapshot }: KPIGridProps) {
       <KPICard
         label="Total Students"
         value={current.totalStudents}
-        trend={deriveTrend(current.totalStudents, prior.totalStudents)}
-        delta={pctDelta(current.totalStudents, prior.totalStudents)}
+        trend={prior ? deriveTrend(current.totalStudents, prior.totalStudents) : "neutral"}
+        delta={prior ? pctDelta(current.totalStudents, prior.totalStudents) : undefined}
         icon={Users}
       />
       <KPICard
         label="Average Engagement"
         value={Math.round(current.averageEngagementScore)}
         unit="%"
-        trend={deriveTrend(current.averageEngagementScore, prior.averageEngagementScore)}
-        delta={pctDelta(current.averageEngagementScore, prior.averageEngagementScore)}
+        trend={prior ? deriveTrend(current.averageEngagementScore, prior.averageEngagementScore) : "neutral"}
+        delta={prior ? pctDelta(current.averageEngagementScore, prior.averageEngagementScore) : undefined}
         icon={TrendingUp}
         tooltip="Reflects logged platform activity. For advising support only — not used for ranking."
       />
@@ -32,22 +32,23 @@ export function KPIGrid({ snapshot }: KPIGridProps) {
         label="Milestone Completion"
         value={Math.round(current.milestoneCompletionRate)}
         unit="%"
-        trend={deriveTrend(
-          current.milestoneCompletionRate,
-          prior.milestoneCompletionRate,
-        )}
-        delta={pctDelta(current.milestoneCompletionRate, prior.milestoneCompletionRate)}
+        trend={prior ? deriveTrend(current.milestoneCompletionRate, prior.milestoneCompletionRate) : "neutral"}
+        delta={prior ? pctDelta(current.milestoneCompletionRate, prior.milestoneCompletionRate) : undefined}
         icon={Target}
       />
       <KPICard
         label="Students Needing Attention"
         value={current.studentsNeedingAttentionCount}
-        trend={deriveTrend(
-          // Fewer students needing attention is better — invert so "up" = good (count fell)
-          -current.studentsNeedingAttentionCount,
-          -prior.studentsNeedingAttentionCount,
-        )}
-        delta={pctDelta(-current.studentsNeedingAttentionCount, -prior.studentsNeedingAttentionCount)}
+        trend={
+          prior
+            ? deriveTrend(
+                // Fewer students needing attention is better — invert so "up" = good (count fell)
+                -current.studentsNeedingAttentionCount,
+                -prior.studentsNeedingAttentionCount,
+              )
+            : "neutral"
+        }
+        delta={prior ? pctDelta(-current.studentsNeedingAttentionCount, -prior.studentsNeedingAttentionCount) : undefined}
         icon={AlertCircle}
       />
     </div>
