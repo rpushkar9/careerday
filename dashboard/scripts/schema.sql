@@ -45,6 +45,20 @@ CREATE TABLE IF NOT EXISTS advisor_notes (
   created_at   TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- Recent Activity (child of students)
+CREATE TABLE IF NOT EXISTS recent_activity (
+  id          TEXT        PRIMARY KEY,
+  student_id  TEXT        NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+  description TEXT        NOT NULL,
+  event_type  TEXT        NOT NULL CHECK (event_type IN (
+    'SurveyCompleted', 'JobPostingViewed', 'NetworkingEventAttended',
+    'MilestoneCompleted', 'ProfileUpdated', 'ResourceAccessed'
+  )),
+  timestamp   TIMESTAMPTZ NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_recent_activity_student ON recent_activity(student_id);
+
 -- ── Views ────────────────────────────────────────────────────
 
 -- KPI summary: one row, four aggregate fields

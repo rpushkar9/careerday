@@ -9,6 +9,7 @@ import type {
   Student,
   Milestone,
   AdvisorNote,
+  ActivityEvent,
 } from "@/types/student";
 import type {
   KPIPeriodSnapshot,
@@ -21,6 +22,13 @@ import type {
 // unions (e.g. status: "On Track"|"At Risk"|"Needs Attention"). The schema.sql
 // enforces this at the DB level via CHECK constraints. If you add a new status
 // value, update both the TS union and the CHECK constraint.
+
+interface ActivityRow {
+  id: string;
+  description: string;
+  event_type: ActivityEvent["eventType"];
+  timestamp: string;
+}
 
 interface StudentRow {
   id: string;
@@ -36,6 +44,7 @@ interface StudentRow {
   last_contacted_date: string;
   status: Student["status"];
   milestones: MilestoneRow[] | null;
+  recent_activity: ActivityRow[] | null;
 }
 
 interface MilestoneRow {
@@ -70,6 +79,15 @@ interface MilestoneCategorySummaryRow {
 
 // ── Mappers ──────────────────────────────────────────────────────────────────
 
+function mapActivityRow(row: ActivityRow): ActivityEvent {
+  return {
+    id: row.id,
+    description: row.description,
+    eventType: row.event_type,
+    timestamp: row.timestamp,
+  };
+}
+
 function mapMilestone(row: MilestoneRow): Milestone {
   return {
     id: row.id,
@@ -96,7 +114,9 @@ function mapStudentRow(row: StudentRow): Student {
     status: row.status,
     milestones: (row.milestones ?? []).map(mapMilestone),
     advisorNotes: [],
-    recentActivity: [],
+    recentActivity: (row.recent_activity ?? [])
+      .map(mapActivityRow)
+      .sort((a, b) => b.timestamp.localeCompare(a.timestamp)),
   };
   return deriveStudent(raw);
 }
@@ -120,7 +140,7 @@ function mapAdvisorNoteRow(row: AdvisorNoteRow): AdvisorNote {
 export async function fetchStudents(): Promise<Student[]> {
   const { data, error } = await supabase
     .from("students")
-    .select("*, milestones(*)");
+    .select("*, milestones(*), recent_activity(*)");
 
   if (error) throw error;
 
