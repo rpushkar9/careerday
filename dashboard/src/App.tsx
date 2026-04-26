@@ -221,10 +221,7 @@ function App() {
               ))}
             </div>
           </div>
-          <EngagementChart
-            data={engagementChartData}
-            rangeLabel={rangeLabel}
-          />
+          <EngagementChart data={engagementChartData} rangeLabel={rangeLabel} />
         </div>
         <MilestoneChart data={milestoneCatData} />
       </section>

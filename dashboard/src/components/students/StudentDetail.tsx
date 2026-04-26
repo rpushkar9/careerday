@@ -190,7 +190,10 @@ function StudentDetailContent({
       <div className="mt-6 space-y-6">
         {/* Support Reason Alert (conditional) */}
         {student.status !== "On Track" && (
-          <div role="status" className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
+          <div
+            role="status"
+            className="bg-amber-50 border border-amber-200 rounded-2xl p-4"
+          >
             <div className="flex items-start gap-3">
               <div className="p-2 rounded-lg bg-amber-100">
                 <AlertCircle className="w-5 h-5 text-amber-600" />

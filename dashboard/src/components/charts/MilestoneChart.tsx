@@ -73,10 +73,7 @@ export function MilestoneChart({ data }: MilestoneChartProps) {
       </div>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={chartData} layout="vertical">
-          <CartesianGrid
-            strokeDasharray="3 3"
-            stroke={CHART_COLORS.grid}
-          />
+          <CartesianGrid strokeDasharray="3 3" stroke={CHART_COLORS.grid} />
           <XAxis
             type="number"
             stroke={CHART_COLORS.axis}
