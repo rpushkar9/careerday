@@ -49,9 +49,7 @@ describe("MilestoneChart", () => {
 
   it("renders the chart title", () => {
     render(<MilestoneChart data={sampleData} />);
-    expect(
-      screen.getByText("Milestone Completion Status"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Milestone Completion Status")).toBeInTheDocument();
   });
 
   it("renders bar elements equal to data.length", () => {

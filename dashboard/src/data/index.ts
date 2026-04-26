@@ -27,9 +27,18 @@ import { rawEngagementTimeSeries } from "./mock/kpi";
 
 // ── Validation ──────────────────────────────────────────────────────────────
 
-const validatedEngagementTimeSeries = z
+const parseResult = z
   .array(EngagementDataPointSchema)
-  .parse(rawEngagementTimeSeries);
+  .safeParse(rawEngagementTimeSeries);
+if (!parseResult.success) {
+  console.warn(
+    "[data/index] Engagement time series failed validation:",
+    parseResult.error.issues,
+  );
+}
+const validatedEngagementTimeSeries = parseResult.success
+  ? parseResult.data
+  : (rawEngagementTimeSeries as EngagementDataPoint[]);
 
 // ── Derivation helpers ──────────────────────────────────────────────────────
 

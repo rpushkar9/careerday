@@ -44,13 +44,19 @@ describe("FilterChips", () => {
       <FilterChips active={[]} onChange={vi.fn()} students={mockStudents} />,
     );
     for (const chip of FILTER_CHIPS) {
-      expect(screen.getByRole("button", { name: new RegExp(chip) })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: new RegExp(chip) }),
+      ).toBeInTheDocument();
     }
   });
 
   it('"All" is visually distinguished when active', () => {
     render(
-      <FilterChips active={["All"]} onChange={vi.fn()} students={mockStudents} />,
+      <FilterChips
+        active={["All"]}
+        onChange={vi.fn()}
+        students={mockStudents}
+      />,
     );
     const allButton = screen.getByRole("button", { name: /^All/ });
     expect(allButton).toHaveAttribute("data-active", "true");

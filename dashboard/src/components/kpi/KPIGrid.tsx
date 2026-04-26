@@ -15,16 +15,38 @@ export function KPIGrid({ snapshot }: KPIGridProps) {
       <KPICard
         label="Total Students"
         value={current.totalStudents}
-        trend={prior ? deriveTrend(current.totalStudents, prior.totalStudents) : "neutral"}
-        delta={prior ? pctDelta(current.totalStudents, prior.totalStudents) : undefined}
+        trend={
+          prior
+            ? deriveTrend(current.totalStudents, prior.totalStudents)
+            : "neutral"
+        }
+        delta={
+          prior
+            ? pctDelta(current.totalStudents, prior.totalStudents)
+            : undefined
+        }
         icon={Users}
       />
       <KPICard
         label="Average Engagement"
         value={Math.round(current.averageEngagementScore)}
         unit="%"
-        trend={prior ? deriveTrend(current.averageEngagementScore, prior.averageEngagementScore) : "neutral"}
-        delta={prior ? pctDelta(current.averageEngagementScore, prior.averageEngagementScore) : undefined}
+        trend={
+          prior
+            ? deriveTrend(
+                current.averageEngagementScore,
+                prior.averageEngagementScore,
+              )
+            : "neutral"
+        }
+        delta={
+          prior
+            ? pctDelta(
+                current.averageEngagementScore,
+                prior.averageEngagementScore,
+              )
+            : undefined
+        }
         icon={TrendingUp}
         tooltip="Reflects logged platform activity. For advising support only — not used for ranking."
       />
@@ -32,8 +54,22 @@ export function KPIGrid({ snapshot }: KPIGridProps) {
         label="Milestone Completion"
         value={Math.round(current.milestoneCompletionRate)}
         unit="%"
-        trend={prior ? deriveTrend(current.milestoneCompletionRate, prior.milestoneCompletionRate) : "neutral"}
-        delta={prior ? pctDelta(current.milestoneCompletionRate, prior.milestoneCompletionRate) : undefined}
+        trend={
+          prior
+            ? deriveTrend(
+                current.milestoneCompletionRate,
+                prior.milestoneCompletionRate,
+              )
+            : "neutral"
+        }
+        delta={
+          prior
+            ? pctDelta(
+                current.milestoneCompletionRate,
+                prior.milestoneCompletionRate,
+              )
+            : undefined
+        }
         icon={Target}
       />
       <KPICard
@@ -48,7 +84,14 @@ export function KPIGrid({ snapshot }: KPIGridProps) {
               )
             : "neutral"
         }
-        delta={prior ? pctDelta(-current.studentsNeedingAttentionCount, -prior.studentsNeedingAttentionCount) : undefined}
+        delta={
+          prior
+            ? pctDelta(
+                -current.studentsNeedingAttentionCount,
+                -prior.studentsNeedingAttentionCount,
+              )
+            : undefined
+        }
         icon={AlertCircle}
       />
     </div>

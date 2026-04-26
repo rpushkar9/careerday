@@ -110,7 +110,9 @@ describe("StudentDetail", () => {
     renderDetail();
     expect(screen.getByText("Career Narrative")).toBeInTheDocument();
     expect(screen.getByText("Career Direction")).toBeInTheDocument();
-    expect(screen.getByText("Self-reported confidence in career direction")).toBeInTheDocument();
+    expect(
+      screen.getByText("Self-reported confidence in career direction"),
+    ).toBeInTheDocument();
     expect(screen.getByText("Actively exploring")).toBeInTheDocument();
     expect(screen.getByText("Fairly confident")).toBeInTheDocument();
   });
@@ -133,16 +135,16 @@ describe("StudentDetail", () => {
     renderDetail();
     expect(screen.getByRole("link", { name: /email/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /schedule/i })).toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: /message/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /message/i })).toBeInTheDocument();
   });
 
   it("shows Needs Attention alert when student is flagged", () => {
     renderDetail({ flaggedForAttention: true, status: "Needs Attention" });
     // "Needs Attention" appears in both the status select trigger and the alert banner
     expect(screen.getAllByText("Needs Attention").length).toBeGreaterThan(0);
-    expect(screen.getByText(/low engagement or milestone gaps/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/low engagement or milestone gaps/i),
+    ).toBeInTheDocument();
   });
 
   it("shows engagement score with percent sign in metrics grid", () => {
@@ -175,7 +177,10 @@ describe("StudentDetail", () => {
   it("shows Undo button after Check in and calls onUndoCheckIn when clicked", async () => {
     const onUndoCheckIn = vi.fn();
     const onCheckIn = vi.fn().mockResolvedValue("2026-04-23");
-    renderDetail({ lastContactedDate: "2026-03-28" }, { onCheckIn, onUndoCheckIn });
+    renderDetail(
+      { lastContactedDate: "2026-03-28" },
+      { onCheckIn, onUndoCheckIn },
+    );
     await userEvent.click(screen.getByRole("button", { name: /check in/i }));
     const undoBtn = await screen.findByRole("button", { name: /undo/i });
     await userEvent.click(undoBtn);

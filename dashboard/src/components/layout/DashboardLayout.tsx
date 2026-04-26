@@ -12,13 +12,19 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-semibold text-primary">CareerDayy</h1>
-              <p className="text-sm text-muted-foreground">Counselor Dashboard</p>
+              <h1 className="text-2xl font-semibold text-primary">
+                CareerDayy
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                Counselor Dashboard
+              </p>
             </div>
             <div className="flex items-center gap-3">
               <Bell className="w-6 h-6 text-primary" aria-hidden="true" />
               <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-                <span className="text-primary-foreground text-sm font-medium">AC</span>
+                <span className="text-primary-foreground text-sm font-medium">
+                  AC
+                </span>
               </div>
             </div>
           </div>

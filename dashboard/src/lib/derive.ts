@@ -1,7 +1,10 @@
 import { ENGAGEMENT_THRESHOLDS } from "@/lib/constants";
 import type { Student, EngagementTier } from "@/types/student";
 
-export type RawStudent = Omit<Student, "engagementTier" | "flaggedForAttention">;
+export type RawStudent = Omit<
+  Student,
+  "engagementTier" | "flaggedForAttention"
+>;
 
 export function deriveEngagementTier(score: number): EngagementTier {
   if (score >= ENGAGEMENT_THRESHOLDS.HIGH) return "High";

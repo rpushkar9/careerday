@@ -53,6 +53,7 @@ export function FilterChips({ active, onChange, students }: FilterChipsProps) {
           <button
             key={chip}
             data-active={isActive}
+            aria-pressed={isActive}
             onClick={() => handleChipClick(chip)}
             className={[
               "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-medium transition-colors",
@@ -64,6 +65,7 @@ export function FilterChips({ active, onChange, students }: FilterChipsProps) {
             <Icon className="w-3.5 h-3.5" />
             {chip}
             <span
+              aria-label={`${count} students`}
               className={[
                 "rounded-full px-1.5 py-0.5 text-xs font-semibold",
                 isActive

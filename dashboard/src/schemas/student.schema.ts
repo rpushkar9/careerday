@@ -40,13 +40,13 @@ export const AdvisorNoteSchema = z.object({
   id: z.string(),
   text: z.string().min(1),
   authorName: z.string().min(1),
-  timestamp: z.string().datetime(),
+  timestamp: z.string().datetime({ offset: true }),
 });
 
 export const ActivityEventSchema = z.object({
   id: z.string(),
   description: z.string().min(1),
-  timestamp: z.string().datetime(),
+  timestamp: z.string().datetime({ offset: true }),
   eventType: ActivityEventTypeSchema,
 });
 

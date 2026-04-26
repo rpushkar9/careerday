@@ -5,7 +5,7 @@ const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
 
 if (!url || !anonKey) {
   throw new Error(
-    "Missing Supabase environment variables. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env.local"
+    "Missing Supabase environment variables. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env.local",
   );
 }
 

@@ -23,7 +23,7 @@ export function InsightsPanel({ students }: InsightsPanelProps) {
       <h2 className="text-base font-semibold mb-4">Insights</h2>
       <ul className="space-y-3">
         <li className="flex items-center gap-3 text-sm">
-          <TrendingDown className="w-4 h-4 text-amber-600 flex-shrink-0" />
+          <TrendingDown aria-hidden="true" className="w-4 h-4 text-amber-600 flex-shrink-0" />
           <span>
             {decliningEngagementCount}{" "}
             {decliningEngagementCount === 1 ? "student" : "students"} with
@@ -31,7 +31,7 @@ export function InsightsPanel({ students }: InsightsPanelProps) {
           </span>
         </li>
         <li className="flex items-center gap-3 text-sm">
-          <Target className="w-4 h-4 text-blue-500 flex-shrink-0" />
+          <Target aria-hidden="true" className="w-4 h-4 text-blue-500 flex-shrink-0" />
           <span>
             {unstartedMilestoneCount}{" "}
             {unstartedMilestoneCount === 1 ? "student" : "students"} with
@@ -39,7 +39,7 @@ export function InsightsPanel({ students }: InsightsPanelProps) {
           </span>
         </li>
         <li className="flex items-center gap-3 text-sm">
-          <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
+          <AlertCircle aria-hidden="true" className="w-4 h-4 text-red-500 flex-shrink-0" />
           <span>
             {needsAttentionCount}{" "}
             {needsAttentionCount === 1 ? "student" : "students"} marked for

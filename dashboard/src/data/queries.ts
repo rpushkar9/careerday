@@ -38,7 +38,7 @@ interface StudentRow {
   graduation_year: number;
   career_direction: Student["careerDirection"];
   confidence_score: number;
-  engagement_score: number;
+  engagement_score: number | string;
   engagement_trend: Student["engagementTrend"];
   last_active_date: string;
   last_contacted_date: string;
@@ -107,7 +107,7 @@ function mapStudentRow(row: StudentRow): Student {
     graduationYear: row.graduation_year,
     careerDirection: row.career_direction,
     confidenceScore: row.confidence_score,
-    engagementScore: row.engagement_score,
+    engagementScore: Number(row.engagement_score),
     engagementTrend: row.engagement_trend,
     lastActiveDate: row.last_active_date,
     lastContactedDate: row.last_contacted_date,
@@ -116,7 +116,7 @@ function mapStudentRow(row: StudentRow): Student {
     advisorNotes: [],
     recentActivity: (row.recent_activity ?? [])
       .map(mapActivityRow)
-      .sort((a, b) => b.timestamp.localeCompare(a.timestamp)),
+      .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp)),
   };
   return deriveStudent(raw);
 }
@@ -207,9 +207,7 @@ export async function fetchKpiSummary(): Promise<KPIPeriodSnapshot> {
     totalStudents: Number(row.total_students),
     averageEngagementScore: Number(row.avg_engagement_score),
     milestoneCompletionRate: Number(row.milestone_completion_rate),
-    studentsNeedingAttentionCount: Number(
-      row.students_needing_attention_count,
-    ),
+    studentsNeedingAttentionCount: Number(row.students_needing_attention_count),
   };
 }
 

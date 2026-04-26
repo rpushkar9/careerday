@@ -2,10 +2,7 @@ import { describe, it, expect } from "vitest";
 import { computeCurrentKPIPeriod } from "./index";
 import type { Student, Milestone } from "@/types";
 
-function makeMilestone(
-  status: Milestone["status"],
-  id = "m-1",
-): Milestone {
+function makeMilestone(status: Milestone["status"], id = "m-1"): Milestone {
   return { id, label: "Test", status, category: "Test" };
 }
 
@@ -77,29 +74,45 @@ describe("computeCurrentKPIPeriod", () => {
     // s2: 1 completed, 1 pending → 1/2 milestones done
     // total: 3 completed / 5 total = 0.6 → 60.0%
     const students = [
-      makeStudent(70, "On Track", [
-        makeMilestone("Completed", "m-1"),
-        makeMilestone("Completed", "m-2"),
-        makeMilestone("Pending", "m-3"),
-      ], "s-1"),
-      makeStudent(50, "On Track", [
-        makeMilestone("Completed", "m-4"),
-        makeMilestone("Pending", "m-5"),
-      ], "s-2"),
+      makeStudent(
+        70,
+        "On Track",
+        [
+          makeMilestone("Completed", "m-1"),
+          makeMilestone("Completed", "m-2"),
+          makeMilestone("Pending", "m-3"),
+        ],
+        "s-1",
+      ),
+      makeStudent(
+        50,
+        "On Track",
+        [makeMilestone("Completed", "m-4"), makeMilestone("Pending", "m-5")],
+        "s-2",
+      ),
     ];
-    expect(computeCurrentKPIPeriod(students).milestoneCompletionRate).toBe(60.0);
+    expect(computeCurrentKPIPeriod(students).milestoneCompletionRate).toBe(
+      60.0,
+    );
   });
 
   it("milestoneCompletionRate counts only Completed — not In Progress", () => {
     // 1 Completed, 1 In Progress, 1 Pending → 1/3 = 33.3%
     const students = [
-      makeStudent(70, "On Track", [
-        makeMilestone("Completed", "m-1"),
-        makeMilestone("In Progress", "m-2"),
-        makeMilestone("Pending", "m-3"),
-      ], "s-1"),
+      makeStudent(
+        70,
+        "On Track",
+        [
+          makeMilestone("Completed", "m-1"),
+          makeMilestone("In Progress", "m-2"),
+          makeMilestone("Pending", "m-3"),
+        ],
+        "s-1",
+      ),
     ];
-    expect(computeCurrentKPIPeriod(students).milestoneCompletionRate).toBe(33.3);
+    expect(computeCurrentKPIPeriod(students).milestoneCompletionRate).toBe(
+      33.3,
+    );
   });
 
   it("milestoneCompletionRate is 0 when student list has no milestones", () => {

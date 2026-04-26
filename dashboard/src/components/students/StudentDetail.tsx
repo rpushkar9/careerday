@@ -20,7 +20,7 @@ import { MilestoneList } from "./MilestoneList";
 import { ActivityFeed } from "./ActivityFeed";
 import {
   Mail,
-  Phone,
+  CalendarPlus,
   MessageSquare,
   AlertCircle,
   TrendingUp,
@@ -30,11 +30,30 @@ import {
 import { STUDENT_STATUSES } from "@/lib/constants";
 import type { CareerDirection } from "@/types";
 
-const DIRECTION_LABELS: Record<CareerDirection, { label: string; description: string }> = {
-  clear:      { label: "Clear direction",    description: "Student has identified a specific career path and is actively working toward it." },
-  exploring:  { label: "Actively exploring", description: "Considering multiple options and gathering information before committing to a path." },
-  uncertain:  { label: "Feeling uncertain",  description: "Not yet sure what direction to take — may benefit from additional career exploration support." },
-  undeclared: { label: "Undeclared",         description: "No career direction identified yet. Common for first-year students or those in transition." },
+const DIRECTION_LABELS: Record<
+  CareerDirection,
+  { label: string; description: string }
+> = {
+  clear: {
+    label: "Clear direction",
+    description:
+      "Student has identified a specific career path and is actively working toward it.",
+  },
+  exploring: {
+    label: "Actively exploring",
+    description:
+      "Considering multiple options and gathering information before committing to a path.",
+  },
+  uncertain: {
+    label: "Feeling uncertain",
+    description:
+      "Not yet sure what direction to take — may benefit from additional career exploration support.",
+  },
+  undeclared: {
+    label: "Undeclared",
+    description:
+      "No career direction identified yet. Common for first-year students or those in transition.",
+  },
 };
 
 const CONFIDENCE_LABELS: Record<number, string> = {
@@ -50,7 +69,7 @@ interface StudentDetailProps {
   onClose: () => void;
   onAddNote: (studentId: string, text: string) => void;
   onUpdateStatus: (studentId: string, status: StudentStatus) => void;
-  onCheckIn: (studentId: string) => Promise<string>;
+  onCheckIn: (studentId: string) => Promise<string | null>;
   onUndoCheckIn: (studentId: string, previousDate: string) => void;
 }
 
@@ -70,7 +89,7 @@ function StudentDetailContent({
   student: Student;
   onAddNote: (studentId: string, text: string) => void;
   onUpdateStatus: (studentId: string, status: StudentStatus) => void;
-  onCheckIn: (studentId: string) => Promise<string>;
+  onCheckIn: (studentId: string) => Promise<string | null>;
   onUndoCheckIn: (studentId: string, previousDate: string) => void;
 }) {
   const UNDO_SECONDS = 8;
@@ -94,10 +113,13 @@ function StudentDetailContent({
     };
   }, [undoDate]);
 
-  useEffect(() => () => {
-    if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
-    if (undoIntervalRef.current) clearInterval(undoIntervalRef.current);
-  }, []);
+  useEffect(
+    () => () => {
+      if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
+      if (undoIntervalRef.current) clearInterval(undoIntervalRef.current);
+    },
+    [],
+  );
 
   const initials = student.name
     .split(" ")
@@ -152,7 +174,7 @@ function StudentDetailContent({
           className="flex flex-col items-center gap-2 p-4 border border-border rounded-2xl hover:bg-secondary transition-colors"
           aria-label={`Schedule meeting with ${student.name}`}
         >
-          <Phone className="w-5 h-5 text-primary" />
+          <CalendarPlus className="w-5 h-5 text-primary" />
           <span className="text-xs text-foreground">Schedule</span>
         </a>
         <a
@@ -168,7 +190,7 @@ function StudentDetailContent({
       <div className="mt-6 space-y-6">
         {/* Support Reason Alert (conditional) */}
         {student.status !== "On Track" && (
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
+          <div role="status" className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
             <div className="flex items-start gap-3">
               <div className="p-2 rounded-lg bg-amber-100">
                 <AlertCircle className="w-5 h-5 text-amber-600" />
@@ -222,7 +244,9 @@ function StudentDetailContent({
           <h3 className="mb-2 text-sm font-semibold">Follow-up</h3>
           <div className="space-y-3 rounded-md border px-3 py-3">
             <div className="flex items-center justify-between gap-4">
-              <span className="text-xs text-muted-foreground whitespace-nowrap">Status</span>
+              <span className="text-xs text-muted-foreground whitespace-nowrap">
+                Status
+              </span>
               <Select
                 value={student.status}
                 onValueChange={(val) => {
@@ -259,6 +283,8 @@ function StudentDetailContent({
                     variant="ghost"
                     className="text-muted-foreground h-7 px-2"
                     onClick={() => {
+                      if (undoTimerRef.current)
+                        clearTimeout(undoTimerRef.current);
                       onUndoCheckIn(student.id, undoDate);
                       setUndoDate(null);
                     }}
@@ -268,7 +294,9 @@ function StudentDetailContent({
                   <div className="w-20 h-0.5 rounded-full bg-muted overflow-hidden">
                     <div
                       className="h-full bg-muted-foreground/50 transition-all duration-1000 ease-linear"
-                      style={{ width: `${(undoSecondsLeft / UNDO_SECONDS) * 100}%` }}
+                      style={{
+                        width: `${(undoSecondsLeft / UNDO_SECONDS) * 100}%`,
+                      }}
                     />
                   </div>
                 </div>
@@ -284,8 +312,12 @@ function StudentDetailContent({
                       const newDate = await onCheckIn(student.id);
                       if (newDate) {
                         setUndoDate(prev);
-                        if (undoTimerRef.current) clearTimeout(undoTimerRef.current);
-                        undoTimerRef.current = setTimeout(() => setUndoDate(null), 8000);
+                        if (undoTimerRef.current)
+                          clearTimeout(undoTimerRef.current);
+                        undoTimerRef.current = setTimeout(
+                          () => setUndoDate(null),
+                          8000,
+                        );
                       }
                     } finally {
                       setCheckingIn(false);
@@ -304,8 +336,12 @@ function StudentDetailContent({
           <h3 className="mb-2 text-sm font-semibold">Career Narrative</h3>
           <div className="space-y-3 rounded-md border px-3 py-3 text-sm">
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Career Direction</p>
-              <p className="font-medium">{DIRECTION_LABELS[student.careerDirection].label}</p>
+              <p className="text-xs text-muted-foreground mb-1">
+                Career Direction
+              </p>
+              <p className="font-medium">
+                {DIRECTION_LABELS[student.careerDirection].label}
+              </p>
               <p className="text-xs text-muted-foreground mt-0.5">
                 {DIRECTION_LABELS[student.careerDirection].description}
               </p>
@@ -320,7 +356,9 @@ function StudentDetailContent({
                     <div
                       key={level}
                       className={`h-2.5 w-2.5 rounded-full ${
-                        level <= student.confidenceScore ? "bg-primary" : "bg-muted"
+                        level <= student.confidenceScore
+                          ? "bg-primary"
+                          : "bg-muted"
                       }`}
                     />
                   ))}

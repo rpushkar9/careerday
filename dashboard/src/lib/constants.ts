@@ -23,3 +23,11 @@ export const STUDENT_STATUSES = [
   "At Risk",
   "Needs Attention",
 ] as const;
+
+export const CHART_COLORS = {
+  grid: "#e3daff",
+  primary: "#6d6bd3",
+  secondary: "#9896e0",
+  tertiary: "#b8b2f0",
+  axis: "#6b7280",
+} as const;

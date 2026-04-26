@@ -122,9 +122,7 @@ describe("StudentTable", () => {
     render(<StudentTable students={[student]} onSelectStudent={vi.fn()} />);
 
     // Tooltip should not be visible initially
-    expect(
-      screen.queryByText(/Engagement declining/i),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText(/Engagement declining/i)).not.toBeInTheDocument();
 
     // Hover the status cell container
     const statusCell = screen.getByText("At Risk").closest("td");
@@ -133,9 +131,7 @@ describe("StudentTable", () => {
 
     // Unhover: tooltip disappears
     await user.unhover(statusCell!);
-    expect(
-      screen.queryByText(/Engagement declining/i),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText(/Engagement declining/i)).not.toBeInTheDocument();
   });
 
   it("clicking Milestones header sorts rows by completion rate", async () => {

@@ -40,7 +40,15 @@ function badgeClasses(trend: TrendDirection): string {
   return "text-muted-foreground bg-secondary/50";
 }
 
-export function KPICard({ label, value, trend, icon: Icon, unit, delta, tooltip }: KPICardProps) {
+export function KPICard({
+  label,
+  value,
+  trend,
+  icon: Icon,
+  unit,
+  delta,
+  tooltip,
+}: KPICardProps) {
   const [showTooltip, setShowTooltip] = useState(false);
 
   return (

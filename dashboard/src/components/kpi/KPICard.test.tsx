@@ -4,7 +4,14 @@ import { KPICard } from "./KPICard";
 
 describe("KPICard", () => {
   it("renders label and value", () => {
-    render(<KPICard label="Total Students" value={30} trend="neutral" icon={Users} />);
+    render(
+      <KPICard
+        label="Total Students"
+        value={30}
+        trend="neutral"
+        icon={Users}
+      />,
+    );
     expect(screen.getByText("Total Students")).toBeInTheDocument();
     expect(screen.getByText("30")).toBeInTheDocument();
   });
@@ -20,28 +27,66 @@ describe("KPICard", () => {
   });
 
   it("hides the badge when trend is neutral and no delta (no prior period)", () => {
-    render(<KPICard label="Engagement" value="Medium" trend="neutral" icon={Users} />);
+    render(
+      <KPICard
+        label="Engagement"
+        value="Medium"
+        trend="neutral"
+        icon={Users}
+      />,
+    );
     expect(screen.queryByLabelText("No change")).not.toBeInTheDocument();
   });
 
   it("shows neutral badge when trend is neutral but a delta is provided", () => {
-    render(<KPICard label="Engagement" value="Medium" trend="neutral" icon={Users} delta="0%" />);
+    render(
+      <KPICard
+        label="Engagement"
+        value="Medium"
+        trend="neutral"
+        icon={Users}
+        delta="0%"
+      />,
+    );
     expect(screen.getByLabelText("No change")).toBeInTheDocument();
   });
 
   it("renders optional unit next to value", () => {
-    render(<KPICard label="Completion" value={58} trend="up" unit="%" icon={Users} />);
+    render(
+      <KPICard
+        label="Completion"
+        value={58}
+        trend="up"
+        unit="%"
+        icon={Users}
+      />,
+    );
     expect(screen.getByText("%")).toBeInTheDocument();
   });
 
   it("renders the icon container with bg-secondary/50 class", () => {
-    render(<KPICard label="Total Students" value={30} trend="neutral" icon={Users} />);
+    render(
+      <KPICard
+        label="Total Students"
+        value={30}
+        trend="neutral"
+        icon={Users}
+      />,
+    );
     const iconContainer = document.querySelector(".bg-secondary\\/50");
     expect(iconContainer).toBeInTheDocument();
   });
 
   it("renders change badge with delta text when delta is provided", () => {
-    render(<KPICard label="Total Students" value={30} trend="up" icon={Users} delta="+8%" />);
+    render(
+      <KPICard
+        label="Total Students"
+        value={30}
+        trend="up"
+        icon={Users}
+        delta="+8%"
+      />,
+    );
     expect(screen.getByText("+8%")).toBeInTheDocument();
   });
 
@@ -53,7 +98,7 @@ describe("KPICard", () => {
         trend="up"
         icon={Users}
         tooltip="Some tooltip text"
-      />
+      />,
     );
     // The Info icon is rendered as an svg with a title or aria-label; we query by role or test-id
     const infoIcon = document.querySelector("[data-tooltip-trigger]");

@@ -8,7 +8,13 @@ import {
   type SortingState,
 } from "@tanstack/react-table";
 import { useState, useEffect } from "react";
-import { ArrowUp, ArrowDown, Minus, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  ArrowUp,
+  ArrowDown,
+  Minus,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import type { Student } from "@/types";
 import { StatusBadge } from "@/components/shared/StatusBadge";
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -141,9 +147,6 @@ const columns = [
   }),
   columnHelper.accessor("status", {
     header: "Status",
-    // Cell rendering for status is handled in the row render loop below
-    // to support tooltip state (hoveredRowId). This cell fn is a fallback.
-    cell: (info) => <StatusBadge status={info.getValue()} />,
   }),
 ];
 
@@ -181,8 +184,24 @@ export function StudentTable({ students, onSelectStudent }: StudentTableProps) {
               {headerGroup.headers.map((header) => (
                 <th
                   key={header.id}
-                  className="px-4 py-3 text-left font-medium text-muted-foreground cursor-pointer select-none"
+                  className={`px-4 py-3 text-left font-medium text-muted-foreground select-none ${header.column.getCanSort() ? "cursor-pointer" : "cursor-default"}`}
+                  tabIndex={header.column.getCanSort() ? 0 : undefined}
+                  aria-sort={
+                    header.column.getIsSorted() === "asc"
+                      ? "ascending"
+                      : header.column.getIsSorted() === "desc"
+                        ? "descending"
+                        : header.column.getCanSort()
+                          ? "none"
+                          : undefined
+                  }
                   onClick={header.column.getToggleSortingHandler()}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      header.column.getToggleSortingHandler()?.(e);
+                    }
+                  }}
                 >
                   {header.isPlaceholder
                     ? null
@@ -201,8 +220,15 @@ export function StudentTable({ students, onSelectStudent }: StudentTableProps) {
           {table.getRowModel().rows.map((row) => (
             <tr
               key={row.id}
-              className="border-b cursor-pointer hover:bg-muted/50 transition-colors"
+              tabIndex={0}
+              className="border-b cursor-pointer hover:bg-muted/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
               onClick={() => onSelectStudent(row.original)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onSelectStudent(row.original);
+                }
+              }}
             >
               {row.getVisibleCells().map((cell) => {
                 if (cell.column.id === "status") {
@@ -225,7 +251,7 @@ export function StudentTable({ students, onSelectStudent }: StudentTableProps) {
                       <div className="relative inline-block">
                         <StatusBadge status={status} />
                         {tooltipText && isHovered && (
-                          <div className="absolute z-10 left-0 top-full mt-1 bg-white border border-border rounded-lg shadow-lg p-2.5 text-xs text-foreground whitespace-nowrap">
+                          <div className="absolute z-10 left-0 top-full mt-1 bg-popover border border-border rounded-lg shadow-lg p-2.5 text-xs text-foreground whitespace-nowrap">
                             {tooltipText}
                           </div>
                         )}
@@ -246,8 +272,8 @@ export function StudentTable({ students, onSelectStudent }: StudentTableProps) {
       {table.getPageCount() > 1 && (
         <div className="flex items-center justify-between border-t px-4 py-3 text-sm text-muted-foreground">
           <span>
-            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-            {" "}· {students.length} students
+            Page {table.getState().pagination.pageIndex + 1} of{" "}
+            {table.getPageCount()} · {students.length} students
           </span>
           <div className="flex items-center gap-1">
             <button

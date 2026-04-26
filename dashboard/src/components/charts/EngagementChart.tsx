@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import type { EngagementDataPoint } from "@/types";
+import { CHART_COLORS } from "@/lib/constants";
 
 interface EngagementChartProps {
   data: EngagementDataPoint[];
@@ -19,6 +20,8 @@ export function EngagementChart({ data, rangeLabel }: EngagementChartProps) {
   return (
     <div
       data-testid="engagement-chart"
+      role="img"
+      aria-label="Student engagement over time"
       className="bg-card border border-border rounded-2xl p-8 shadow-sm"
     >
       <div className="mb-6">
@@ -32,7 +35,7 @@ export function EngagementChart({ data, rangeLabel }: EngagementChartProps) {
       </div>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e3daff" />
+          <CartesianGrid strokeDasharray="3 3" stroke={CHART_COLORS.grid} />
           <XAxis
             dataKey="date"
             tickFormatter={(d: string) =>
@@ -48,7 +51,7 @@ export function EngagementChart({ data, rangeLabel }: EngagementChartProps) {
             labelFormatter={(d: string) => new Date(d).toLocaleDateString()}
             contentStyle={{
               backgroundColor: "#ffffff",
-              border: "1px solid #6d6bd3",
+              border: `1px solid ${CHART_COLORS.primary}`,
               borderRadius: "12px",
               padding: "12px",
             }}
@@ -57,7 +60,7 @@ export function EngagementChart({ data, rangeLabel }: EngagementChartProps) {
           <Line
             type="monotone"
             dataKey="engagementScore"
-            stroke="hsl(var(--primary))"
+            stroke={CHART_COLORS.primary}
             strokeWidth={2}
             dot={false}
             name="Engagement"
@@ -65,7 +68,7 @@ export function EngagementChart({ data, rangeLabel }: EngagementChartProps) {
           <Line
             type="monotone"
             dataKey="target"
-            stroke="#9896e0"
+            stroke={CHART_COLORS.secondary}
             strokeWidth={2}
             strokeDasharray="5 5"
             dot={false}

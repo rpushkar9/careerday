@@ -58,6 +58,8 @@ CREATE TABLE IF NOT EXISTS recent_activity (
 );
 
 CREATE INDEX IF NOT EXISTS idx_recent_activity_student ON recent_activity(student_id);
+CREATE INDEX IF NOT EXISTS idx_milestones_student ON milestones(student_id);
+CREATE UNIQUE INDEX IF NOT EXISTS uniq_students_email ON students(email);
 
 -- ── Views ────────────────────────────────────────────────────
 

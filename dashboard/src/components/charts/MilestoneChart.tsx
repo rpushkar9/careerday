@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   BarChart,
   Bar,
@@ -10,6 +11,7 @@ import {
   type TooltipProps,
 } from "recharts";
 import type { MilestoneCategoryCompletion } from "@/types";
+import { CHART_COLORS } from "@/lib/constants";
 
 interface MilestoneChartProps {
   data: MilestoneCategoryCompletion[];
@@ -35,7 +37,7 @@ function MilestoneTooltip({ active, payload }: TooltipProps<number, string>) {
       className="rounded-md border bg-background px-3 py-2 text-sm shadow"
       style={{
         backgroundColor: "#ffffff",
-        border: "1px solid #6d6bd3",
+        border: `1px solid ${CHART_COLORS.primary}`,
         borderRadius: "12px",
         padding: "12px",
       }}
@@ -49,9 +51,16 @@ function MilestoneTooltip({ active, payload }: TooltipProps<number, string>) {
 }
 
 export function MilestoneChart({ data }: MilestoneChartProps) {
+  const chartData = useMemo(
+    () => data.map((d) => ({ ...d, category: labelFor(d.category) })),
+    [data],
+  );
+
   return (
     <div
       data-testid="milestone-chart"
+      role="img"
+      aria-label="Milestone completion status by category"
       className="bg-card border border-border rounded-2xl p-8 shadow-sm"
     >
       <div className="mb-6">
@@ -63,16 +72,20 @@ export function MilestoneChart({ data }: MilestoneChartProps) {
         </p>
       </div>
       <ResponsiveContainer width="100%" height={300}>
-        <BarChart
-          data={data.map((d) => ({ ...d, category: labelFor(d.category) }))}
-          layout="vertical"
-        >
-          <CartesianGrid strokeDasharray="3 3" stroke="#e3daff" />
-          <XAxis type="number" stroke="#6b7280" tick={{ fontSize: 12 }} />
+        <BarChart data={chartData} layout="vertical">
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke={CHART_COLORS.grid}
+          />
+          <XAxis
+            type="number"
+            stroke={CHART_COLORS.axis}
+            tick={{ fontSize: 12 }}
+          />
           <YAxis
             type="category"
             dataKey="category"
-            stroke="#6b7280"
+            stroke={CHART_COLORS.axis}
             tick={{ fontSize: 12 }}
             width={170}
           />
@@ -80,13 +93,13 @@ export function MilestoneChart({ data }: MilestoneChartProps) {
           <Legend wrapperStyle={{ paddingTop: "16px" }} />
           <Bar
             dataKey="completedCount"
-            fill="#6d6bd3"
+            fill={CHART_COLORS.primary}
             radius={[0, 8, 8, 0]}
             name="Completed"
           />
           <Bar
             dataKey="inProgressCount"
-            fill="#b8b2f0"
+            fill={CHART_COLORS.tertiary}
             radius={[0, 8, 8, 0]}
             name="In Progress"
           />

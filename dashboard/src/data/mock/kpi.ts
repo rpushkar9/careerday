@@ -30,4 +30,3 @@ function generateEngagementTimeSeries(): EngagementDataPoint[] {
 
 export const rawEngagementTimeSeries: EngagementDataPoint[] =
   generateEngagementTimeSeries();
-
