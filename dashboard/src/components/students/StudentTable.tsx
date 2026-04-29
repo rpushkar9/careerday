@@ -45,7 +45,7 @@ const CAREER_DIRECTION_STYLES: Record<
   },
   undeclared: {
     className:
-      "bg-gray-50 text-gray-600 border border-gray-200 rounded-lg px-2 py-0.5 text-xs",
+      "bg-gray-100 text-gray-600 border border-gray-300 rounded-lg px-2 py-0.5 text-xs",
     label: "Undeclared",
   },
 };

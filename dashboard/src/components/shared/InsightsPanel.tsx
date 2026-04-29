@@ -19,8 +19,8 @@ export function InsightsPanel({ students }: InsightsPanelProps) {
   ).length;
 
   return (
-    <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
-      <h2 className="text-base font-semibold mb-4">Insights</h2>
+    <div className="bg-secondary/40 border border-primary/20 rounded-2xl p-6 shadow-sm border-l-[3px] border-l-primary">
+      <h2 className="text-base font-semibold text-primary mb-4">Insights</h2>
       <ul className="space-y-3">
         <li className="flex items-center gap-3 text-sm">
           <TrendingDown
