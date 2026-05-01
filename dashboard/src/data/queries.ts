@@ -15,67 +15,22 @@ import type {
   KPIPeriodSnapshot,
   MilestoneCategoryCompletion,
 } from "@/types/kpi";
+import { z } from "zod";
+import {
+  ActivityRowSchema,
+  MilestoneRowSchema,
+  StudentRowSchema,
+  AdvisorNoteRowSchema,
+} from "@/schemas/student.schema";
+import {
+  KpiSummaryRowSchema,
+  MilestoneCategorySummaryRowSchema,
+} from "@/schemas/kpi.schema";
 
-// ── DB row shapes ────────────────────────────────────────────────────────────
-// These interfaces mirror the Supabase table columns. The casts (data as StudentRow[])
-// are unchecked — they trust that the DB contains values matching the TypeScript
-// unions (e.g. status: "On Track"|"At Risk"|"Needs Attention"). The schema.sql
-// enforces this at the DB level via CHECK constraints. If you add a new status
-// value, update both the TS union and the CHECK constraint.
-
-interface ActivityRow {
-  id: string;
-  description: string;
-  event_type: ActivityEvent["eventType"];
-  timestamp: string;
-}
-
-interface StudentRow {
-  id: string;
-  name: string;
-  email: string;
-  major: string;
-  graduation_year: number;
-  career_direction: Student["careerDirection"];
-  confidence_score: number;
-  engagement_score: number | string;
-  engagement_trend: Student["engagementTrend"];
-  last_active_date: string;
-  last_contacted_date: string;
-  status: Student["status"];
-  milestones: MilestoneRow[] | null;
-  recent_activity: ActivityRow[] | null;
-}
-
-interface MilestoneRow {
-  id: string;
-  label: string;
-  status: Milestone["status"];
-  category: string;
-  completed_date?: string | null;
-}
-
-interface AdvisorNoteRow {
-  id: string;
-  text: string;
-  author_name: string;
-  created_at: string;
-}
-
-interface KpiSummaryRow {
-  total_students: number | string;
-  avg_engagement_score: number | string;
-  milestone_completion_rate: number | string;
-  students_needing_attention_count: number | string;
-}
-
-interface MilestoneCategorySummaryRow {
-  category: string;
-  completed_count: number | string;
-  in_progress_count: number | string;
-  total_count: number | string;
-  completion_rate: number | string;
-}
+type ActivityRow = z.infer<typeof ActivityRowSchema>;
+type MilestoneRow = z.infer<typeof MilestoneRowSchema>;
+type StudentRow = z.infer<typeof StudentRowSchema>;
+type AdvisorNoteRow = z.infer<typeof AdvisorNoteRowSchema>;
 
 // ── Mappers ──────────────────────────────────────────────────────────────────
 
@@ -144,7 +99,7 @@ export async function fetchStudents(): Promise<Student[]> {
 
   if (error) throw error;
 
-  return ((data ?? []) as StudentRow[]).map(mapStudentRow);
+  return StudentRowSchema.array().parse(data ?? []).map(mapStudentRow);
 }
 
 /**
@@ -161,7 +116,7 @@ export async function fetchAdvisorNotes(
 
   if (error) throw error;
 
-  return ((data ?? []) as AdvisorNoteRow[]).map(mapAdvisorNoteRow);
+  return AdvisorNoteRowSchema.array().parse(data ?? []).map(mapAdvisorNoteRow);
 }
 
 /**
@@ -179,7 +134,7 @@ export async function insertAdvisorNote(
 
   if (error) throw error;
 
-  return mapAdvisorNoteRow(data as AdvisorNoteRow);
+  return mapAdvisorNoteRow(AdvisorNoteRowSchema.parse(data));
 }
 
 /**
@@ -202,7 +157,7 @@ export async function fetchKpiSummary(): Promise<KPIPeriodSnapshot> {
     };
   }
 
-  const row = data[0] as KpiSummaryRow;
+  const row = KpiSummaryRowSchema.parse(data[0]);
   return {
     totalStudents: Number(row.total_students),
     averageEngagementScore: Number(row.avg_engagement_score),
@@ -224,7 +179,7 @@ export async function fetchMilestoneCategorySummary(): Promise<
 
   if (error) throw error;
 
-  return ((data ?? []) as MilestoneCategorySummaryRow[]).map((row) => ({
+  return MilestoneCategorySummaryRowSchema.array().parse(data ?? []).map((row) => ({
     category: row.category,
     completedCount: Number(row.completed_count),
     inProgressCount: Number(row.in_progress_count),
@@ -250,6 +205,8 @@ export async function updateStudentStatus(
 
 /**
  * Set last_contacted_date to today (YYYY-MM-DD in UTC).
+ * Date-only strings are parsed as UTC midnight by JS, so this round-trips
+ * correctly through new Date(str).toLocaleDateString() in the UI.
  * Returns the date string written so the caller can update local state.
  */
 export async function markStudentCheckedIn(studentId: string): Promise<string> {

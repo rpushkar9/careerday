@@ -1223,7 +1223,7 @@ export const rawStudents = [
     advisorNotes: [
       {
         id: "n-023-1",
-        text: "Criminal justice major. Interested in forensics. Strong analytical skills.",
+        text: "Nursing major. Exploring hospital administration and clinical roles. Strong patient-care focus.",
         authorName: "Dr. Martinez",
         timestamp: "2026-04-05T11:00:00Z",
       },
@@ -1231,7 +1231,7 @@ export const rawStudents = [
     recentActivity: [
       {
         id: "a-023-1",
-        description: "Attended forensic science webinar",
+        description: "Attended healthcare career fair",
         timestamp: "2026-04-08T14:00:00Z",
         eventType: "NetworkingEventAttended" as const,
       },
@@ -1333,7 +1333,7 @@ export const rawStudents = [
     advisorNotes: [
       {
         id: "n-025-1",
-        text: "Architecture path. Completed excellent portfolio. Strong spatial reasoning.",
+        text: "Marketing major. Exploring brand strategy and digital marketing roles. Strong communication skills.",
         authorName: "Dr. Martinez",
         timestamp: "2026-04-06T10:00:00Z",
       },
@@ -1341,7 +1341,7 @@ export const rawStudents = [
     recentActivity: [
       {
         id: "a-025-1",
-        description: "Submitted architecture school portfolio",
+        description: "Completed marketing internship application",
         timestamp: "2026-04-09T09:00:00Z",
         eventType: "MilestoneCompleted" as const,
       },
@@ -1437,7 +1437,7 @@ export const rawStudents = [
     advisorNotes: [
       {
         id: "n-027-1",
-        text: "Pre-law track. Excellent debate team record. Applying to political science programs.",
+        text: "Civil engineering major. Excellent STEM GPA. Actively applying to infrastructure and construction internships.",
         authorName: "Dr. Martinez",
         timestamp: "2026-04-05T15:00:00Z",
       },
@@ -1445,7 +1445,7 @@ export const rawStudents = [
     recentActivity: [
       {
         id: "a-027-1",
-        description: "Attended mock trial competition",
+        description: "Attended civil engineering industry panel",
         timestamp: "2026-04-08T17:00:00Z",
         eventType: "NetworkingEventAttended" as const,
       },
@@ -1591,7 +1591,7 @@ export const rawStudents = [
     advisorNotes: [
       {
         id: "n-030-1",
-        text: "Civil engineering path. Good GPA in STEM courses. Applying to state university programs.",
+        text: "Architecture major. Strong portfolio in progress. Applying to design firms and graduate programs.",
         authorName: "Ms. Thompson",
         timestamp: "2026-04-03T09:00:00Z",
       },
@@ -1599,13 +1599,13 @@ export const rawStudents = [
     recentActivity: [
       {
         id: "a-030-1",
-        description: "Viewed state university engineering program",
+        description: "Viewed graduate architecture program",
         timestamp: "2026-04-07T15:00:00Z",
         eventType: "JobPostingViewed" as const,
       },
       {
         id: "a-030-2",
-        description: "Completed engineering aptitude survey",
+        description: "Completed design portfolio survey",
         timestamp: "2026-04-05T10:00:00Z",
         eventType: "SurveyCompleted" as const,
       },

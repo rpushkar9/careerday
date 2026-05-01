@@ -62,10 +62,10 @@ describe("InsightsPanel", () => {
     ).toBeInTheDocument();
   });
 
-  it("shows correct count of students with unstarted milestones", () => {
+  it("shows correct count of students with pending milestones", () => {
     render(<InsightsPanel students={students} />);
     expect(
-      screen.getByText(/1 student with unstarted milestones/i),
+      screen.getByText(/1 student with pending milestones/i),
     ).toBeInTheDocument();
   });
 

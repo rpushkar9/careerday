@@ -1,11 +1,16 @@
 import type { ReactNode } from "react";
 import { Bell } from "lucide-react";
+import { getInitials } from "@/lib/initials";
 
 interface DashboardLayoutProps {
   children: ReactNode;
+  counselor?: { name: string };
 }
 
-export function DashboardLayout({ children }: DashboardLayoutProps) {
+export function DashboardLayout({ children, counselor }: DashboardLayoutProps) {
+  const initials = counselor ? getInitials(counselor.name) : "AC";
+  const avatarLabel = counselor ? `${counselor.name} avatar` : "Counselor avatar";
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card shadow-sm">
@@ -21,9 +26,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             </div>
             <div className="flex items-center gap-3">
               <Bell className="w-6 h-6 text-primary" aria-hidden="true" />
-              <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+              <div
+                role="img"
+                aria-label={avatarLabel}
+                className="w-10 h-10 bg-primary rounded-full flex items-center justify-center"
+              >
                 <span className="text-primary-foreground text-sm font-medium">
-                  AC
+                  {initials}
                 </span>
               </div>
             </div>

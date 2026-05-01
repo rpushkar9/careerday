@@ -52,12 +52,10 @@ describe("MilestoneChart", () => {
     expect(screen.getByText("Milestone Completion Status")).toBeInTheDocument();
   });
 
-  it("renders bar elements equal to data.length", () => {
+  it("renders the recharts responsive container", () => {
     const { container } = render(<MilestoneChart data={sampleData} />);
-    // In jsdom Recharts may not render actual bars, so check container exists
     expect(
       container.querySelector(".recharts-responsive-container"),
     ).toBeInTheDocument();
-    expect(screen.getByTestId("milestone-chart")).toBeInTheDocument();
   });
 });

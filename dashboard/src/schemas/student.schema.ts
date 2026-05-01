@@ -50,6 +50,49 @@ export const ActivityEventSchema = z.object({
   eventType: ActivityEventTypeSchema,
 });
 
+// ── DB row schemas (snake_case, mirrors Supabase table columns) ──────────────
+
+export const ActivityRowSchema = z.object({
+  id: z.string(),
+  description: z.string(),
+  event_type: ActivityEventTypeSchema,
+  timestamp: z.string(),
+});
+
+export const MilestoneRowSchema = z.object({
+  id: z.string(),
+  label: z.string(),
+  status: MilestoneStatusSchema,
+  category: z.string(),
+  completed_date: z.string().nullable().optional(),
+});
+
+export const StudentRowSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string(),
+  major: z.string(),
+  graduation_year: z.number(),
+  career_direction: CareerDirectionSchema,
+  confidence_score: z.number(),
+  engagement_score: z.union([z.number(), z.string()]),
+  engagement_trend: EngagementTrendSchema,
+  last_active_date: z.string(),
+  last_contacted_date: z.string(),
+  status: StudentStatusSchema,
+  milestones: z.array(MilestoneRowSchema).nullable(),
+  recent_activity: z.array(ActivityRowSchema).nullable(),
+});
+
+export const AdvisorNoteRowSchema = z.object({
+  id: z.string(),
+  text: z.string(),
+  author_name: z.string(),
+  created_at: z.string(),
+});
+
+// ── App-level schemas (camelCase) ────────────────────────────────────────────
+
 export const RawStudentSchema = z.object({
   id: z.string(),
   name: z.string().min(1),

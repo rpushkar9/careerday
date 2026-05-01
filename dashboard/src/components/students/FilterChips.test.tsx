@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { FilterChips } from "./FilterChips";
 import { FILTER_CHIPS } from "@/lib/constants";
+import type { FilterChip } from "@/lib/constants";
 import type { Student } from "@/types";
 
 function makeStudent(overrides: Partial<Student> = {}): Student {
@@ -105,8 +106,8 @@ describe("FilterChips", () => {
 
   it("two chips can be active at once", async () => {
     const user = userEvent.setup();
-    let activeState: string[] = [];
-    const onChange = vi.fn((chips: string[]) => {
+    let activeState: FilterChip[] = [];
+    const onChange = vi.fn((chips: FilterChip[]) => {
       activeState = chips;
     });
 

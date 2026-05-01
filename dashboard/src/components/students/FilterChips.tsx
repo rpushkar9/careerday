@@ -4,8 +4,8 @@ import { FILTER_CHIPS } from "@/lib/constants";
 import type { Student } from "@/types";
 
 interface FilterChipsProps {
-  active: string[];
-  onChange: (chips: string[]) => void;
+  active: FilterChip[];
+  onChange: (chips: FilterChip[]) => void;
   students: Student[];
 }
 

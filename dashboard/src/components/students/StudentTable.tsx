@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import type { Student } from "@/types";
 import { StatusBadge } from "@/components/shared/StatusBadge";
+import { CareerDirectionBadge } from "@/components/shared/CareerDirectionBadge";
 import { EmptyState } from "@/components/shared/EmptyState";
 
 interface StudentTableProps {
@@ -24,31 +25,6 @@ interface StudentTableProps {
   onSelectStudent: (student: Student) => void;
 }
 
-const CAREER_DIRECTION_STYLES: Record<
-  Student["careerDirection"],
-  { className: string; label: string }
-> = {
-  clear: {
-    className:
-      "bg-green-50 text-green-700 border border-green-200 rounded-lg px-2 py-0.5 text-xs",
-    label: "Clear",
-  },
-  exploring: {
-    className:
-      "bg-blue-50 text-blue-700 border border-blue-200 rounded-lg px-2 py-0.5 text-xs",
-    label: "Exploring",
-  },
-  uncertain: {
-    className:
-      "bg-amber-50 text-amber-700 border border-amber-200 rounded-lg px-2 py-0.5 text-xs",
-    label: "Uncertain",
-  },
-  undeclared: {
-    className:
-      "bg-gray-100 text-gray-600 border border-gray-300 rounded-lg px-2 py-0.5 text-xs",
-    label: "Undeclared",
-  },
-};
 
 const STATUS_TOOLTIP: Partial<Record<Student["status"], string>> = {
   "At Risk": "Engagement declining or milestones behind schedule",
@@ -80,11 +56,7 @@ const columns = [
   }),
   columnHelper.accessor("careerDirection", {
     header: "Career Direction",
-    cell: (info) => {
-      const value = info.getValue();
-      const style = CAREER_DIRECTION_STYLES[value];
-      return <span className={style.className}>{style.label}</span>;
-    },
+    cell: (info) => <CareerDirectionBadge direction={info.getValue()} />,
   }),
   columnHelper.accessor((row) => row.engagementScore, {
     id: "engagement",

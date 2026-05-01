@@ -41,7 +41,7 @@ export function InsightsPanel({ students }: InsightsPanelProps) {
           <span>
             {unstartedMilestoneCount}{" "}
             {unstartedMilestoneCount === 1 ? "student" : "students"} with
-            unstarted milestones
+            pending milestones
           </span>
         </li>
         <li className="flex items-center gap-3 text-sm">

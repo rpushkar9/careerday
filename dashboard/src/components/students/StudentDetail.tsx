@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import type { Student, StudentStatus } from "@/types";
+import { getInitials } from "@/lib/initials";
 import {
   Sheet,
   SheetContent,
@@ -121,10 +122,7 @@ function StudentDetailContent({
     [],
   );
 
-  const initials = student.name
-    .split(" ")
-    .map((n) => n[0])
-    .join("");
+  const initials = getInitials(student.name);
   const completed = student.milestones.filter(
     (m) => m.status === "Completed",
   ).length;

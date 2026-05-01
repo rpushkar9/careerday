@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
+import { AlertCircle, X } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { InsightsPanel } from "@/components/shared/InsightsPanel";
 import { KPIGrid } from "@/components/kpi/KPIGrid";
@@ -46,6 +47,17 @@ function App() {
   >([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<Error | null>(null);
+  const [kpiVersion, setKpiVersion] = useState(0);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function showActionError(msg: string) {
+    if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
+    setActionError(msg);
+    errorTimerRef.current = setTimeout(() => setActionError(null), 5000);
+  }
+
+  useEffect(() => () => { if (errorTimerRef.current) clearTimeout(errorTimerRef.current); }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -115,6 +127,16 @@ function App() {
     };
   }, [selectedStudentId]);
 
+  // Cancellable KPI refresh — triggered by incrementing kpiVersion after a write
+  useEffect(() => {
+    if (kpiVersion === 0) return;
+    let cancelled = false;
+    fetchKpiSummary()
+      .then((kpi) => { if (!cancelled) setKpiData(kpi); })
+      .catch(() => { /* best-effort */ });
+    return () => { cancelled = true; };
+  }, [kpiVersion]);
+
   async function handleAddNote(studentId: string, text: string) {
     try {
       const newNote = await insertAdvisorNote(studentId, text);
@@ -126,7 +148,7 @@ function App() {
         ),
       );
     } catch {
-      console.warn("Failed to insert advisor note for", studentId);
+      showActionError("Couldn't save note. Please try again.");
     }
   }
 
@@ -138,14 +160,9 @@ function App() {
           s.id === studentId ? deriveStudent({ ...s, status }) : s,
         ),
       );
-      // Re-fetch KPI so "Students Needing Attention" count reflects the change
-      fetchKpiSummary()
-        .then(setKpiData)
-        .catch(() => {
-          console.warn("Failed to refresh KPI after status update");
-        });
+      setKpiVersion((v) => v + 1);
     } catch {
-      console.warn("Failed to update status for", studentId);
+      showActionError("Couldn't update status. Please try again.");
     }
   }
 
@@ -160,7 +177,7 @@ function App() {
       );
       return today;
     } catch {
-      console.warn("Check-in failed for", studentId);
+      showActionError("Check-in failed. Please try again.");
       return null;
     }
   }
@@ -174,7 +191,7 @@ function App() {
         ),
       );
     } catch {
-      console.warn("Undo check-in failed for", studentId);
+      showActionError("Couldn't undo check-in. Please try again.");
     }
   }
 
@@ -190,6 +207,25 @@ function App() {
 
   return (
     <DashboardLayout>
+      {actionError && (
+        <div
+          role="alert"
+          className="mb-4 flex items-center gap-2 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+        >
+          <AlertCircle className="h-4 w-4 shrink-0 text-amber-500" aria-hidden="true" />
+          <span className="flex-1">{actionError}</span>
+          <button
+            onClick={() => {
+              if (errorTimerRef.current) clearTimeout(errorTimerRef.current);
+              setActionError(null);
+            }}
+            className="ml-2 text-amber-500 hover:text-amber-700"
+            aria-label="Dismiss error"
+          >
+            <X className="h-4 w-4" aria-hidden="true" />
+          </button>
+        </div>
+      )}
       <InsightsPanel students={studentData} />
 
       <section aria-label="Key performance indicators" className="mt-6">
@@ -241,6 +277,7 @@ function App() {
           />
           <Input
             placeholder="Search students..."
+            aria-label="Search students by name or career direction"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="max-w-xs"

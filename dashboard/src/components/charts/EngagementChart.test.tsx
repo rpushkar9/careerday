@@ -43,16 +43,12 @@ describe("EngagementChart", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders at least one data series element when given data", () => {
+  it("renders the recharts responsive container", () => {
     const { container } = render(
       <EngagementChart data={sampleData} rangeLabel="Last 30 days" />,
     );
-    // Recharts renders the line as a <path> inside a .recharts-line element
-    const lineElements = container.querySelectorAll(
-      ".recharts-line, .recharts-line-curve",
-    );
-    expect(lineElements.length).toBeGreaterThanOrEqual(0);
-    // At minimum, the chart container should exist
-    expect(screen.getByTestId("engagement-chart")).toBeInTheDocument();
+    expect(
+      container.querySelector(".recharts-responsive-container"),
+    ).toBeInTheDocument();
   });
 });

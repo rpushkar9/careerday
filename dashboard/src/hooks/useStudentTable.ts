@@ -5,7 +5,7 @@ import { filterByChip } from "@/data";
 
 export function useStudentTable(students: Student[]) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeChips, setActiveChips] = useState<string[]>([]);
+  const [activeChips, setActiveChips] = useState<FilterChip[]>([]);
 
   const filteredStudents = useMemo(() => {
     let chipFiltered: Student[];
@@ -17,7 +17,7 @@ export function useStudentTable(students: Student[]) {
       const seen = new Set<string>();
       chipFiltered = [];
       for (const chip of activeChips) {
-        const results = filterByChip(students, chip as FilterChip);
+        const results = filterByChip(students, chip);
         for (const student of results) {
           if (!seen.has(student.id)) {
             seen.add(student.id);
