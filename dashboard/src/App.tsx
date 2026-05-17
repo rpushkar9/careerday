@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AlertCircle, X } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { InsightsPanel } from "@/components/shared/InsightsPanel";
@@ -9,12 +9,12 @@ import { StudentDetail } from "@/components/students/StudentDetail";
 import { Input } from "@/components/ui/input";
 import { EngagementChart } from "@/components/charts/EngagementChart";
 import { MilestoneChart } from "@/components/charts/MilestoneChart";
-import { Button } from "@/components/ui/button";
-import { engagementTimeSeries, sliceEngagementData } from "@/data";
 import {
   fetchStudents,
   fetchAdvisorNotes,
   insertAdvisorNote,
+  insertMilestone,
+  deleteMilestone,
   fetchKpiSummary,
   fetchMilestoneCategorySummary,
   updateStudentStatus,
@@ -23,14 +23,12 @@ import {
 } from "@/data/queries";
 import { deriveStudent } from "@/lib/derive";
 import { useStudentTable } from "@/hooks/useStudentTable";
-import { useChartRange, type ChartRange } from "@/hooks/useChartRange";
 import type {
   Student,
   KPIPeriodSnapshot,
   MilestoneCategoryCompletion,
   StudentStatus,
 } from "@/types";
-import { TIME_RANGES } from "@/lib/constants";
 
 const zeroKpi: KPIPeriodSnapshot = {
   totalStudents: 0,
@@ -48,6 +46,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<Error | null>(null);
   const [kpiVersion, setKpiVersion] = useState(0);
+  const [milestoneVersion, setMilestoneVersion] = useState(0);
   const [actionError, setActionError] = useState<string | null>(null);
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -100,12 +99,6 @@ function App() {
   const selectedStudent: Student | null =
     studentData.find((s) => s.id === selectedStudentId) ?? null;
 
-  const { range, setRange, label: rangeLabel } = useChartRange();
-  const engagementChartData = useMemo(
-    () => sliceEngagementData(engagementTimeSeries, range),
-    [range],
-  );
-
   useEffect(() => {
     if (!selectedStudentId) return;
     let cancelled = false;
@@ -137,6 +130,15 @@ function App() {
     return () => { cancelled = true; };
   }, [kpiVersion]);
 
+  useEffect(() => {
+    if (milestoneVersion === 0) return;
+    let cancelled = false;
+    fetchMilestoneCategorySummary()
+      .then((d) => { if (!cancelled) setMilestoneCatData(d); })
+      .catch(() => { /* best-effort */ });
+    return () => { cancelled = true; };
+  }, [milestoneVersion]);
+
   async function handleAddNote(studentId: string, text: string) {
     try {
       const newNote = await insertAdvisorNote(studentId, text);
@@ -149,6 +151,23 @@ function App() {
       );
     } catch {
       showActionError("Couldn't save note. Please try again.");
+    }
+  }
+
+  async function handleAddMilestone(studentId: string, label: string, category: string) {
+    try {
+      const newMilestone = await insertMilestone(studentId, label, category);
+      setStudentData((prev) =>
+        prev.map((s) =>
+          s.id === studentId
+            ? { ...s, milestones: [newMilestone, ...s.milestones] }
+            : s,
+        ),
+      );
+      setMilestoneVersion((v) => v + 1);
+    } catch (err) {
+      console.error("insertMilestone failed:", err);
+      showActionError("Couldn't save milestone. Please try again.");
     }
   }
 
@@ -179,6 +198,23 @@ function App() {
     } catch {
       showActionError("Check-in failed. Please try again.");
       return null;
+    }
+  }
+
+  async function handleDeleteMilestone(studentId: string, milestoneId: string) {
+    try {
+      await deleteMilestone(milestoneId);
+      setStudentData((prev) =>
+        prev.map((s) =>
+          s.id === studentId
+            ? { ...s, milestones: s.milestones.filter((m) => m.id !== milestoneId) }
+            : s,
+        ),
+      );
+      setMilestoneVersion((v) => v + 1);
+    } catch (err) {
+      console.error("deleteMilestone failed:", err);
+      showActionError("Couldn't delete milestone. Please try again.");
     }
   }
 
@@ -242,23 +278,7 @@ function App() {
         aria-label="Charts"
         className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2"
       >
-        <div>
-          <div className="mb-3 flex items-center justify-end">
-            <div className="flex gap-1">
-              {TIME_RANGES.map((r) => (
-                <Button
-                  key={r}
-                  variant={r === range ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setRange(r as ChartRange)}
-                >
-                  {r}d
-                </Button>
-              ))}
-            </div>
-          </div>
-          <EngagementChart data={engagementChartData} rangeLabel={rangeLabel} />
-        </div>
+        <EngagementChart students={studentData} />
         <MilestoneChart data={milestoneCatData} />
       </section>
 
@@ -293,6 +313,8 @@ function App() {
         student={selectedStudent}
         onClose={() => setSelectedStudentId(null)}
         onAddNote={handleAddNote}
+        onAddMilestone={handleAddMilestone}
+        onDeleteMilestone={handleDeleteMilestone}
         onUpdateStatus={handleUpdateStatus}
         onCheckIn={handleCheckIn}
         onUndoCheckIn={handleUndoCheckIn}

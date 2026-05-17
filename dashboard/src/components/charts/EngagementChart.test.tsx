@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import { EngagementChart } from "./EngagementChart";
-import type { EngagementDataPoint } from "@/types";
+import type { Student } from "@/types";
 
 // Recharts needs ResizeObserver in jsdom
 class ResizeObserverMock {
@@ -12,43 +12,65 @@ class ResizeObserverMock {
 globalThis.ResizeObserver =
   ResizeObserverMock as unknown as typeof ResizeObserver;
 
-const sampleData: EngagementDataPoint[] = [
-  { date: "2026-03-01", engagementScore: 55, target: 60 },
-  { date: "2026-03-02", engagementScore: 60, target: 62 },
-  { date: "2026-03-03", engagementScore: 58, target: 61 },
+function makeStudent(engagementScore: number): Student {
+  return {
+    id: `s-${engagementScore}`,
+    name: null,
+    email: `s${engagementScore}@example.com`,
+    major: "CS",
+    graduationYear: 2027,
+    careerDirection: "exploring",
+    confidenceScore: null,
+    engagementScore,
+    engagementTrend: null,
+    engagementTier: "Medium",
+    lastActiveDate: "2026-05-01",
+    lastContactedDate: "2026-05-01",
+    status: "On Track",
+    milestones: [],
+    advisorNotes: [],
+    recentActivity: [],
+    flaggedForAttention: false,
+  };
+}
+
+const sampleStudents: Student[] = [
+  makeStudent(15),
+  makeStudent(35),
+  makeStudent(55),
+  makeStudent(72),
+  makeStudent(88),
 ];
 
 describe("EngagementChart", () => {
   it("renders a chart container", () => {
-    render(<EngagementChart data={sampleData} rangeLabel="Last 30 days" />);
+    render(<EngagementChart students={sampleStudents} />);
     expect(screen.getByTestId("engagement-chart")).toBeInTheDocument();
   });
 
-  it("renders the rangeLabel", () => {
-    render(<EngagementChart data={sampleData} rangeLabel="Last 30 days" />);
-    expect(screen.getByText("Last 30 days")).toBeInTheDocument();
-  });
-
   it("renders card wrapper with rounded-2xl class", () => {
-    const { container } = render(
-      <EngagementChart data={sampleData} rangeLabel="Last 30 days" />,
-    );
+    const { container } = render(<EngagementChart students={sampleStudents} />);
     expect(container.querySelector(".rounded-2xl")).toBeInTheDocument();
   });
 
   it("renders the chart title", () => {
-    render(<EngagementChart data={sampleData} rangeLabel="Last 30 days" />);
+    render(<EngagementChart students={sampleStudents} />);
     expect(
-      screen.getByText("Student Engagement Over Time"),
+      screen.getByText("Engagement Score Distribution"),
     ).toBeInTheDocument();
   });
 
   it("renders the recharts responsive container", () => {
-    const { container } = render(
-      <EngagementChart data={sampleData} rangeLabel="Last 30 days" />,
-    );
+    const { container } = render(<EngagementChart students={sampleStudents} />);
     expect(
       container.querySelector(".recharts-responsive-container"),
+    ).toBeInTheDocument();
+  });
+
+  it("renders subtitle text", () => {
+    render(<EngagementChart students={sampleStudents} />);
+    expect(
+      screen.getByText("Number of students in each score band"),
     ).toBeInTheDocument();
   });
 });

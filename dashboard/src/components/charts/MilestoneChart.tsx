@@ -21,7 +21,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   Assessment: "Career Assessment",
   Profile: "Resume & Profile",
   Networking: "Networking",
-  Experience: "Internship & Industry Experience",
+  Experience: "Internship & Experience",
   Applications: "Job Applications",
 };
 

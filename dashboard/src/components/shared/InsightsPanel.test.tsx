@@ -10,14 +10,14 @@ function makeMilestone(status: Milestone["status"], id = "m-1"): Milestone {
 function makeStudent(overrides: Partial<Student> = {}): Student {
   return {
     id: "s-1",
-    name: "Test Student",
+    name: null,
     email: "test@example.com",
     major: "CS",
     graduationYear: 2026,
     careerDirection: "exploring",
-    confidenceScore: 3,
+    confidenceScore: null,
     engagementScore: 60,
-    engagementTrend: "stable",
+    engagementTrend: null,
     engagementTier: "Medium",
     lastActiveDate: "2026-04-01",
     lastContactedDate: "2026-03-28",
@@ -31,22 +31,22 @@ function makeStudent(overrides: Partial<Student> = {}): Student {
 }
 
 const students: Student[] = [
-  // declining engagement (2)
-  makeStudent({ id: "s-1", engagementTrend: "down" }),
-  makeStudent({ id: "s-2", engagementTrend: "down" }),
+  // low engagement (2) — score < 40
+  makeStudent({ id: "s-1", engagementScore: 20 }),
+  makeStudent({ id: "s-2", engagementScore: 35 }),
   // unstarted milestone (1 — s-3 has a Pending milestone)
   makeStudent({
     id: "s-3",
-    engagementTrend: "stable",
+    engagementScore: 65,
     milestones: [
       makeMilestone("Completed", "m-1"),
       makeMilestone("Pending", "m-2"),
     ],
   }),
   // needs attention (1)
-  makeStudent({ id: "s-4", status: "Needs Attention" }),
+  makeStudent({ id: "s-4", engagementScore: 55, status: "Needs Attention" }),
   // baseline — none of the above
-  makeStudent({ id: "s-5" }),
+  makeStudent({ id: "s-5", engagementScore: 72 }),
 ];
 
 describe("InsightsPanel", () => {
@@ -55,10 +55,10 @@ describe("InsightsPanel", () => {
     expect(screen.getByText("Insights")).toBeInTheDocument();
   });
 
-  it("shows correct count of students with declining engagement", () => {
+  it("shows correct count of students with low engagement", () => {
     render(<InsightsPanel students={students} />);
     expect(
-      screen.getByText(/2 students with declining engagement/i),
+      screen.getByText(/2 students with low engagement/i),
     ).toBeInTheDocument();
   });
 
@@ -78,7 +78,6 @@ describe("InsightsPanel", () => {
 
   it("shows 0 for each category when list is empty", () => {
     render(<InsightsPanel students={[]} />);
-    // All three bullets should show 0
     const zeros = screen.getAllByText(/^0 students/i);
     expect(zeros).toHaveLength(3);
   });

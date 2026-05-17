@@ -1,16 +1,29 @@
 #!/usr/bin/env node
 /**
- * One-time seed script: inserts 30 mock students into Supabase.
+ * Seed script — pilot data integration (2026-05-16)
+ *
+ * Reads dashboard/Docs/final_engagement_scores.csv and inserts 46 real pilot
+ * students into Supabase, replacing the previous 30 synthetic students.
  *
  * Usage:
  *   SUPABASE_URL=https://xxx.supabase.co \
  *   SUPABASE_ANON_KEY=eyJ... \
  *   node scripts/seed-supabase.mjs
  *
- * Safe to re-run: uses upsert (ON CONFLICT DO UPDATE) so existing rows are updated.
+ * Safe to re-run: clears existing students (cascade) then upserts fresh rows.
  */
 
 import { createClient } from '@supabase/supabase-js';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+import {
+  MILESTONE_TEMPLATES,
+  ACTIVITY_TEMPLATES,
+  NOTE_TEMPLATES,
+} from './templates/engagement-templates.mjs';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
@@ -22,606 +35,153 @@ if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const students = [
-  {
-    id: "s-001",
-    name: "Aisha Johnson",
-    email: "aisha.johnson@university.edu",
-    major: "Biomedical Engineering",
-    graduationYear: 2026,
-    engagementTrend: "up",
-    careerDirection: "clear",
-    confidenceScore: 5,
-    engagementScore: 92,
-    lastActiveDate: "2026-04-08",
-    lastContactedDate: "2026-04-05",
-    status: "On Track",
-    milestones: [
-      { id: "m-001-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-02-10" },
-      { id: "m-001-2", label: "Resume Draft", status: "Completed", category: "Profile", completedDate: "2026-03-01" },
-      { id: "m-001-3", label: "Job Shadow", status: "Completed", category: "Experience", completedDate: "2026-03-20" },
-      { id: "m-001-4", label: "Job Applications", status: "In Progress", category: "Applications" },
-    ],
-  },
-  {
-    id: "s-002",
-    name: "Marcus Chen",
-    email: "marcus.chen@university.edu",
-    major: "Computer Science",
-    graduationYear: 2027,
-    engagementTrend: "stable",
-    careerDirection: "exploring",
-    confidenceScore: 3,
-    engagementScore: 65,
-    lastActiveDate: "2026-04-07",
-    lastContactedDate: "2026-04-01",
-    status: "On Track",
-    milestones: [
-      { id: "m-002-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-02-15" },
-      { id: "m-002-2", label: "Resume Draft", status: "In Progress", category: "Profile" },
-      { id: "m-002-3", label: "Informational Interview", status: "Pending", category: "Networking" },
-    ],
-  },
-  {
-    id: "s-003",
-    name: "Priya Patel",
-    email: "priya.patel@university.edu",
-    major: "Biology (Pre-Med)",
-    graduationYear: 2026,
-    engagementTrend: "up",
-    careerDirection: "clear",
-    confidenceScore: 4,
-    engagementScore: 78,
-    lastActiveDate: "2026-04-08",
-    lastContactedDate: "2026-04-03",
-    status: "On Track",
-    milestones: [
-      { id: "m-003-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-02-01" },
-      { id: "m-003-2", label: "LinkedIn Profile", status: "Completed", category: "Profile", completedDate: "2026-02-28" },
-      { id: "m-003-3", label: "Internship Applications", status: "In Progress", category: "Applications" },
-    ],
-  },
-  {
-    id: "s-004",
-    name: "Deshawn Williams",
-    email: "deshawn.williams@university.edu",
-    major: "Undeclared",
-    graduationYear: 2027,
-    engagementTrend: "down",
-    careerDirection: "uncertain",
-    confidenceScore: 2,
-    engagementScore: 35,
-    lastActiveDate: "2026-03-25",
-    lastContactedDate: "2026-03-20",
-    status: "Needs Attention",
-    milestones: [
-      { id: "m-004-1", label: "Career Assessment", status: "In Progress", category: "Assessment" },
-    ],
-  },
-  {
-    id: "s-005",
-    name: "Sofia Rodriguez",
-    email: "sofia.rodriguez@university.edu",
-    major: "Nursing",
-    graduationYear: 2027,
-    engagementTrend: "down",
-    careerDirection: "exploring",
-    confidenceScore: 3,
-    engagementScore: 55,
-    lastActiveDate: "2026-04-06",
-    lastContactedDate: "2026-03-28",
-    status: "At Risk",
-    milestones: [
-      { id: "m-005-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-02-20" },
-      { id: "m-005-2", label: "Resume Draft", status: "Pending", category: "Profile" },
-      { id: "m-005-3", label: "Job Shadow", status: "Pending", category: "Experience" },
-    ],
-  },
-  {
-    id: "s-006",
-    name: "Tyler Kim",
-    email: "tyler.kim@university.edu",
-    major: "Computer Science",
-    graduationYear: 2025,
-    engagementTrend: "up",
-    careerDirection: "clear",
-    confidenceScore: 5,
-    engagementScore: 88,
-    lastActiveDate: "2026-04-09",
-    lastContactedDate: "2026-04-07",
-    status: "On Track",
-    milestones: [
-      { id: "m-006-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-01-20" },
-      { id: "m-006-2", label: "LinkedIn Profile", status: "Completed", category: "Profile", completedDate: "2026-02-10" },
-      { id: "m-006-3", label: "Internship Applications", status: "Completed", category: "Applications", completedDate: "2026-03-15" },
-      { id: "m-006-4", label: "Job Shadow", status: "Completed", category: "Experience", completedDate: "2026-03-25" },
-      { id: "m-006-5", label: "Job Applications", status: "In Progress", category: "Applications" },
-    ],
-  },
-  {
-    id: "s-007",
-    name: "Emma Thompson",
-    email: "emma.thompson@university.edu",
-    major: "Undeclared",
-    graduationYear: 2028,
-    engagementTrend: "down",
-    careerDirection: "undeclared",
-    confidenceScore: 1,
-    engagementScore: 22,
-    lastActiveDate: "2026-03-15",
-    lastContactedDate: "2026-03-10",
-    status: "Needs Attention",
-    milestones: [
-      { id: "m-007-1", label: "Career Assessment", status: "Pending", category: "Assessment" },
-    ],
-  },
-  {
-    id: "s-008",
-    name: "Jordan Davis",
-    email: "jordan.davis@university.edu",
-    major: "Construction Technology",
-    graduationYear: 2026,
-    engagementTrend: "stable",
-    careerDirection: "exploring",
-    confidenceScore: 3,
-    engagementScore: 60,
-    lastActiveDate: "2026-04-04",
-    lastContactedDate: "2026-03-30",
-    status: "On Track",
-    milestones: [
-      { id: "m-008-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-02-25" },
-      { id: "m-008-2", label: "Resume Draft", status: "In Progress", category: "Profile" },
-      { id: "m-008-3", label: "Informational Interview", status: "Pending", category: "Networking" },
-    ],
-  },
-  {
-    id: "s-009",
-    name: "Olivia Martinez",
-    email: "olivia.martinez@university.edu",
-    major: "Environmental Science",
-    graduationYear: 2025,
-    engagementTrend: "up",
-    careerDirection: "clear",
-    confidenceScore: 4,
-    engagementScore: 82,
-    lastActiveDate: "2026-04-08",
-    lastContactedDate: "2026-04-06",
-    status: "On Track",
-    milestones: [
-      { id: "m-009-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-01-30" },
-      { id: "m-009-2", label: "LinkedIn Profile", status: "Completed", category: "Profile", completedDate: "2026-02-20" },
-      { id: "m-009-3", label: "Job Shadow", status: "Completed", category: "Experience", completedDate: "2026-03-05" },
-      { id: "m-009-4", label: "Job Applications", status: "In Progress", category: "Applications" },
-    ],
-  },
-  {
-    id: "s-010",
-    name: "Liam O'Brien",
-    email: "liam.obrien@university.edu",
-    major: "Psychology",
-    graduationYear: 2027,
-    engagementTrend: "down",
-    careerDirection: "uncertain",
-    confidenceScore: 2,
-    engagementScore: 42,
-    lastActiveDate: "2026-04-02",
-    lastContactedDate: "2026-03-25",
-    status: "At Risk",
-    milestones: [
-      { id: "m-010-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-03-01" },
-    ],
-  },
-  {
-    id: "s-011",
-    name: "Zara Ahmed",
-    email: "zara.ahmed@university.edu",
-    major: "Communications & Journalism",
-    graduationYear: 2025,
-    engagementTrend: "stable",
-    careerDirection: "clear",
-    confidenceScore: 4,
-    engagementScore: 75,
-    lastActiveDate: "2026-04-07",
-    lastContactedDate: "2026-04-02",
-    status: "On Track",
-    milestones: [
-      { id: "m-011-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-02-05" },
-      { id: "m-011-2", label: "Resume Draft", status: "Completed", category: "Profile", completedDate: "2026-03-01" },
-      { id: "m-011-3", label: "Internship Applications", status: "In Progress", category: "Applications" },
-    ],
-  },
-  {
-    id: "s-012",
-    name: "Noah Jackson",
-    email: "noah.jackson@university.edu",
-    major: "Business Administration",
-    graduationYear: 2026,
-    engagementTrend: "stable",
-    careerDirection: "exploring",
-    confidenceScore: 3,
-    engagementScore: 58,
-    lastActiveDate: "2026-04-05",
-    lastContactedDate: "2026-03-29",
-    status: "On Track",
-    milestones: [
-      { id: "m-012-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-02-18" },
-    ],
-  },
-  {
-    id: "s-013",
-    name: "Mia Chang",
-    email: "mia.chang@university.edu",
-    major: "Data Science",
-    graduationYear: 2025,
-    engagementTrend: "up",
-    careerDirection: "clear",
-    confidenceScore: 5,
-    engagementScore: 95,
-    lastActiveDate: "2026-04-09",
-    lastContactedDate: "2026-04-08",
-    status: "On Track",
-    milestones: [
-      { id: "m-013-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-01-15" },
-      { id: "m-013-2", label: "LinkedIn Profile", status: "Completed", category: "Profile", completedDate: "2026-02-01" },
-      { id: "m-013-3", label: "Job Shadow", status: "Completed", category: "Experience", completedDate: "2026-02-28" },
-      { id: "m-013-4", label: "Internship Applications", status: "Completed", category: "Applications", completedDate: "2026-03-15" },
-      { id: "m-013-5", label: "Job Applications", status: "Completed", category: "Applications", completedDate: "2026-04-01" },
-    ],
-  },
-  {
-    id: "s-014",
-    name: "Ethan Brown",
-    email: "ethan.brown@university.edu",
-    major: "Undeclared",
-    graduationYear: 2028,
-    engagementTrend: "down",
-    careerDirection: "undeclared",
-    confidenceScore: 1,
-    engagementScore: 18,
-    lastActiveDate: "2026-03-10",
-    lastContactedDate: "2026-03-05",
-    status: "Needs Attention",
-    milestones: [
-      { id: "m-014-1", label: "Career Assessment", status: "Pending", category: "Assessment" },
-    ],
-  },
-  {
-    id: "s-015",
-    name: "Isabella Nguyen",
-    email: "isabella.nguyen@university.edu",
-    major: "Political Science",
-    graduationYear: 2026,
-    engagementTrend: "stable",
-    careerDirection: "exploring",
-    confidenceScore: 3,
-    engagementScore: 52,
-    lastActiveDate: "2026-04-03",
-    lastContactedDate: "2026-03-28",
-    status: "On Track",
-    milestones: [
-      { id: "m-015-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-02-22" },
-      { id: "m-015-2", label: "Resume Draft", status: "In Progress", category: "Profile" },
-      { id: "m-015-3", label: "Informational Interview", status: "Pending", category: "Networking" },
-    ],
-  },
-  {
-    id: "s-016",
-    name: "James Wilson",
-    email: "james.wilson@university.edu",
-    major: "Mechanical Engineering",
-    graduationYear: 2026,
-    engagementTrend: "up",
-    careerDirection: "clear",
-    confidenceScore: 4,
-    engagementScore: 71,
-    lastActiveDate: "2026-04-06",
-    lastContactedDate: "2026-04-01",
-    status: "On Track",
-    milestones: [
-      { id: "m-016-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-02-10" },
-      { id: "m-016-3", label: "Job Shadow", status: "In Progress", category: "Experience" },
-    ],
-  },
-  {
-    id: "s-017",
-    name: "Ava Lee",
-    email: "ava.lee@university.edu",
-    major: "Fine Arts",
-    graduationYear: 2027,
-    engagementTrend: "down",
-    careerDirection: "uncertain",
-    confidenceScore: 2,
-    engagementScore: 38,
-    lastActiveDate: "2026-03-30",
-    lastContactedDate: "2026-03-22",
-    status: "At Risk",
-    milestones: [
-      { id: "m-017-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-03-01" },
-    ],
-  },
-  {
-    id: "s-018",
-    name: "Daniel Garcia",
-    email: "daniel.garcia@university.edu",
-    major: "Finance",
-    graduationYear: 2025,
-    engagementTrend: "up",
-    careerDirection: "clear",
-    confidenceScore: 4,
-    engagementScore: 80,
-    lastActiveDate: "2026-04-08",
-    lastContactedDate: "2026-04-04",
-    status: "On Track",
-    milestones: [
-      { id: "m-018-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-01-25" },
-      { id: "m-018-3", label: "Internship Applications", status: "In Progress", category: "Applications" },
-    ],
-  },
-  {
-    id: "s-019",
-    name: "Chloe Taylor",
-    email: "chloe.taylor@university.edu",
-    major: "Education",
-    graduationYear: 2026,
-    engagementTrend: "stable",
-    careerDirection: "exploring",
-    confidenceScore: 3,
-    engagementScore: 63,
-    lastActiveDate: "2026-04-07",
-    lastContactedDate: "2026-04-02",
-    status: "On Track",
-    milestones: [
-      { id: "m-019-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-02-12" },
-      { id: "m-019-3", label: "Job Shadow", status: "Pending", category: "Experience" },
-    ],
-  },
-  {
-    id: "s-020",
-    name: "Ryan Mitchell",
-    email: "ryan.mitchell@university.edu",
-    major: "Undeclared",
-    graduationYear: 2028,
-    engagementTrend: "down",
-    careerDirection: "undeclared",
-    confidenceScore: 2,
-    engagementScore: 28,
-    lastActiveDate: "2026-03-20",
-    lastContactedDate: "2026-03-15",
-    status: "Needs Attention",
-    milestones: [
-      { id: "m-020-1", label: "Career Assessment", status: "In Progress", category: "Assessment" },
-    ],
-  },
-  {
-    id: "s-021",
-    name: "Hannah Lewis",
-    email: "hannah.lewis@university.edu",
-    major: "Biochemistry",
-    graduationYear: 2025,
-    engagementTrend: "up",
-    careerDirection: "clear",
-    confidenceScore: 5,
-    engagementScore: 90,
-    lastActiveDate: "2026-04-09",
-    lastContactedDate: "2026-04-07",
-    status: "On Track",
-    milestones: [
-      { id: "m-021-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-01-20" },
-      { id: "m-021-3", label: "Job Shadow", status: "Completed", category: "Experience", completedDate: "2026-03-01" },
-      { id: "m-021-4", label: "Job Applications", status: "In Progress", category: "Applications" },
-    ],
-  },
-  {
-    id: "s-022",
-    name: "Brandon Scott",
-    email: "brandon.scott@university.edu",
-    major: "Criminal Justice",
-    graduationYear: 2027,
-    engagementTrend: "down",
-    careerDirection: "exploring",
-    confidenceScore: 3,
-    engagementScore: 48,
-    lastActiveDate: "2026-04-01",
-    lastContactedDate: "2026-03-25",
-    status: "At Risk",
-    milestones: [
-      { id: "m-022-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-02-28" },
-    ],
-  },
-  {
-    id: "s-023",
-    name: "Grace White",
-    email: "grace.white@university.edu",
-    major: "Nursing",
-    graduationYear: 2025,
-    engagementTrend: "up",
-    careerDirection: "clear",
-    confidenceScore: 4,
-    engagementScore: 77,
-    lastActiveDate: "2026-04-08",
-    lastContactedDate: "2026-04-05",
-    status: "On Track",
-    milestones: [
-      { id: "m-023-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-02-01" },
-      { id: "m-023-3", label: "Internship Applications", status: "In Progress", category: "Applications" },
-    ],
-  },
-  {
-    id: "s-024",
-    name: "Alex Rivera",
-    email: "alex.rivera@university.edu",
-    major: "Theater Arts",
-    graduationYear: 2026,
-    engagementTrend: "down",
-    careerDirection: "uncertain",
-    confidenceScore: 2,
-    engagementScore: 40,
-    lastActiveDate: "2026-03-28",
-    lastContactedDate: "2026-03-20",
-    status: "At Risk",
-    milestones: [
-      { id: "m-024-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-03-05" },
-      { id: "m-024-3", label: "Informational Interview", status: "Pending", category: "Networking" },
-    ],
-  },
-  {
-    id: "s-025",
-    name: "Natalie Foster",
-    email: "natalie.foster@university.edu",
-    major: "Marketing",
-    graduationYear: 2025,
-    engagementTrend: "up",
-    careerDirection: "clear",
-    confidenceScore: 4,
-    engagementScore: 85,
-    lastActiveDate: "2026-04-09",
-    lastContactedDate: "2026-04-06",
-    status: "On Track",
-    milestones: [
-      { id: "m-025-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-01-28" },
-      { id: "m-025-3", label: "Job Shadow", status: "Completed", category: "Experience", completedDate: "2026-03-10" },
-      { id: "m-025-4", label: "Job Applications", status: "In Progress", category: "Applications" },
-    ],
-  },
-  {
-    id: "s-026",
-    name: "Kevin Park",
-    email: "kevin.park@university.edu",
-    major: "Philosophy",
-    graduationYear: 2027,
-    engagementTrend: "stable",
-    careerDirection: "exploring",
-    confidenceScore: 3,
-    engagementScore: 56,
-    lastActiveDate: "2026-04-04",
-    lastContactedDate: "2026-03-30",
-    status: "On Track",
-    milestones: [
-      { id: "m-026-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-02-20" },
-    ],
-  },
-  {
-    id: "s-027",
-    name: "Sarah Cooper",
-    email: "sarah.cooper@university.edu",
-    major: "Civil Engineering",
-    graduationYear: 2025,
-    engagementTrend: "up",
-    careerDirection: "clear",
-    confidenceScore: 5,
-    engagementScore: 88,
-    lastActiveDate: "2026-04-08",
-    lastContactedDate: "2026-04-05",
-    status: "On Track",
-    milestones: [
-      { id: "m-027-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-01-18" },
-      { id: "m-027-3", label: "Internship Applications", status: "Completed", category: "Applications", completedDate: "2026-03-20" },
-      { id: "m-027-4", label: "Job Applications", status: "In Progress", category: "Applications" },
-    ],
-  },
-  {
-    id: "s-028",
-    name: "Michael Adams",
-    email: "michael.adams@university.edu",
-    major: "History",
-    graduationYear: 2027,
-    engagementTrend: "down",
-    careerDirection: "uncertain",
-    confidenceScore: 2,
-    engagementScore: 33,
-    lastActiveDate: "2026-03-22",
-    lastContactedDate: "2026-03-18",
-    status: "Needs Attention",
-    milestones: [
-      { id: "m-028-1", label: "Career Assessment", status: "In Progress", category: "Assessment" },
-    ],
-  },
-  {
-    id: "s-029",
-    name: "Emily Clark",
-    email: "emily.clark@university.edu",
-    major: "Graphic Design",
-    graduationYear: 2026,
-    engagementTrend: "stable",
-    careerDirection: "exploring",
-    confidenceScore: 3,
-    engagementScore: 62,
-    lastActiveDate: "2026-04-06",
-    lastContactedDate: "2026-04-01",
-    status: "On Track",
-    milestones: [
-      { id: "m-029-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-02-15" },
-      { id: "m-029-3", label: "Job Shadow", status: "Pending", category: "Experience" },
-    ],
-  },
-  {
-    id: "s-030",
-    name: "David Hernandez",
-    email: "david.hernandez@university.edu",
-    major: "Architecture",
-    graduationYear: 2025,
-    engagementTrend: "up",
-    careerDirection: "clear",
-    confidenceScore: 4,
-    engagementScore: 73,
-    lastActiveDate: "2026-04-07",
-    lastContactedDate: "2026-04-03",
-    status: "On Track",
-    milestones: [
-      { id: "m-030-1", label: "Career Assessment", status: "Completed", category: "Assessment", completedDate: "2026-02-08" },
-      { id: "m-030-3", label: "Internship Applications", status: "In Progress", category: "Applications" },
-    ],
-  },
-];
+// ── Utilities ────────────────────────────────────────────────────────────────
 
-async function seed() {
-  for (const student of students) {
-    // Upsert student row
-    const studentRow = {
-      id: student.id,
-      name: student.name,
-      email: student.email,
-      major: student.major,
-      graduation_year: student.graduationYear,
-      career_direction: student.careerDirection,
-      confidence_score: student.confidenceScore,
-      engagement_score: student.engagementScore,
-      engagement_trend: student.engagementTrend,
-      last_active_date: student.lastActiveDate,
-      last_contacted_date: student.lastContactedDate,
-      status: student.status,
-    };
-
-    const { error: sErr } = await supabase
-      .from('students')
-      .upsert(studentRow, { onConflict: 'id' });
-    if (sErr) {
-      console.error(`Student ${student.id} failed:`, sErr.message);
-      continue;
-    }
-
-    // Upsert milestones
-    if (student.milestones?.length) {
-      const milestoneRows = student.milestones.map(m => ({
-        id: m.id,
-        student_id: student.id,
-        label: m.label,
-        status: m.status,
-        category: m.category,
-        completed_date: m.completedDate ?? null,
-      }));
-      const { error: mErr } = await supabase
-        .from('milestones')
-        .upsert(milestoneRows, { onConflict: 'id' });
-      if (mErr) console.error(`Milestones for ${student.id} failed:`, mErr.message);
-    }
-
-    // Notes are skipped for MVP — they will be created via the UI.
-    // Seeding notes would conflict with the DB's UUID PK strategy.
-
-    console.log(`✓ ${student.name}`);
-  }
-  console.log('Seed complete.');
+/** Simple seeded pseudo-random for deterministic career_direction assignment. */
+function seededRandom(seed) {
+  let s = seed;
+  return () => {
+    s = (s * 1664525 + 1013904223) & 0xffffffff;
+    return (s >>> 0) / 0xffffffff;
+  };
 }
 
-seed().catch(console.error);
+const CAREER_DIRECTIONS = ['clear', 'exploring', 'uncertain', 'undeclared'];
+
+function pickCareerDirection(studentId) {
+  const hash = studentId.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const rng = seededRandom(hash);
+  return CAREER_DIRECTIONS[Math.floor(rng() * CAREER_DIRECTIONS.length)];
+}
+
+function statusFromCategory(category) {
+  if (category === 'Red')    return 'Needs Attention';
+  if (category === 'Yellow') return 'At Risk';
+  return 'On Track';
+}
+
+function normalizeClassYear(raw) {
+  const cleaned = raw.trim();
+  if (/sophmore/i.test(cleaned)) return 'Sophomore';
+  return cleaned.charAt(0).toUpperCase() + cleaned.slice(1).toLowerCase();
+}
+
+/** Parse a minimal CSV without external deps. Handles quoted fields. */
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  const headers = lines[0].split(',').map(h => h.trim());
+  return lines.slice(1).map(line => {
+    const values = [];
+    let current = '';
+    let inQuotes = false;
+    for (const char of line) {
+      if (char === '"') { inQuotes = !inQuotes; continue; }
+      if (char === ',' && !inQuotes) { values.push(current.trim()); current = ''; continue; }
+      current += char;
+    }
+    values.push(current.trim());
+    return Object.fromEntries(headers.map((h, i) => [h, values[i] ?? '']));
+  });
+}
+
+function pick(arr, index) {
+  return arr[index % arr.length];
+}
+
+// ── Load CSV ─────────────────────────────────────────────────────────────────
+
+const csvPath = join(__dirname, '../Docs/final_engagement_scores.csv');
+const csvText = readFileSync(csvPath, 'utf8');
+const rows = parseCSV(csvText);
+
+console.log(`Parsed ${rows.length} students from CSV.`);
+
+// ── Clear existing data (cascade deletes milestones, notes, activity) ────────
+
+console.log('Clearing existing students…');
+const { error: clearErr } = await supabase.from('students').delete().neq('id', '__none__');
+if (clearErr) {
+  console.error('Failed to clear students:', clearErr.message);
+  process.exit(1);
+}
+console.log('Cleared.');
+
+// ── Seed students + children ─────────────────────────────────────────────────
+
+const TODAY = new Date().toISOString().slice(0, 10);
+
+for (let i = 0; i < rows.length; i++) {
+  const row = rows[i];
+  const category = row['engagement_category']?.trim() || 'Red';
+  const studentId = row['student_id']?.trim();
+
+  if (!studentId) { console.warn(`Row ${i + 1}: missing student_id, skipping`); continue; }
+
+  const studentRow = {
+    id:                   studentId,
+    name:                 null,
+    email:                row['Email']?.trim() || '',
+    major:                row['major_x']?.trim() || 'Undeclared',
+    graduation_year:      parseInt(row['Grad.Year'], 10) || 2029,
+    career_direction:     pickCareerDirection(studentId),
+    confidence_score:     null,
+    engagement_score:     Math.round(parseFloat(row['final_engagement']) * 100),
+    engagement_trend:     null,
+    last_active_date:     TODAY,
+    last_contacted_date:  TODAY,
+    status:               statusFromCategory(category),
+    age:                  (n => Number.isFinite(n) ? n : null)(parseInt(row['age'], 10)),
+    gpa:                  (n => Number.isFinite(n) ? n : null)(parseFloat(row['GPA'])),
+    attendance_rate:      (n => Number.isFinite(n) ? n : null)(parseFloat(row['attendance_rate'])),
+    college:              row['College_y']?.trim() || null,
+    class_year:           row['Class.Year'] ? normalizeClassYear(row['Class.Year']) : null,
+    enrollment_status:    row['enrollment_status']?.trim() || null,
+    engagement_category:  category,
+  };
+
+  const { error: sErr } = await supabase.from('students').upsert(studentRow, { onConflict: 'id' });
+  if (sErr) { console.error(`Student ${studentId} failed:`, sErr.message); process.exit(1); }
+
+  // ── Milestones (weighted by category) ──────────────────────────────────────
+  const milestoneTemplate = pick(MILESTONE_TEMPLATES[category] ?? MILESTONE_TEMPLATES.Red, i);
+  const milestoneRows = milestoneTemplate.map((m, mi) => ({
+    id:             `${studentId}-m${mi + 1}`,
+    student_id:     studentId,
+    label:          m.label,
+    status:         m.status,
+    category:       m.category,
+    completed_date: m.completedDate ?? null,
+  }));
+  if (milestoneRows.length) {
+    const { error: mErr } = await supabase.from('milestones').upsert(milestoneRows, { onConflict: 'id' });
+    if (mErr) console.error(`Milestones for ${studentId} failed:`, mErr.message);
+  }
+
+  // ── Recent activity (weighted by category) ──────────────────────────────────
+  const actTemplate = pick(ACTIVITY_TEMPLATES[category] ?? ACTIVITY_TEMPLATES.Red, i);
+  const actRows = actTemplate.map((a, ai) => ({
+    id:          `${studentId}-a${ai + 1}`,
+    student_id:  studentId,
+    description: a.description,
+    event_type:  a.event_type,
+    timestamp:   a.timestamp,
+  }));
+  if (actRows.length) {
+    const { error: aErr } = await supabase.from('recent_activity').upsert(actRows, { onConflict: 'id' });
+    if (aErr) console.error(`Activity for ${studentId} failed:`, aErr.message);
+  }
+
+  // ── Advisor note (one per student, weighted by category) ────────────────────
+  const notePool = NOTE_TEMPLATES[category] ?? NOTE_TEMPLATES.Red;
+  const noteText = notePool[i % notePool.length];
+  const { error: nErr } = await supabase.from('advisor_notes').insert({
+    student_id:  studentId,
+    text:        noteText,
+    author_name: 'Counselor',
+  });
+  if (nErr) console.error(`Note for ${studentId} failed:`, nErr.message);
+
+  console.log(`✓ ${studentId} [${category}]`);
+}
+
+console.log('\nSeed complete.');

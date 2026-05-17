@@ -1,4 +1,4 @@
-import { TrendingDown, Target, AlertCircle } from "lucide-react";
+import { AlertTriangle, Target, AlertCircle } from "lucide-react";
 import type { Student } from "@/types";
 
 interface InsightsPanelProps {
@@ -6,8 +6,8 @@ interface InsightsPanelProps {
 }
 
 export function InsightsPanel({ students }: InsightsPanelProps) {
-  const decliningEngagementCount = students.filter(
-    (s) => s.engagementTrend === "down",
+  const lowEngagementCount = students.filter(
+    (s) => s.engagementScore < 40,
   ).length;
 
   const unstartedMilestoneCount = students.filter((s) =>
@@ -23,14 +23,14 @@ export function InsightsPanel({ students }: InsightsPanelProps) {
       <h2 className="text-base font-semibold text-primary mb-4">Insights</h2>
       <ul className="space-y-3">
         <li className="flex items-center gap-3 text-sm">
-          <TrendingDown
+          <AlertTriangle
             aria-hidden="true"
             className="w-4 h-4 text-amber-600 flex-shrink-0"
           />
           <span>
-            {decliningEngagementCount}{" "}
-            {decliningEngagementCount === 1 ? "student" : "students"} with
-            declining engagement
+            {lowEngagementCount}{" "}
+            {lowEngagementCount === 1 ? "student" : "students"} with low
+            engagement (score &lt; 40)
           </span>
         </li>
         <li className="flex items-center gap-3 text-sm">

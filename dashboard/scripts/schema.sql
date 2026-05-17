@@ -12,18 +12,25 @@
 
 -- Students
 CREATE TABLE IF NOT EXISTS students (
-  id                 TEXT PRIMARY KEY,
-  name               TEXT        NOT NULL,
-  email              TEXT        NOT NULL,
-  major              TEXT        NOT NULL,
-  graduation_year    INTEGER     NOT NULL,
-  career_direction   TEXT        NOT NULL CHECK (career_direction IN ('clear', 'exploring', 'uncertain', 'undeclared')),
-  confidence_score   INTEGER     NOT NULL CHECK (confidence_score BETWEEN 1 AND 5),
-  engagement_score   NUMERIC     NOT NULL,
-  engagement_trend   TEXT        NOT NULL CHECK (engagement_trend IN ('up', 'down', 'stable')),
-  last_active_date   DATE        NOT NULL,
-  last_contacted_date DATE       NOT NULL,
-  status             TEXT        NOT NULL CHECK (status IN ('On Track', 'At Risk', 'Needs Attention'))
+  id                  TEXT PRIMARY KEY,
+  name                TEXT,
+  email               TEXT        NOT NULL,
+  major               TEXT        NOT NULL,
+  graduation_year     INTEGER     NOT NULL,
+  career_direction    TEXT        NOT NULL CHECK (career_direction IN ('clear', 'exploring', 'uncertain', 'undeclared')),
+  confidence_score    INTEGER     CHECK (confidence_score BETWEEN 1 AND 5),
+  engagement_score    NUMERIC     NOT NULL,
+  engagement_trend    TEXT        CHECK (engagement_trend IN ('up', 'down', 'stable')),
+  last_active_date    DATE        NOT NULL,
+  last_contacted_date DATE        NOT NULL,
+  status              TEXT        NOT NULL CHECK (status IN ('On Track', 'At Risk', 'Needs Attention')),
+  age                 INTEGER,
+  gpa                 NUMERIC,
+  attendance_rate     NUMERIC,
+  college             TEXT,
+  class_year          TEXT,
+  enrollment_status   TEXT,
+  engagement_category TEXT        CHECK (engagement_category IN ('Red', 'Yellow', 'Green'))
 );
 
 -- Milestones (child of students)

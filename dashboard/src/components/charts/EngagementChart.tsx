@@ -1,54 +1,72 @@
 import {
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
+  Cell,
 } from "recharts";
-import type { EngagementDataPoint } from "@/types";
+import type { Student } from "@/types";
 import { CHART_COLORS } from "@/lib/constants";
 
 interface EngagementChartProps {
-  data: EngagementDataPoint[];
-  rangeLabel: string;
+  students: Student[];
 }
 
-export function EngagementChart({ data, rangeLabel }: EngagementChartProps) {
+const BINS = [
+  { label: "0–20", min: 0, max: 20 },
+  { label: "20–40", min: 20, max: 40 },
+  { label: "40–60", min: 40, max: 60 },
+  { label: "60–80", min: 60, max: 80 },
+  { label: "80–100", min: 80, max: 101 },
+];
+
+const BIN_COLORS = [
+  "#ef4444", // red — danger zone
+  "#f97316", // orange
+  "#eab308", // yellow
+  "#22c55e", // green
+  "#6d6bd3", // brand purple — thriving
+];
+
+function computeBins(students: Student[]) {
+  return BINS.map((bin, i) => ({
+    label: bin.label,
+    count: students.filter(
+      (s) => s.engagementScore >= bin.min && s.engagementScore < bin.max,
+    ).length,
+    color: BIN_COLORS[i],
+  }));
+}
+
+export function EngagementChart({ students }: EngagementChartProps) {
+  const data = computeBins(students);
+
   return (
     <div
       data-testid="engagement-chart"
       role="img"
-      aria-label="Student engagement over time"
+      aria-label="Engagement score distribution"
       className="bg-card border border-border rounded-2xl p-8 shadow-sm"
     >
       <div className="mb-6">
         <h3 className="text-lg font-medium text-foreground">
-          Student Engagement Over Time
+          Engagement Score Distribution
         </h3>
         <p className="text-sm text-muted-foreground">
-          Monthly engagement rates and targets
+          Number of students in each score band
         </p>
-        <p className="text-xs text-muted-foreground/60 mt-1">{rangeLabel}</p>
       </div>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" stroke={CHART_COLORS.grid} />
-          <XAxis
-            dataKey="date"
-            tickFormatter={(d: string) =>
-              new Date(d).toLocaleDateString(undefined, {
-                month: "short",
-                day: "numeric",
-              })
-            }
-            tick={{ fontSize: 12 }}
-          />
-          <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
+        <BarChart data={data} barCategoryGap="30%">
+          <CartesianGrid strokeDasharray="3 3" stroke={CHART_COLORS.grid} vertical={false} />
+          <XAxis dataKey="label" tick={{ fontSize: 12 }} />
+          <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
           <Tooltip
-            labelFormatter={(d: string) => new Date(d).toLocaleDateString()}
+            cursor={{ fill: "rgba(109,107,211,0.08)" }}
+            formatter={(value: number) => [value, "Students"]}
             contentStyle={{
               backgroundColor: "#ffffff",
               border: `1px solid ${CHART_COLORS.primary}`,
@@ -56,25 +74,12 @@ export function EngagementChart({ data, rangeLabel }: EngagementChartProps) {
               padding: "12px",
             }}
           />
-          <Legend wrapperStyle={{ paddingTop: "16px" }} />
-          <Line
-            type="monotone"
-            dataKey="engagementScore"
-            stroke={CHART_COLORS.primary}
-            strokeWidth={2}
-            dot={false}
-            name="Engagement"
-          />
-          <Line
-            type="monotone"
-            dataKey="target"
-            stroke={CHART_COLORS.secondary}
-            strokeWidth={2}
-            strokeDasharray="5 5"
-            dot={false}
-            name="Target"
-          />
-        </LineChart>
+          <Bar dataKey="count" radius={[6, 6, 0, 0]}>
+            {data.map((entry, index) => (
+              <Cell key={index} fill={entry.color} />
+            ))}
+          </Bar>
+        </BarChart>
       </ResponsiveContainer>
     </div>
   );
