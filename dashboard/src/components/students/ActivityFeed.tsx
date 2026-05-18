@@ -44,9 +44,14 @@ function milestoneEvents(milestones: Milestone[]): ActivityEvent[] {
 
 export function ActivityFeed({ activity, milestones = [] }: ActivityFeedProps) {
   const derived = milestoneEvents(milestones);
-  const all = [...activity, ...derived].sort(
-    (a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp),
-  );
+  const seenIds = new Set<string>();
+  const all = [...activity, ...derived]
+    .filter((e) => {
+      if (seenIds.has(e.id)) return false;
+      seenIds.add(e.id);
+      return true;
+    })
+    .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp));
 
   if (all.length === 0) {
     return <EmptyState message="No recent activity" />;
@@ -63,7 +68,11 @@ export function ActivityFeed({ activity, milestones = [] }: ActivityFeedProps) {
             className="shrink-0 text-muted-foreground"
             dateTime={event.timestamp}
           >
-            {new Date(event.timestamp).toLocaleDateString()}
+            {new Date(event.timestamp).toLocaleDateString(undefined, {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}
           </time>
           <span>{event.description}</span>
         </li>

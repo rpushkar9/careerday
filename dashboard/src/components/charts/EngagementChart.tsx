@@ -10,35 +10,10 @@ import {
 } from "recharts";
 import type { Student } from "@/types";
 import { CHART_COLORS } from "@/lib/constants";
+import { computeBins } from "./engagementBins";
 
 interface EngagementChartProps {
   students: Student[];
-}
-
-const BINS = [
-  { label: "0–20", min: 0, max: 20 },
-  { label: "20–40", min: 20, max: 40 },
-  { label: "40–60", min: 40, max: 60 },
-  { label: "60–80", min: 60, max: 80 },
-  { label: "80–100", min: 80, max: 101 },
-];
-
-const BIN_COLORS = [
-  "#ef4444", // red — danger zone
-  "#f97316", // orange
-  "#eab308", // yellow
-  "#22c55e", // green
-  "#6d6bd3", // brand purple — thriving
-];
-
-function computeBins(students: Student[]) {
-  return BINS.map((bin, i) => ({
-    label: bin.label,
-    count: students.filter(
-      (s) => s.engagementScore >= bin.min && s.engagementScore < bin.max,
-    ).length,
-    color: BIN_COLORS[i],
-  }));
 }
 
 export function EngagementChart({ students }: EngagementChartProps) {

@@ -142,7 +142,7 @@ function StudentDetailContent({
       <SheetHeader className="sr-only">
         <SheetTitle>{student.id}</SheetTitle>
         <SheetDescription>
-          {student.major} · {student.college ?? "Class"} of {student.graduationYear}
+          {student.major}{student.college ? ` · ${student.college}` : ""} · Class of {student.graduationYear}
         </SheetDescription>
       </SheetHeader>
 
@@ -156,17 +156,17 @@ function StudentDetailContent({
         <div className="flex-1">
           <h2 className="text-lg font-semibold font-mono">{student.id}</h2>
           <p className="text-sm text-muted-foreground">
-            {student.major} · {student.college ?? `Class of ${student.graduationYear}`}
+            {student.major}{student.college ? ` · ${student.college}` : ""} · Class of {student.graduationYear}
           </p>
-          <p className="text-xs text-muted-foreground">{student.email}</p>
+          <a
+            href={`mailto:${student.email}`}
+            aria-label={`Email ${student.id}`}
+            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors mt-0.5"
+          >
+            <Mail className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+            {student.email}
+          </a>
         </div>
-        <a
-          href={`mailto:${student.email}`}
-          aria-label={`Email ${student.id}`}
-          className="p-2 rounded-lg border border-border hover:bg-secondary transition-colors text-primary"
-        >
-          <Mail className="w-5 h-5" />
-        </a>
       </div>
 
       <div className="mt-2 space-y-6">
@@ -239,7 +239,7 @@ function StudentDetailContent({
                     onUpdateStatus(student.id, val as StudentStatus);
                 }}
               >
-                <SelectTrigger className="h-8 w-44 text-xs">
+                <SelectTrigger className="h-8 w-44 text-xs border-border">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -289,6 +289,7 @@ function StudentDetailContent({
                 <Button
                   size="sm"
                   variant="outline"
+                  className="border-border"
                   disabled={checkingIn}
                   onClick={async () => {
                     const prev = student.lastContactedDate;
@@ -362,7 +363,7 @@ function StudentDetailContent({
         </section>
 
         {/* Pilot Data: academic + attendance metrics */}
-        {(student.gpa != null || student.attendanceRate != null || student.college || student.classYear || student.age != null) && (
+        {(student.gpa != null || student.attendanceRate != null || student.college || student.classYear || student.age != null || student.enrollmentStatus) && (
           <section>
             <h3 className="mb-2 text-sm font-semibold">Academic Profile</h3>
             <div className="grid grid-cols-2 gap-3 text-sm">
@@ -387,13 +388,19 @@ function StudentDetailContent({
               {student.gpa != null && (
                 <div className="rounded-md border px-3 py-2">
                   <p className="text-xs text-muted-foreground">GPA</p>
-                  <p className="font-medium">{(student.gpa * 4).toFixed(2)} / 4.0</p>
+                  <p className="font-medium">{(Math.min(student.gpa, 1) * 4).toFixed(2)} / 4.0</p>
                 </div>
               )}
               {student.attendanceRate != null && (
                 <div className="rounded-md border px-3 py-2">
                   <p className="text-xs text-muted-foreground">Attendance Rate</p>
                   <p className="font-medium">{(student.attendanceRate * 100).toFixed(0)}%</p>
+                </div>
+              )}
+              {student.enrollmentStatus && (
+                <div className="rounded-md border px-3 py-2">
+                  <p className="text-xs text-muted-foreground">Enrollment</p>
+                  <p className="font-medium">{student.enrollmentStatus}</p>
                 </div>
               )}
             </div>

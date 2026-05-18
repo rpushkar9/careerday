@@ -13,12 +13,14 @@ export const MILESTONE_TEMPLATES = {
     [
       { label: 'Career Assessment',      status: 'Completed',   category: 'Assessment',   completedDate: '2026-02-10' },
       { label: 'Resume Draft',           status: 'Completed',   category: 'Profile',      completedDate: '2026-03-01' },
+      { label: 'Informational Interview',status: 'Completed',   category: 'Networking',   completedDate: '2026-03-10' },
       { label: 'Job Shadow',             status: 'Completed',   category: 'Experience',   completedDate: '2026-03-20' },
       { label: 'Job Applications',       status: 'In Progress', category: 'Applications' },
     ],
     [
       { label: 'Career Assessment',      status: 'Completed',   category: 'Assessment',   completedDate: '2026-01-15' },
       { label: 'LinkedIn Profile',       status: 'Completed',   category: 'Profile',      completedDate: '2026-02-01' },
+      { label: 'Career Fair Attendance', status: 'Completed',   category: 'Networking',   completedDate: '2026-02-20' },
       { label: 'Job Shadow',             status: 'Completed',   category: 'Experience',   completedDate: '2026-02-28' },
       { label: 'Internship Applications',status: 'Completed',   category: 'Applications', completedDate: '2026-03-15' },
       { label: 'Job Applications',       status: 'In Progress', category: 'Applications' },
@@ -26,6 +28,7 @@ export const MILESTONE_TEMPLATES = {
     [
       { label: 'Career Assessment',      status: 'Completed',   category: 'Assessment',   completedDate: '2026-01-20' },
       { label: 'LinkedIn Profile',       status: 'Completed',   category: 'Profile',      completedDate: '2026-02-10' },
+      { label: 'Alumni Coffee Chat',     status: 'Completed',   category: 'Networking',   completedDate: '2026-02-25' },
       { label: 'Internship Applications',status: 'Completed',   category: 'Applications', completedDate: '2026-03-15' },
       { label: 'Job Shadow',             status: 'Completed',   category: 'Experience',   completedDate: '2026-03-25' },
       { label: 'Job Applications',       status: 'In Progress', category: 'Applications' },
@@ -33,6 +36,7 @@ export const MILESTONE_TEMPLATES = {
     [
       { label: 'Career Assessment',      status: 'Completed',   category: 'Assessment',   completedDate: '2026-01-30' },
       { label: 'LinkedIn Profile',       status: 'Completed',   category: 'Profile',      completedDate: '2026-02-20' },
+      { label: 'Informational Interview',status: 'Completed',   category: 'Networking',   completedDate: '2026-03-01' },
       { label: 'Job Shadow',             status: 'Completed',   category: 'Experience',   completedDate: '2026-03-05' },
       { label: 'Job Applications',       status: 'In Progress', category: 'Applications' },
     ],
@@ -47,6 +51,7 @@ export const MILESTONE_TEMPLATES = {
     [
       { label: 'Career Assessment',      status: 'Completed',   category: 'Assessment',   completedDate: '2026-02-01' },
       { label: 'LinkedIn Profile',       status: 'Completed',   category: 'Profile',      completedDate: '2026-02-28' },
+      { label: 'Career Fair Attendance', status: 'In Progress', category: 'Networking' },
       { label: 'Internship Applications',status: 'In Progress', category: 'Applications' },
     ],
     [
@@ -57,6 +62,7 @@ export const MILESTONE_TEMPLATES = {
     [
       { label: 'Career Assessment',      status: 'Completed',   category: 'Assessment',   completedDate: '2026-02-25' },
       { label: 'Resume Draft',           status: 'In Progress', category: 'Profile' },
+      { label: 'Informational Interview',status: 'Pending',     category: 'Networking' },
     ],
   ],
 
@@ -66,6 +72,7 @@ export const MILESTONE_TEMPLATES = {
     ],
     [
       { label: 'Career Assessment',      status: 'Pending',     category: 'Assessment' },
+      { label: 'Informational Interview',status: 'Pending',     category: 'Networking' },
     ],
     [
       { label: 'Career Assessment',      status: 'Completed',   category: 'Assessment',   completedDate: '2026-03-01' },
@@ -73,6 +80,7 @@ export const MILESTONE_TEMPLATES = {
     [
       { label: 'Career Assessment',      status: 'In Progress', category: 'Assessment' },
       { label: 'Resume Draft',           status: 'Pending',     category: 'Profile' },
+      { label: 'Informational Interview',status: 'Pending',     category: 'Networking' },
     ],
   ],
 };

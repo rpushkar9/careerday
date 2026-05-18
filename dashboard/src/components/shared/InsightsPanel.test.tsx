@@ -81,4 +81,14 @@ describe("InsightsPanel", () => {
     const zeros = screen.getAllByText(/^0 students/i);
     expect(zeros).toHaveLength(3);
   });
+
+  it("counts score 39 as low engagement (< 40 is inclusive boundary)", () => {
+    render(<InsightsPanel students={[makeStudent({ id: "x", engagementScore: 39 })]} />);
+    expect(screen.getByText(/1 student with low engagement/i)).toBeInTheDocument();
+  });
+
+  it("does NOT count score 40 as low engagement", () => {
+    render(<InsightsPanel students={[makeStudent({ id: "x", engagementScore: 40 })]} />);
+    expect(screen.getByText(/0 students with low engagement/i)).toBeInTheDocument();
+  });
 });

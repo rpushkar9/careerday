@@ -4,6 +4,13 @@ import { StatusBadge } from "@/components/shared/StatusBadge";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { CheckCircle, Clock, Circle, Trash2 } from "lucide-react";
 import { MILESTONE_CATEGORIES } from "@/lib/constants";
 
@@ -31,6 +38,7 @@ function getIconStyles(status: MilestoneStatus): {
 export function MilestoneList({ milestones, onAddMilestone, onDeleteMilestone }: MilestoneListProps) {
   const [label, setLabel] = useState("");
   const [category, setCategory] = useState<string>(MILESTONE_CATEGORIES[0].value);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   function handleAdd() {
     const trimmed = label.trim();
@@ -49,20 +57,20 @@ export function MilestoneList({ milestones, onAddMilestone, onDeleteMilestone }:
             value={label}
             onChange={(e) => setLabel(e.target.value)}
             aria-label="Milestone label"
-            className="flex-1"
+            className="flex-1 border-border"
           />
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            aria-label="Milestone category"
-            className="rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-          >
-            {MILESTONE_CATEGORIES.map((c) => (
-              <option key={c.value} value={c.value}>
-                {c.label}
-              </option>
-            ))}
-          </select>
+          <Select value={category} onValueChange={setCategory}>
+            <SelectTrigger aria-label="Milestone category" className="w-48 border-border">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {MILESTONE_CATEGORIES.map((c) => (
+                <SelectItem key={c.value} value={c.value}>
+                  {c.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Button size="sm" disabled={label.trim().length === 0} onClick={handleAdd}>
             Add
           </Button>
@@ -85,7 +93,9 @@ export function MilestoneList({ milestones, onAddMilestone, onDeleteMilestone }:
                 </div>
                 <div className="flex-1">
                   <p className="text-sm text-foreground">{m.label}</p>
-                  <p className="text-xs text-muted-foreground">{m.category}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {MILESTONE_CATEGORIES.find((c) => c.value === m.category)?.label ?? m.category}
+                  </p>
                   {m.completedDate && (
                     <p className="text-xs text-muted-foreground mt-0.5">
                       {new Date(m.completedDate).toLocaleDateString(undefined, {
@@ -98,13 +108,33 @@ export function MilestoneList({ milestones, onAddMilestone, onDeleteMilestone }:
                 </div>
                 <StatusBadge status={m.status} />
                 {onDeleteMilestone && (
-                  <button
-                    onClick={() => onDeleteMilestone(m.id)}
-                    aria-label={`Delete milestone ${m.label}`}
-                    className="ml-1 text-muted-foreground hover:text-destructive transition-colors"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+                  pendingDeleteId === m.id ? (
+                    <div className="ml-1 flex items-center gap-1 shrink-0 text-xs">
+                      <button
+                        onClick={() => { onDeleteMilestone(m.id); setPendingDeleteId(null); }}
+                        aria-label={`Confirm delete milestone ${m.label}`}
+                        className="text-destructive hover:underline font-medium"
+                      >
+                        Delete
+                      </button>
+                      <span className="text-muted-foreground">|</span>
+                      <button
+                        onClick={() => setPendingDeleteId(null)}
+                        aria-label="Cancel delete"
+                        className="text-muted-foreground hover:underline"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setPendingDeleteId(m.id)}
+                      aria-label={`Delete milestone ${m.label}`}
+                      className="ml-1 text-muted-foreground hover:text-destructive transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )
                 )}
               </li>
             );
