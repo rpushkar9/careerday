@@ -27,6 +27,7 @@ export function AdvisorNotes({ notes, onAddNote }: AdvisorNotesProps) {
           value={text}
           onChange={(e) => setText(e.target.value)}
           aria-label="Note text"
+          className="border-border"
         />
         <Button
           size="sm"

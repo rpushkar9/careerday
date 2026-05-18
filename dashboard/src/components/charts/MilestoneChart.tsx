@@ -11,19 +11,15 @@ import {
   type TooltipProps,
 } from "recharts";
 import type { MilestoneCategoryCompletion } from "@/types";
-import { CHART_COLORS } from "@/lib/constants";
+import { CHART_COLORS, MILESTONE_CATEGORIES } from "@/lib/constants";
 
 interface MilestoneChartProps {
   data: MilestoneCategoryCompletion[];
 }
 
-const CATEGORY_LABELS: Record<string, string> = {
-  Assessment: "Career Assessment",
-  Profile: "Resume & Profile",
-  Networking: "Networking",
-  Experience: "Internship & Industry Experience",
-  Applications: "Job Applications",
-};
+const CATEGORY_LABELS: Record<string, string> = Object.fromEntries(
+  MILESTONE_CATEGORIES.map((c) => [c.value, c.label]),
+);
 
 function labelFor(category: string): string {
   return CATEGORY_LABELS[category] ?? category;
@@ -51,10 +47,19 @@ function MilestoneTooltip({ active, payload }: TooltipProps<number, string>) {
 }
 
 export function MilestoneChart({ data }: MilestoneChartProps) {
-  const chartData = useMemo(
-    () => data.map((d) => ({ ...d, category: labelFor(d.category) })),
-    [data],
-  );
+  const chartData = useMemo(() => {
+    const byCategory = new Map(data.map((d) => [d.category, d]));
+    return MILESTONE_CATEGORIES.map(({ value }) => {
+      const d = byCategory.get(value) ?? {
+        category: value,
+        completedCount: 0,
+        inProgressCount: 0,
+        totalCount: 0,
+        completionRate: 0,
+      };
+      return { ...d, category: labelFor(d.category) };
+    });
+  }, [data]);
 
   return (
     <div

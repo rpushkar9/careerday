@@ -4,6 +4,8 @@ export type EngagementTrend = "up" | "down" | "stable";
 
 export type EngagementTier = "High" | "Medium" | "Low";
 
+export type EngagementCategory = "Red" | "Yellow" | "Green";
+
 export type StudentStatus = "On Track" | "At Risk" | "Needs Attention";
 
 export type CareerDirection =
@@ -46,14 +48,14 @@ export interface ActivityEvent {
 
 export interface Student {
   id: string;
-  name: string;
+  name?: string | null;
   email: string;
   major: string;
   graduationYear: number;
   careerDirection: CareerDirection;
-  confidenceScore: number;
+  confidenceScore?: number | null;
   engagementScore: number;
-  engagementTrend: EngagementTrend;
+  engagementTrend?: EngagementTrend | null;
   engagementTier: EngagementTier;
   lastActiveDate: string;
   lastContactedDate: string;
@@ -62,4 +64,12 @@ export interface Student {
   advisorNotes: AdvisorNote[];
   recentActivity: ActivityEvent[];
   flaggedForAttention: boolean;
+  // Pilot data fields
+  age?: number | null;
+  gpa?: number | null;
+  attendanceRate?: number | null;
+  college?: string | null;
+  classYear?: string | null;
+  enrollmentStatus?: string | null;
+  engagementCategory?: EngagementCategory | null;
 }

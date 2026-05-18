@@ -16,6 +16,8 @@ import {
   fetchStudents,
   fetchAdvisorNotes,
   insertAdvisorNote,
+  insertMilestone,
+  deleteMilestone,
   fetchKpiSummary,
   fetchMilestoneCategorySummary,
 } from "./queries";
@@ -226,6 +228,70 @@ describe("insertAdvisorNote", () => {
   it("throws ZodError when returned row shape is invalid", async () => {
     makeInsertSelectSingleChain({ data: { id: null }, error: null });
     await expect(insertAdvisorNote("s-1", "text")).rejects.toThrow();
+  });
+});
+
+// ── insertMilestone ───────────────────────────────────────────────────────────
+
+const minimalMilestoneRow = {
+  id: "m-1",
+  label: "Update resume",
+  status: "Pending" as const,
+  category: "Profile",
+  completed_date: null,
+};
+
+describe("insertMilestone", () => {
+  it("returns the mapped Milestone on success", async () => {
+    makeInsertSelectSingleChain({ data: minimalMilestoneRow, error: null });
+    const result = await insertMilestone("s-1", "Update resume", "Profile");
+    expect(result.id).toBe("m-1");
+    expect(result.label).toBe("Update resume");
+    expect(result.status).toBe("Pending");
+    expect(result.category).toBe("Profile");
+    expect(result.completedDate).toBeUndefined();
+  });
+
+  it("passes label and category to supabase insert", async () => {
+    const { mockInsert } = makeInsertSelectSingleChain({ data: minimalMilestoneRow, error: null });
+    await insertMilestone("s-1", "Update resume", "Profile");
+    expect(mockInsert).toHaveBeenCalledWith(
+      expect.objectContaining({ label: "Update resume", category: "Profile", status: "Pending" }),
+    );
+  });
+
+  it("throws when supabase returns an error", async () => {
+    makeInsertSelectSingleChain({ data: null, error: { message: "insert error" } });
+    await expect(insertMilestone("s-1", "label", "Profile")).rejects.toMatchObject({
+      message: "insert error",
+    });
+  });
+
+  it("throws ZodError when returned row shape is invalid", async () => {
+    makeInsertSelectSingleChain({ data: { id: null }, error: null });
+    await expect(insertMilestone("s-1", "label", "Profile")).rejects.toThrow();
+  });
+});
+
+// ── deleteMilestone ───────────────────────────────────────────────────────────
+
+describe("deleteMilestone", () => {
+  it("calls supabase delete with the correct milestone id", async () => {
+    const mockEq = vi.fn().mockResolvedValue({ error: null });
+    const mockDelete = vi.fn().mockReturnValue({ eq: mockEq });
+    mockFrom.mockReturnValue({ delete: mockDelete });
+    await deleteMilestone("m-42");
+    expect(mockDelete).toHaveBeenCalled();
+    expect(mockEq).toHaveBeenCalledWith("id", "m-42");
+  });
+
+  it("throws when supabase returns an error", async () => {
+    const mockEq = vi.fn().mockResolvedValue({ error: { message: "delete error" } });
+    const mockDelete = vi.fn().mockReturnValue({ eq: mockEq });
+    mockFrom.mockReturnValue({ delete: mockDelete });
+    await expect(deleteMilestone("m-42")).rejects.toMatchObject({
+      message: "delete error",
+    });
   });
 });
 

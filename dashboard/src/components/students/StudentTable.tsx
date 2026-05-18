@@ -34,13 +34,13 @@ const STATUS_TOOLTIP: Partial<Record<Student["status"], string>> = {
 const columnHelper = createColumnHelper<Student>();
 
 const columns = [
-  columnHelper.accessor("name", {
-    header: "Name",
+  columnHelper.accessor("id", {
+    header: "Student ID",
     cell: (info) => {
       const student = info.row.original;
       return (
         <div>
-          <div className="font-medium">{student.name}</div>
+          <div className="font-medium font-mono">{student.id}</div>
           <div className="text-xs text-muted-foreground">{student.email}</div>
         </div>
       );
@@ -49,6 +49,14 @@ const columns = [
   columnHelper.accessor("major", {
     header: "Major",
     cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("college", {
+    header: "College",
+    cell: (info) => info.getValue() ?? "—",
+  }),
+  columnHelper.accessor("classYear", {
+    header: "Class Year",
+    cell: (info) => info.getValue() ?? "—",
   }),
   columnHelper.accessor("graduationYear", {
     header: "Grad Year",
@@ -71,6 +79,10 @@ const columns = [
           : score >= 50
             ? "text-amber-600"
             : "text-red-600";
+
+      if (!trend) {
+        return <span className={scoreColor}>{score}%</span>;
+      }
 
       const TrendIcon =
         trend === "up" ? ArrowUp : trend === "down" ? ArrowDown : Minus;
@@ -109,14 +121,6 @@ const columns = [
       },
     },
   ),
-  columnHelper.accessor("lastActiveDate", {
-    header: "Last Active",
-    cell: (info) => new Date(info.getValue()).toLocaleDateString(),
-  }),
-  columnHelper.accessor("lastContactedDate", {
-    header: "Last Contacted",
-    cell: (info) => new Date(info.getValue()).toLocaleDateString(),
-  }),
   columnHelper.accessor("status", {
     header: "Status",
   }),

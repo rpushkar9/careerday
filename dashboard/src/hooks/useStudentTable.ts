@@ -32,8 +32,10 @@ export function useStudentTable(students: Student[]) {
     const query = searchQuery.toLowerCase();
     return chipFiltered.filter(
       (s) =>
-        s.name.toLowerCase().includes(query) ||
-        s.careerDirection.toLowerCase().includes(query),
+        s.id.toLowerCase().includes(query) ||
+        s.email.toLowerCase().includes(query) ||
+        s.major.toLowerCase().includes(query) ||
+        (s.college ?? "").toLowerCase().includes(query),
     );
   }, [students, activeChips, searchQuery]);
 

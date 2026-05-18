@@ -56,14 +56,14 @@ function mapMilestone(row: MilestoneRow): Milestone {
 function mapStudentRow(row: StudentRow): Student {
   const raw: RawStudent = {
     id: row.id,
-    name: row.name,
+    name: row.name ?? null,
     email: row.email,
     major: row.major,
     graduationYear: row.graduation_year,
     careerDirection: row.career_direction,
-    confidenceScore: row.confidence_score,
+    confidenceScore: row.confidence_score ?? null,
     engagementScore: Number(row.engagement_score),
-    engagementTrend: row.engagement_trend,
+    engagementTrend: row.engagement_trend ?? null,
     lastActiveDate: row.last_active_date,
     lastContactedDate: row.last_contacted_date,
     status: row.status,
@@ -72,6 +72,13 @@ function mapStudentRow(row: StudentRow): Student {
     recentActivity: (row.recent_activity ?? [])
       .map(mapActivityRow)
       .sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp)),
+    age: row.age ?? null,
+    gpa: row.gpa != null ? Number(row.gpa) : null,
+    attendanceRate: row.attendance_rate != null ? Number(row.attendance_rate) : null,
+    college: row.college ?? null,
+    classYear: row.class_year ?? null,
+    enrollmentStatus: row.enrollment_status ?? null,
+    engagementCategory: row.engagement_category ?? null,
   };
   return deriveStudent(raw);
 }
@@ -135,6 +142,37 @@ export async function insertAdvisorNote(
   if (error) throw error;
 
   return mapAdvisorNoteRow(AdvisorNoteRowSchema.parse(data));
+}
+
+export async function insertMilestone(
+  studentId: string,
+  label: string,
+  category: string,
+): Promise<Milestone> {
+  const { data, error } = await supabase
+    .from("milestones")
+    .insert({
+      id: crypto.randomUUID(),
+      student_id: studentId,
+      label,
+      status: "Pending",
+      category,
+      completed_date: null,
+    })
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return mapMilestone(MilestoneRowSchema.parse(data));
+}
+
+export async function deleteMilestone(milestoneId: string): Promise<void> {
+  const { error } = await supabase
+    .from("milestones")
+    .delete()
+    .eq("id", milestoneId);
+  if (error) throw error;
 }
 
 /**

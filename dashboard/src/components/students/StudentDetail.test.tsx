@@ -53,6 +53,8 @@ function renderDetail(
   handlers: {
     onClose?: () => void;
     onAddNote?: (id: string, text: string) => void;
+    onAddMilestone?: (id: string, label: string, category: string) => void;
+    onDeleteMilestone?: (id: string, milestoneId: string) => void;
     onUpdateStatus?: (id: string, status: StudentStatus) => void;
     onCheckIn?: (id: string) => Promise<string>;
     onUndoCheckIn?: (id: string, previousDate: string) => void;
@@ -64,6 +66,8 @@ function renderDetail(
       student={s}
       onClose={handlers.onClose ?? vi.fn()}
       onAddNote={handlers.onAddNote ?? vi.fn()}
+      onAddMilestone={handlers.onAddMilestone ?? vi.fn()}
+      onDeleteMilestone={handlers.onDeleteMilestone ?? vi.fn()}
       onUpdateStatus={handlers.onUpdateStatus ?? vi.fn()}
       onCheckIn={handlers.onCheckIn ?? vi.fn().mockResolvedValue("2026-04-23")}
       onUndoCheckIn={handlers.onUndoCheckIn ?? vi.fn()}
@@ -79,22 +83,24 @@ describe("StudentDetail", () => {
         student={null}
         onClose={vi.fn()}
         onAddNote={vi.fn()}
+        onAddMilestone={vi.fn()}
+        onDeleteMilestone={vi.fn()}
         onUpdateStatus={vi.fn()}
         onCheckIn={vi.fn().mockResolvedValue("2026-04-23")}
         onUndoCheckIn={vi.fn()}
       />,
     );
-    expect(screen.queryByText("Jane Doe")).not.toBeInTheDocument();
+    expect(screen.queryByText("s-042")).not.toBeInTheDocument();
   });
 
   it("drawer opens when student is set", () => {
     renderDetail();
-    expect(screen.getAllByText("Jane Doe").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("s-042").length).toBeGreaterThan(0);
   });
 
-  it("renders student name, careerDirection, and confidence score", () => {
+  it("renders student ID, careerDirection, and confidence score", () => {
     renderDetail();
-    expect(screen.getAllByText("Jane Doe").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("s-042").length).toBeGreaterThan(0);
     expect(screen.getByText(/exploring/i)).toBeInTheDocument();
     expect(screen.getByText(/4.*\/.*5/)).toBeInTheDocument();
   });
@@ -126,16 +132,17 @@ describe("StudentDetail", () => {
     expect(onAddNote).toHaveBeenCalledWith("s-042", "Test note");
   });
 
-  it("renders avatar with correct initials for Aisha Johnson", () => {
-    renderDetail({ name: "Aisha Johnson" });
-    expect(screen.getByText("AJ")).toBeInTheDocument();
+  it("renders avatar using student ID short form", () => {
+    // id "s-042" → idToAvatar strips leading letter "s", returns last 3 of "-042" → "042"
+    renderDetail();
+    expect(screen.getByText("042")).toBeInTheDocument();
   });
 
-  it("renders Email, Schedule, and Message quick action links", () => {
+  it("renders Email link in header, no Schedule or Message", () => {
     renderDetail();
     expect(screen.getByRole("link", { name: /email/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /schedule/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /message/i })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /schedule/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /message/i })).not.toBeInTheDocument();
   });
 
   it("shows Needs Attention alert when student is flagged", () => {
@@ -156,7 +163,7 @@ describe("StudentDetail", () => {
   it("renders Follow-up section with status selector and Check in button", () => {
     renderDetail();
     expect(screen.getByText("Follow-up")).toBeInTheDocument();
-    expect(screen.getByRole("combobox")).toBeInTheDocument();
+    expect(screen.getAllByRole("combobox").length).toBeGreaterThanOrEqual(1);
     expect(
       screen.getByRole("button", { name: /check in/i }),
     ).toBeInTheDocument();
@@ -172,6 +179,33 @@ describe("StudentDetail", () => {
     renderDetail({}, { onCheckIn });
     await userEvent.click(screen.getByRole("button", { name: /check in/i }));
     expect(onCheckIn).toHaveBeenCalledWith("s-042");
+  });
+
+  it("renders GPA multiplied by 4 for a pilot student", () => {
+    // gpa stored as 0–1 normalized; 0.875 → "3.50 / 4.0"
+    renderDetail({ gpa: 0.875, college: "Queens College", classYear: "Junior", age: 20 });
+    expect(screen.getByText("3.50 / 4.0")).toBeInTheDocument();
+  });
+
+  it("clamps gpa > 1 to 4.0 max (legacy-scale guard)", () => {
+    renderDetail({ gpa: 3.5, college: "Queens College", classYear: "Junior", age: 20 });
+    expect(screen.getByText("4.00 / 4.0")).toBeInTheDocument();
+  });
+
+  it("does not show GPA card when gpa is null", () => {
+    renderDetail({ gpa: null });
+    expect(screen.queryByText("/ 4.0")).not.toBeInTheDocument();
+  });
+
+  it("header shows major · college · Class of year when college is present", () => {
+    renderDetail({ college: "City College", graduationYear: 2027 });
+    // Both visible and sr-only headers use the same format; at least one must match
+    expect(screen.getAllByText(/city college.*class of 2027/i).length).toBeGreaterThan(0);
+  });
+
+  it("header shows major · Class of year when college is null", () => {
+    renderDetail({ college: null, major: "Economics", graduationYear: 2026 });
+    expect(screen.getAllByText(/economics.*class of 2026/i).length).toBeGreaterThan(0);
   });
 
   it("shows Undo button after Check in and calls onUndoCheckIn when clicked", async () => {

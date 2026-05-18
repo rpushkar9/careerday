@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import type { Student, StudentStatus } from "@/types";
-import { getInitials } from "@/lib/initials";
+import { idToAvatar } from "@/lib/initials";
 import {
   Sheet,
   SheetContent,
@@ -21,8 +21,6 @@ import { MilestoneList } from "./MilestoneList";
 import { ActivityFeed } from "./ActivityFeed";
 import {
   Mail,
-  CalendarPlus,
-  MessageSquare,
   AlertCircle,
   TrendingUp,
   Target,
@@ -69,6 +67,8 @@ interface StudentDetailProps {
   student: Student | null;
   onClose: () => void;
   onAddNote: (studentId: string, text: string) => void;
+  onAddMilestone: (studentId: string, label: string, category: string) => void;
+  onDeleteMilestone: (studentId: string, milestoneId: string) => void;
   onUpdateStatus: (studentId: string, status: StudentStatus) => void;
   onCheckIn: (studentId: string) => Promise<string | null>;
   onUndoCheckIn: (studentId: string, previousDate: string) => void;
@@ -83,12 +83,16 @@ function getReasonText(student: Student): string {
 function StudentDetailContent({
   student,
   onAddNote,
+  onAddMilestone,
+  onDeleteMilestone,
   onUpdateStatus,
   onCheckIn,
   onUndoCheckIn,
 }: {
   student: Student;
   onAddNote: (studentId: string, text: string) => void;
+  onAddMilestone: (studentId: string, label: string, category: string) => void;
+  onDeleteMilestone: (studentId: string, milestoneId: string) => void;
   onUpdateStatus: (studentId: string, status: StudentStatus) => void;
   onCheckIn: (studentId: string) => Promise<string | null>;
   onUndoCheckIn: (studentId: string, previousDate: string) => void;
@@ -122,7 +126,7 @@ function StudentDetailContent({
     [],
   );
 
-  const initials = getInitials(student.name);
+  const avatar = idToAvatar(student.id);
   const completed = student.milestones.filter(
     (m) => m.status === "Completed",
   ).length;
@@ -136,56 +140,36 @@ function StudentDetailContent({
     <>
       {/* Visually-hidden sheet header for accessibility */}
       <SheetHeader className="sr-only">
-        <SheetTitle>{student.name}</SheetTitle>
+        <SheetTitle>{student.id}</SheetTitle>
         <SheetDescription>
-          {student.major} · Class of {student.graduationYear}
+          {student.major}{student.college ? ` · ${student.college}` : ""} · Class of {student.graduationYear}
         </SheetDescription>
       </SheetHeader>
 
-      {/* Avatar + name header */}
-      <div className="mb-4 flex items-center gap-4">
+      {/* Avatar + ID header */}
+      <div className="mb-6 flex items-center gap-4">
         <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
-          <span className="text-primary-foreground text-xl font-medium">
-            {initials}
+          <span className="text-primary-foreground text-xl font-medium font-mono">
+            {avatar}
           </span>
         </div>
-        <div>
-          <h2 className="text-lg font-semibold">{student.name}</h2>
+        <div className="flex-1">
+          <h2 className="text-lg font-semibold font-mono">{student.id}</h2>
           <p className="text-sm text-muted-foreground">
-            {student.major} · Class of {student.graduationYear}
+            {student.major}{student.college ? ` · ${student.college}` : ""} · Class of {student.graduationYear}
           </p>
+          <a
+            href={`mailto:${student.email}`}
+            aria-label={`Email ${student.id}`}
+            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors mt-0.5"
+          >
+            <Mail className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+            {student.email}
+          </a>
         </div>
       </div>
 
-      {/* Quick Action Buttons */}
-      <div className="grid grid-cols-3 gap-3">
-        <a
-          href={`mailto:${student.email}`}
-          className="flex flex-col items-center gap-2 p-4 border border-border rounded-2xl hover:bg-secondary transition-colors"
-          aria-label={`Email ${student.name}`}
-        >
-          <Mail className="w-5 h-5 text-primary" />
-          <span className="text-xs text-foreground">Email</span>
-        </a>
-        <a
-          href={`mailto:${student.email}?subject=Meeting+request`}
-          className="flex flex-col items-center gap-2 p-4 border border-border rounded-2xl hover:bg-secondary transition-colors"
-          aria-label={`Schedule meeting with ${student.name}`}
-        >
-          <CalendarPlus className="w-5 h-5 text-primary" />
-          <span className="text-xs text-foreground">Schedule</span>
-        </a>
-        <a
-          href={`mailto:${student.email}`}
-          className="flex flex-col items-center gap-2 p-4 border border-border rounded-2xl hover:bg-secondary transition-colors"
-          aria-label={`Message ${student.name}`}
-        >
-          <MessageSquare className="w-5 h-5 text-primary" />
-          <span className="text-xs text-foreground">Message</span>
-        </a>
-      </div>
-
-      <div className="mt-6 space-y-6">
+      <div className="mt-2 space-y-6">
         {/* Support Reason Alert (conditional) */}
         {student.status !== "On Track" && (
           <div
@@ -255,7 +239,7 @@ function StudentDetailContent({
                     onUpdateStatus(student.id, val as StudentStatus);
                 }}
               >
-                <SelectTrigger className="h-8 w-44 text-xs">
+                <SelectTrigger className="h-8 w-44 text-xs border-border">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -305,6 +289,7 @@ function StudentDetailContent({
                 <Button
                   size="sm"
                   variant="outline"
+                  className="border-border"
                   disabled={checkingIn}
                   onClick={async () => {
                     const prev = student.lastContactedDate;
@@ -347,37 +332,92 @@ function StudentDetailContent({
                 {DIRECTION_LABELS[student.careerDirection].description}
               </p>
             </div>
-            <div className="border-t pt-3">
-              <p className="text-xs text-muted-foreground mb-1">
-                Self-reported confidence in career direction
-              </p>
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1">
-                  {[1, 2, 3, 4, 5].map((level) => (
-                    <div
-                      key={level}
-                      className={`h-2.5 w-2.5 rounded-full ${
-                        level <= student.confidenceScore
-                          ? "bg-primary"
-                          : "bg-muted"
-                      }`}
-                    />
-                  ))}
+            {student.confidenceScore != null && (
+              <div className="border-t pt-3">
+                <p className="text-xs text-muted-foreground mb-1">
+                  Self-reported confidence in career direction
+                </p>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map((level) => (
+                      <div
+                        key={level}
+                        className={`h-2.5 w-2.5 rounded-full ${
+                          level <= student.confidenceScore!
+                            ? "bg-primary"
+                            : "bg-muted"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <span className="text-sm font-medium">
+                    {CONFIDENCE_LABELS[student.confidenceScore] ?? "—"}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    ({student.confidenceScore}/5)
+                  </span>
                 </div>
-                <span className="text-sm font-medium">
-                  {CONFIDENCE_LABELS[student.confidenceScore] ?? "—"}
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  ({student.confidenceScore}/5)
-                </span>
               </div>
-            </div>
+            )}
           </div>
         </section>
 
+        {/* Pilot Data: academic + attendance metrics */}
+        {(student.gpa != null || student.attendanceRate != null || student.college || student.classYear || student.age != null || student.enrollmentStatus) && (
+          <section>
+            <h3 className="mb-2 text-sm font-semibold">Academic Profile</h3>
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              {student.college && (
+                <div className="rounded-md border px-3 py-2">
+                  <p className="text-xs text-muted-foreground">College</p>
+                  <p className="font-medium">{student.college}</p>
+                </div>
+              )}
+              {student.classYear && (
+                <div className="rounded-md border px-3 py-2">
+                  <p className="text-xs text-muted-foreground">Class Year</p>
+                  <p className="font-medium">{student.classYear}</p>
+                </div>
+              )}
+              {student.age != null && (
+                <div className="rounded-md border px-3 py-2">
+                  <p className="text-xs text-muted-foreground">Age</p>
+                  <p className="font-medium">{student.age}</p>
+                </div>
+              )}
+              {student.gpa != null && (
+                <div className="rounded-md border px-3 py-2">
+                  <p className="text-xs text-muted-foreground">GPA</p>
+                  <p className="font-medium">{(Math.min(student.gpa, 1) * 4).toFixed(2)} / 4.0</p>
+                </div>
+              )}
+              {student.attendanceRate != null && (
+                <div className="rounded-md border px-3 py-2">
+                  <p className="text-xs text-muted-foreground">Attendance Rate</p>
+                  <p className="font-medium">{(student.attendanceRate * 100).toFixed(0)}%</p>
+                </div>
+              )}
+              {student.enrollmentStatus && (
+                <div className="rounded-md border px-3 py-2">
+                  <p className="text-xs text-muted-foreground">Enrollment</p>
+                  <p className="font-medium">{student.enrollmentStatus}</p>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
         <section>
           <h3 className="mb-2 text-sm font-semibold">Milestones</h3>
-          <MilestoneList milestones={student.milestones} />
+          <MilestoneList
+            milestones={student.milestones}
+            onAddMilestone={(label, category) =>
+              onAddMilestone(student.id, label, category)
+            }
+            onDeleteMilestone={(milestoneId) =>
+              onDeleteMilestone(student.id, milestoneId)
+            }
+          />
         </section>
 
         <section>
@@ -390,7 +430,7 @@ function StudentDetailContent({
 
         <section>
           <h3 className="mb-2 text-sm font-semibold">Recent Activity</h3>
-          <ActivityFeed activity={student.recentActivity} />
+          <ActivityFeed activity={student.recentActivity} milestones={student.milestones} />
         </section>
       </div>
     </>
@@ -401,6 +441,8 @@ export function StudentDetail({
   student,
   onClose,
   onAddNote,
+  onAddMilestone,
+  onDeleteMilestone,
   onUpdateStatus,
   onCheckIn,
   onUndoCheckIn,
@@ -417,6 +459,8 @@ export function StudentDetail({
           <StudentDetailContent
             student={student}
             onAddNote={onAddNote}
+            onAddMilestone={onAddMilestone}
+            onDeleteMilestone={onDeleteMilestone}
             onUpdateStatus={onUpdateStatus}
             onCheckIn={onCheckIn}
             onUndoCheckIn={onUndoCheckIn}

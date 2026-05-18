@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo, useRef } from "react";
-import { AlertCircle, X } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { AlertCircle, X, Search } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { InsightsPanel } from "@/components/shared/InsightsPanel";
 import { KPIGrid } from "@/components/kpi/KPIGrid";
@@ -9,12 +9,12 @@ import { StudentDetail } from "@/components/students/StudentDetail";
 import { Input } from "@/components/ui/input";
 import { EngagementChart } from "@/components/charts/EngagementChart";
 import { MilestoneChart } from "@/components/charts/MilestoneChart";
-import { Button } from "@/components/ui/button";
-import { engagementTimeSeries, sliceEngagementData } from "@/data";
 import {
   fetchStudents,
   fetchAdvisorNotes,
   insertAdvisorNote,
+  insertMilestone,
+  deleteMilestone,
   fetchKpiSummary,
   fetchMilestoneCategorySummary,
   updateStudentStatus,
@@ -23,14 +23,12 @@ import {
 } from "@/data/queries";
 import { deriveStudent } from "@/lib/derive";
 import { useStudentTable } from "@/hooks/useStudentTable";
-import { useChartRange, type ChartRange } from "@/hooks/useChartRange";
 import type {
   Student,
   KPIPeriodSnapshot,
   MilestoneCategoryCompletion,
   StudentStatus,
 } from "@/types";
-import { TIME_RANGES } from "@/lib/constants";
 
 const zeroKpi: KPIPeriodSnapshot = {
   totalStudents: 0,
@@ -48,6 +46,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<Error | null>(null);
   const [kpiVersion, setKpiVersion] = useState(0);
+  const [milestoneVersion, setMilestoneVersion] = useState(0);
   const [actionError, setActionError] = useState<string | null>(null);
   const errorTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -100,23 +99,21 @@ function App() {
   const selectedStudent: Student | null =
     studentData.find((s) => s.id === selectedStudentId) ?? null;
 
-  const { range, setRange, label: rangeLabel } = useChartRange();
-  const engagementChartData = useMemo(
-    () => sliceEngagementData(engagementTimeSeries, range),
-    [range],
-  );
-
   useEffect(() => {
     if (!selectedStudentId) return;
     let cancelled = false;
     fetchAdvisorNotes(selectedStudentId)
       .then((notes) => {
         if (cancelled) return;
-        // Updating studentData is enough — selectedStudent is derived from it
         setStudentData((prev) =>
-          prev.map((s) =>
-            s.id === selectedStudentId ? { ...s, advisorNotes: notes } : s,
-          ),
+          prev.map((s) => {
+            if (s.id !== selectedStudentId) return s;
+            // Merge: keep any locally-prepended notes not yet reflected in the server response
+            // (guards against a race where an insert resolves before this fetch)
+            const serverIds = new Set(notes.map((n) => n.id));
+            const localOnly = s.advisorNotes.filter((n) => !serverIds.has(n.id));
+            return { ...s, advisorNotes: [...localOnly, ...notes] };
+          }),
         );
       })
       .catch(() => {
@@ -137,6 +134,15 @@ function App() {
     return () => { cancelled = true; };
   }, [kpiVersion]);
 
+  useEffect(() => {
+    if (milestoneVersion === 0) return;
+    let cancelled = false;
+    fetchMilestoneCategorySummary()
+      .then((d) => { if (!cancelled) setMilestoneCatData(d); })
+      .catch(() => { /* best-effort */ });
+    return () => { cancelled = true; };
+  }, [milestoneVersion]);
+
   async function handleAddNote(studentId: string, text: string) {
     try {
       const newNote = await insertAdvisorNote(studentId, text);
@@ -149,6 +155,23 @@ function App() {
       );
     } catch {
       showActionError("Couldn't save note. Please try again.");
+    }
+  }
+
+  async function handleAddMilestone(studentId: string, label: string, category: string) {
+    try {
+      const newMilestone = await insertMilestone(studentId, label, category);
+      setStudentData((prev) =>
+        prev.map((s) =>
+          s.id === studentId
+            ? { ...s, milestones: [newMilestone, ...s.milestones] }
+            : s,
+        ),
+      );
+      setMilestoneVersion((v) => v + 1);
+    } catch (err) {
+      console.error("insertMilestone failed:", err);
+      showActionError("Couldn't save milestone. Please try again.");
     }
   }
 
@@ -182,6 +205,23 @@ function App() {
     }
   }
 
+  async function handleDeleteMilestone(studentId: string, milestoneId: string) {
+    try {
+      await deleteMilestone(milestoneId);
+      setStudentData((prev) =>
+        prev.map((s) =>
+          s.id === studentId
+            ? { ...s, milestones: s.milestones.filter((m) => m.id !== milestoneId) }
+            : s,
+        ),
+      );
+      setMilestoneVersion((v) => v + 1);
+    } catch (err) {
+      console.error("deleteMilestone failed:", err);
+      showActionError("Couldn't delete milestone. Please try again.");
+    }
+  }
+
   async function handleUndoCheckIn(studentId: string, previousDate: string) {
     try {
       await revertStudentCheckedIn(studentId, previousDate);
@@ -195,7 +235,22 @@ function App() {
     }
   }
 
-  if (loadError) throw loadError;
+  if (loadError) {
+    return (
+      <DashboardLayout>
+        <div
+          role="alert"
+          className="m-8 flex items-start gap-3 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900"
+        >
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-amber-500" aria-hidden="true" />
+          <div>
+            <p className="font-medium">Failed to load dashboard data</p>
+            <p className="mt-1 text-xs text-amber-700">{loadError.message}</p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -242,23 +297,7 @@ function App() {
         aria-label="Charts"
         className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2"
       >
-        <div>
-          <div className="mb-3 flex items-center justify-end">
-            <div className="flex gap-1">
-              {TIME_RANGES.map((r) => (
-                <Button
-                  key={r}
-                  variant={r === range ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setRange(r as ChartRange)}
-                >
-                  {r}d
-                </Button>
-              ))}
-            </div>
-          </div>
-          <EngagementChart data={engagementChartData} rangeLabel={rangeLabel} />
-        </div>
+        <EngagementChart students={studentData} />
         <MilestoneChart data={milestoneCatData} />
       </section>
 
@@ -275,13 +314,16 @@ function App() {
             onChange={setActiveChips}
             students={studentData}
           />
-          <Input
-            placeholder="Search students..."
-            aria-label="Search students by name or career direction"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="max-w-xs"
-          />
+          <div className="relative w-full sm:w-80">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+            <Input
+              placeholder="Search students..."
+              aria-label="Search students by ID, email, or major"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 border-border bg-background"
+            />
+          </div>
         </div>
         <StudentTable
           students={filteredStudents}
@@ -293,6 +335,8 @@ function App() {
         student={selectedStudent}
         onClose={() => setSelectedStudentId(null)}
         onAddNote={handleAddNote}
+        onAddMilestone={handleAddMilestone}
+        onDeleteMilestone={handleDeleteMilestone}
         onUpdateStatus={handleUpdateStatus}
         onCheckIn={handleCheckIn}
         onUndoCheckIn={handleUndoCheckIn}

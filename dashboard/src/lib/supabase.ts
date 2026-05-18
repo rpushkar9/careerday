@@ -18,11 +18,15 @@ let _client: SupabaseClient | null = null;
 export const supabase = new Proxy({} as SupabaseClient, {
   get(_target, prop) {
     if (!_client) _client = buildClient();
-    return _client[prop as keyof SupabaseClient];
+    const value = _client[prop as keyof SupabaseClient];
+    if (typeof value === "function") {
+      return (value as (...args: unknown[]) => unknown).bind(_client);
+    }
+    return value;
   },
   set(_target, prop, value) {
     if (!_client) _client = buildClient();
-    (_client as Record<string | symbol, unknown>)[prop] = value;
+    (_client as unknown as Record<string | symbol, unknown>)[prop] = value;
     return true;
   },
 });

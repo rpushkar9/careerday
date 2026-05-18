@@ -18,6 +18,16 @@ export const FILTER_CHIPS: FilterChip[] = [
   "Low Engagement",
 ];
 
+export const MILESTONE_CATEGORIES = [
+  { value: "Assessment", label: "Career Assessment" },
+  { value: "Profile", label: "Resume & Profile" },
+  { value: "Networking", label: "Networking" },
+  { value: "Experience", label: "Internship & Experience" },
+  { value: "Applications", label: "Job Applications" },
+] as const;
+
+export type MilestoneCategory = (typeof MILESTONE_CATEGORIES)[number]["value"];
+
 export const STUDENT_STATUSES = [
   "On Track",
   "At Risk",

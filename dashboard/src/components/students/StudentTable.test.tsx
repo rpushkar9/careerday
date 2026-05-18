@@ -65,14 +65,14 @@ describe("StudentTable", () => {
     const headers = screen.getAllByRole("columnheader");
     expect(headers).toHaveLength(9);
     expect(headers.map((h) => h.textContent?.trim())).toEqual([
-      "Name",
+      "Student ID",
       "Major",
+      "College",
+      "Class Year",
       "Grad Year",
       "Career Direction",
       "Engagement",
       "Milestones",
-      "Last Active",
-      "Last Contacted",
       "Status",
     ]);
   });
@@ -83,23 +83,23 @@ describe("StudentTable", () => {
   });
 
   it("clicking a row calls onSelectStudent with the correct student", async () => {
-    const student = makeStudent({ id: "s-042", name: "Clicked Student" });
+    const student = makeStudent({ id: "s-042", email: "clicked@university.edu" });
     const onSelect = vi.fn();
     render(<StudentTable students={[student]} onSelectStudent={onSelect} />);
-    await userEvent.click(screen.getByText("Clicked Student"));
+    await userEvent.click(screen.getByText("s-042"));
     expect(onSelect).toHaveBeenCalledWith(student);
   });
 
-  it("email appears under student name in the first cell", () => {
+  it("email appears under student ID in the first cell", () => {
     const student = makeStudent({
-      name: "Jane Doe",
+      id: "s-001",
       email: "jane.doe@university.edu",
     });
     render(<StudentTable students={[student]} onSelectStudent={vi.fn()} />);
     expect(screen.getByText("jane.doe@university.edu")).toBeInTheDocument();
-    // Name and email are both in the first column
-    const nameCell = screen.getByText("Jane Doe").closest("td");
-    expect(nameCell).toHaveTextContent("jane.doe@university.edu");
+    // ID and email are both in the first column
+    const idCell = screen.getByText("s-001").closest("td");
+    expect(idCell).toHaveTextContent("jane.doe@university.edu");
   });
 
   it("engagement cell contains % for a student", () => {
@@ -138,7 +138,7 @@ describe("StudentTable", () => {
     const user = userEvent.setup();
     const highAchiever = makeStudent({
       id: "s-high",
-      name: "High Achiever",
+      email: "high@university.edu",
       milestones: [
         { id: "m-1", label: "A", status: "Completed", category: "X" },
         { id: "m-2", label: "B", status: "Completed", category: "X" },
@@ -146,7 +146,7 @@ describe("StudentTable", () => {
     });
     const lowAchiever = makeStudent({
       id: "s-low",
-      name: "Low Achiever",
+      email: "low@university.edu",
       milestones: [
         { id: "m-1", label: "A", status: "Pending", category: "X" },
         { id: "m-2", label: "B", status: "Pending", category: "X" },
@@ -162,21 +162,21 @@ describe("StudentTable", () => {
 
     // Initial order: Low then High
     let rows = screen.getAllByRole("row").slice(1);
-    expect(rows[0]).toHaveTextContent("Low Achiever");
+    expect(rows[0]).toHaveTextContent("s-low");
 
-    // Milestones is column index 5 (0-based: Name, Major, Grad Year, Career Direction, Engagement, Milestones)
-    const milestonesHeader = screen.getAllByRole("columnheader")[5];
+    // Milestones is column index 7 (0-based: Student ID, Major, College, Class Year, Grad Year, Career Direction, Engagement, Milestones)
+    const milestonesHeader = screen.getAllByRole("columnheader")[7];
     await user.click(milestonesHeader);
     expect(milestonesHeader.textContent).toContain("▼");
     rows = screen.getAllByRole("row").slice(1);
-    expect(rows[0]).toHaveTextContent("High Achiever");
-    expect(rows[1]).toHaveTextContent("Low Achiever");
+    expect(rows[0]).toHaveTextContent("s-high");
+    expect(rows[1]).toHaveTextContent("s-low");
 
     // Second click → ascending (lower first)
     await user.click(milestonesHeader);
     expect(milestonesHeader.textContent).toContain("▲");
     rows = screen.getAllByRole("row").slice(1);
-    expect(rows[0]).toHaveTextContent("Low Achiever");
-    expect(rows[1]).toHaveTextContent("High Achiever");
+    expect(rows[0]).toHaveTextContent("s-low");
+    expect(rows[1]).toHaveTextContent("s-high");
   });
 });
