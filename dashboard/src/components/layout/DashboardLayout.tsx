@@ -16,13 +16,20 @@ export function DashboardLayout({ children, counselor }: DashboardLayoutProps) {
       <header className="border-b bg-card shadow-sm">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold text-primary">
-                CareerDayy
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                Counselor Dashboard
-              </p>
+            <div className="flex items-center gap-3">
+              <img
+                src="/logo.png"
+                alt="CareerDayy logo"
+                className="w-12 h-12 rounded-lg"
+              />
+              <div>
+                <h1 className="text-2xl font-semibold text-primary">
+                  CareerDayy
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                  Counselor Dashboard
+                </p>
+              </div>
             </div>
             <div className="flex items-center gap-3">
               <Bell className="w-6 h-6 text-primary" aria-hidden="true" />
