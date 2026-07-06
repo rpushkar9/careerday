@@ -54,6 +54,14 @@ refreshes and redeploys.
 - **Student detail drawer** — follow-up check-in with an **8-second undo**, career narrative,
   academic profile, milestone add/delete, timestamped advisor notes, and a recent-activity feed.
 
+<div align="center">
+
+### Click a student → detail drawer
+
+<img src="docs/screenshots/student-detail.png" width="440" alt="Student detail drawer — follow-up, career narrative, academic profile" />
+
+</div>
+
 ## Data & architecture
 
 ```
